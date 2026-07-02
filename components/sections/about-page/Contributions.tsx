@@ -20,6 +20,7 @@ import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { githubContributions, navigation } from "@/data";
 import { SectionLabel } from "@/components/sections/case-study/SectionLabel";
+import { playSweep } from "@/lib/audio";
 import styles from "./Contributions.module.css";
 
 // Cell geometry in SVG user units (the viewBox scales to fit the container).
@@ -251,10 +252,69 @@ export function AboutPageContributions() {
         runCycle();
       }
 
+      // 3D Tilt Hover effect on the grid wrap container
+      const gridWrap = section.querySelector<HTMLElement>(`.${styles.gridWrap}`);
+      const listeners: { element: HTMLElement; type: string; fn: any }[] = [];
+      
+      if (gridWrap && !reduced) {
+        gsap.set(gridWrap, { transformPerspective: 1000, transformStyle: "preserve-3d" });
+        
+        const handleMouseMove = (e: MouseEvent) => {
+          const rect = gridWrap.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const normX = (x / rect.width) - 0.5;
+          const normY = (y / rect.height) - 0.5;
+          
+          // Subtle tilt for a large grid container (max 6 degrees tilt)
+          const rotateX = -normY * 6;
+          const rotateY = normX * 6;
+          
+          gsap.to(gridWrap, {
+            rotateX: rotateX,
+            rotateY: rotateY,
+            x: normX * 4,
+            y: normY * 4,
+            duration: 0.3,
+            ease: "power2.out",
+            overwrite: "auto",
+          });
+        };
+        
+        const handleMouseEnter = () => {
+          playSweep();
+        };
+        
+        const handleMouseLeave = () => {
+          gsap.to(gridWrap, {
+            rotateX: 0,
+            rotateY: 0,
+            x: 0,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+            overwrite: "auto",
+          });
+        };
+        
+        gridWrap.addEventListener("mousemove", handleMouseMove);
+        gridWrap.addEventListener("mouseenter", handleMouseEnter);
+        gridWrap.addEventListener("mouseleave", handleMouseLeave);
+        
+        listeners.push(
+          { element: gridWrap, type: "mousemove", fn: handleMouseMove },
+          { element: gridWrap, type: "mouseenter", fn: handleMouseEnter },
+          { element: gridWrap, type: "mouseleave", fn: handleMouseLeave }
+        );
+      }
+
       return () => {
         trigger.kill();
         if (tl) tl.kill();
         if (pending) pending.kill();
+        listeners.forEach(({ element, type, fn }) => {
+          element.removeEventListener(type, fn);
+        });
       };
     },
     { scope: sectionRef, dependencies: [reduced] },

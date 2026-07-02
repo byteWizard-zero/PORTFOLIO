@@ -5,6 +5,8 @@ import { useGSAP } from "@gsap/react";
 import { gsap } from "@/lib/gsap";
 import { leetcodeStats } from "@/data";
 import { SectionLabel } from "@/components/sections/case-study/SectionLabel";
+import { useReducedMotion } from "@/lib/useReducedMotion";
+import { playSweep } from "@/lib/audio";
 import styles from "./LeetCodeStats.module.css";
 
 export function AboutPageLeetCodeStats() {
@@ -23,6 +25,7 @@ export function AboutPageLeetCodeStats() {
   } = leetcodeStats;
 
   const sectionRef = useRef<HTMLElement>(null);
+  const reducedMotion = useReducedMotion();
 
   // Math for SVG circle path
   const solvedPercent = (totalSolved / totalQuestions) * 100;
@@ -114,7 +117,75 @@ export function AboutPageLeetCodeStats() {
         if (acceptEl) acceptEl.textContent = countTarget.acceptance.toFixed(1) + "%";
       }
     });
-  }, { scope: sectionRef });
+
+    // 5. 3D Tilt Hover effect on cardMain and cardBars
+    const listeners: { element: HTMLElement; type: string; fn: any }[] = [];
+    
+    if (!reducedMotion) {
+      const cards = [
+        sectionRef.current.querySelector<HTMLElement>(`.${styles.cardMain}`),
+        sectionRef.current.querySelector<HTMLElement>(`.${styles.cardBars}`)
+      ];
+      
+      cards.forEach((card) => {
+        if (!card) return;
+        
+        gsap.set(card, { transformPerspective: 1000, transformStyle: "preserve-3d" });
+        
+        const handleMouseMove = (e: MouseEvent) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const normX = (x / rect.width) - 0.5;
+          const normY = (y / rect.height) - 0.5;
+          const rotateX = -normY * 10;
+          const rotateY = normX * 10;
+          
+          gsap.to(card, {
+            rotateX: rotateX,
+            rotateY: rotateY,
+            x: normX * 6,
+            y: normY * 6,
+            duration: 0.3,
+            ease: "power2.out",
+            overwrite: "auto",
+          });
+        };
+        
+        const handleMouseEnter = () => {
+          playSweep();
+        };
+        
+        const handleMouseLeave = () => {
+          gsap.to(card, {
+            rotateX: 0,
+            rotateY: 0,
+            x: 0,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+            overwrite: "auto",
+          });
+        };
+        
+        card.addEventListener("mousemove", handleMouseMove);
+        card.addEventListener("mouseenter", handleMouseEnter);
+        card.addEventListener("mouseleave", handleMouseLeave);
+        
+        listeners.push(
+          { element: card, type: "mousemove", fn: handleMouseMove },
+          { element: card, type: "mouseenter", fn: handleMouseEnter },
+          { element: card, type: "mouseleave", fn: handleMouseLeave }
+        );
+      });
+    }
+
+    return () => {
+      listeners.forEach(({ element, type, fn }) => {
+        element.removeEventListener(type, fn);
+      });
+    };
+  }, { scope: sectionRef, dependencies: [reducedMotion] });
 
   return (
     <section
