@@ -1,6 +1,7 @@
 import { Hero } from '@/components/sections/Hero';
 import { Philosophy } from '@/components/sections/Philosophy';
 import { ServicesV2 } from '@/components/sections/ServicesV2';
+import { AiVisualizer } from '@/components/sections/AiVisualizer';
 import { Projects } from '@/components/sections/Projects';
 import { Archive } from '@/components/sections/Archive';
 import { Workflow } from '@/components/sections/Workflow';
@@ -15,6 +16,7 @@ export default function Home() {
       <Hero />
       <Philosophy />
       <ServicesV2 />
+      <AiVisualizer />
       <Projects />
       <Archive />
       <Workflow />

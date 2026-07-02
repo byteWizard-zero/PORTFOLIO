@@ -1,0 +1,463 @@
+.section {
+  padding: clamp(100px, 15vh, 200px) var(--spacing-nav-side);
+  background-color: var(--color-background);
+  border-bottom: 2px solid var(--color-primary-text);
+}
+
+.inner {
+  max-width: var(--canvas-max-width);
+  margin: 0 auto;
+}
+
+.sectionHeader {
+  margin-bottom: clamp(32px, 5vh, 56px);
+}
+
+.eyebrow {
+  font-family: var(--font-navbar);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent-purple);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.title {
+  font-family: var(--font-primary);
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-primary-text);
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  font-family: var(--font-primary);
+  font-size: clamp(14px, 1.6vw, 17px);
+  color: var(--color-text-muted-strong);
+  max-width: 680px;
+}
+
+/* ── Dashboard Grid ── */
+.dashboard {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.mainPanel, .monitorPanel {
+  border: 1.5px solid var(--color-primary-text);
+  border-radius: 16px;
+  background-color: var(--color-background);
+  padding: 24px;
+  box-shadow: 6px 6px 0px var(--color-primary-text);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Presets & Input */
+.presets {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.presetBtn {
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--color-primary-text);
+  background-color: var(--color-background);
+  color: var(--color-primary-text);
+  cursor: pointer;
+  transition: transform 0.15s var(--ease-out-expo), background 0.15s ease;
+}
+
+.presetBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background-color: var(--color-grid-line);
+}
+
+.inputGroup {
+  display: flex;
+  gap: 12px;
+}
+
+.textInput {
+  flex-grow: 1;
+  font-family: var(--font-primary);
+  font-size: 13px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1.5px solid var(--color-primary-text);
+  background-color: var(--color-background);
+  color: var(--color-primary-text);
+  outline: none;
+}
+
+.routeBtn {
+  font-family: var(--font-navbar);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0 20px;
+  border-radius: 8px;
+  border: 1.5px solid var(--color-primary-text);
+  background-color: var(--color-primary-text);
+  color: var(--color-background);
+  cursor: pointer;
+  transition: transform 0.15s var(--ease-out-expo), opacity 0.15s ease;
+}
+
+.routeBtn:hover:not(:disabled) {
+  transform: scale(1.02);
+}
+
+.routeBtn:disabled, .textInput:disabled, .presetBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── SVG Pipeline Canvas ── */
+.pipelineArea {
+  border: 1.5px solid var(--color-primary-text);
+  border-radius: 12px;
+  background-color: var(--color-grid-line);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.networkSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.nodeCircle {
+  fill: var(--color-background);
+  stroke: var(--color-primary-text);
+  stroke-width: 2px;
+}
+
+.nodeRect {
+  fill: var(--color-background);
+  stroke: var(--color-primary-text);
+  stroke-width: 2px;
+  transition: fill 0.3s ease, stroke-color 0.3s ease;
+}
+
+.nodeLabel, .routerLabel, .modelLabel {
+  font-family: var(--font-navbar);
+  font-size: 10px;
+  font-weight: 700;
+  fill: var(--color-primary-text);
+  letter-spacing: 0.02em;
+}
+
+.routerLabel {
+  font-size: 9px;
+  fill: var(--color-primary-text);
+}
+
+.modelLabel {
+  font-size: 9px;
+}
+
+/* Connection Paths */
+.connLine {
+  stroke: var(--color-primary-text);
+  stroke-width: 1.5px;
+  stroke-dasharray: 4 4;
+  opacity: 0.25;
+  transition: stroke 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease;
+}
+
+/* Active Glow Pipeline Routes */
+.activeConn {
+  stroke: var(--color-accent-purple);
+  stroke-width: 2px;
+  opacity: 1;
+  animation: dashFlow 1s linear infinite;
+}
+
+.activeRouteCode {
+  stroke: var(--color-accent-purple);
+  stroke-width: 2.5px;
+  opacity: 1;
+  animation: dashFlow 0.8s linear infinite;
+}
+
+.activeRouteCreative {
+  stroke: var(--color-accent-gold);
+  stroke-width: 2.5px;
+  opacity: 1;
+  animation: dashFlow 0.8s linear infinite;
+}
+
+.activeRouteDebug {
+  stroke: var(--color-accent-teal);
+  stroke-width: 2.5px;
+  opacity: 1;
+  animation: dashFlow 0.8s linear infinite;
+}
+
+@keyframes dashFlow {
+  from { stroke-dashoffset: 20; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* Pulsing active model nodes */
+.pulsePro {
+  fill: color-mix(in srgb, var(--color-accent-purple) 15%, var(--color-background));
+  stroke: var(--color-accent-purple);
+  stroke-width: 2.5px;
+  animation: pulsePurple 2s infinite ease-in-out;
+}
+
+.pulseGroq {
+  fill: color-mix(in srgb, var(--color-accent-gold) 15%, var(--color-background));
+  stroke: var(--color-accent-gold);
+  stroke-width: 2.5px;
+  animation: pulseGold 2s infinite ease-in-out;
+}
+
+.pulseFlash {
+  fill: color-mix(in srgb, var(--color-accent-teal) 15%, var(--color-background));
+  stroke: var(--color-accent-teal);
+  stroke-width: 2.5px;
+  animation: pulseTeal 2s infinite ease-in-out;
+}
+
+@keyframes pulsePurple {
+  0%, 100% { filter: drop-shadow(0 0 2px var(--color-accent-purple)); }
+  50% { filter: drop-shadow(0 0 8px var(--color-accent-purple)); }
+}
+
+@keyframes pulseGold {
+  0%, 100% { filter: drop-shadow(0 0 2px var(--color-accent-gold)); }
+  50% { filter: drop-shadow(0 0 8px var(--color-accent-gold)); }
+}
+
+@keyframes pulseTeal {
+  0%, 100% { filter: drop-shadow(0 0 2px var(--color-accent-teal)); }
+  50% { filter: drop-shadow(0 0 8px var(--color-accent-teal)); }
+}
+
+/* ── Monitor Panel ── */
+.panelTitle {
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin-bottom: 8px;
+}
+
+.scoreBars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scoreRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scoreLabelRow {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-primary);
+  font-size: 12px;
+  color: var(--color-primary-text);
+  font-weight: 600;
+}
+
+.barTrack {
+  height: 8px;
+  background-color: var(--color-grid-line);
+  border: 1px solid var(--color-primary-text);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  width: 0;
+  transition: width 0.1s ease;
+}
+
+/* Response Monitor */
+.monitorOutput {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+.outputConsole {
+  border: 1.5px solid var(--color-primary-text);
+  border-radius: 8px;
+  background-color: #0b0c10;
+  padding: 16px;
+  height: 160px;
+  overflow-y: auto;
+  display: flex;
+}
+
+.outputText {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  color: #a8ffb2;
+  white-space: pre-wrap;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.outputPlaceholder {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  color: #56596b;
+  font-style: italic;
+  align-self: center;
+  margin: auto;
+}
+
+/* Telemetry Grid */
+.telemetryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  border-top: 1.5px solid var(--color-grid-line);
+  padding-top: 14px;
+}
+
+.telemetryItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.tLabel {
+  font-family: var(--font-navbar);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.tValue {
+  font-family: var(--font-primary);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary-text);
+}
+
+/* ── Console Logs Footer ── */
+.logsFooter {
+  border: 1.5px solid var(--color-primary-text);
+  border-radius: 12px;
+  background-color: #0d0e12;
+  box-shadow: 4px 4px 0px var(--color-primary-text);
+  display: flex;
+  flex-direction: column;
+  height: 160px;
+  overflow: hidden;
+}
+
+.logsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1.5px solid var(--color-primary-text);
+  background-color: #16181f;
+}
+
+.dotGroup {
+  display: flex;
+  gap: 8px;
+}
+
+.redDot, .yellowDot, .greenDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--color-primary-text);
+}
+
+.redDot { background-color: #ff5f56; }
+.yellowDot { background-color: #ffbd2e; }
+.greenDot { background-color: #27c93f; }
+
+.logsTitle {
+  font-family: var(--font-navbar);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: #888da8;
+}
+
+.logsBody {
+  flex-grow: 1;
+  padding: 14px 16px;
+  overflow-y: auto;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #e5e7eb;
+}
+
+.logsPlaceholder {
+  color: #56596b;
+  font-style: italic;
+}
+
+.logLine {
+  margin-bottom: 4px;
+}
+
+/* ── responsiveness ── */
+@media (max-width: 1024px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .presets {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .presetBtn {
+    width: 100%;
+  }
+
+  .inputGroup {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .routeBtn {
+    width: 100%;
+    padding: 12px 0;
+  }
+  
+  .telemetryGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
