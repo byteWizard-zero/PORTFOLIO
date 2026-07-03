@@ -62,7 +62,7 @@
 /* Mask container for reveal animation */
 .linkMask {
     overflow: hidden;
-    padding: 0;
+    padding: 0.8vh 0;
 }
 
 .link {
