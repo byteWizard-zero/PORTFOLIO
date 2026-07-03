@@ -160,69 +160,111 @@ export function AiVisualizer() {
     setOutputResponse('');
     setTelemetry({ latency: 0, tokens: 0, speed: 0, cost: 0 });
 
-    const lowerQuery = processedQuery.toLowerCase();
-    let targetRoute: 'code' | 'creative' | 'debug' | 'generic' = 'generic';
+    const addLogDeferred = (msg: string, delay: number): Promise<void> => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          addLog(msg);
+          resolve();
+        }, delay);
+      });
+    };
+
+    // Techy initialization logs
+    setTerminalLogs([
+      `[GATEWAY] Initializing classification pipeline...`,
+      `[RESOLVER] DNS lookup for API endpoint resolved to v1beta.googleapis.com`,
+      `[RESOLVER] Connecting to gateway routing agent...`
+    ]);
+
+    await addLogDeferred(`[RESOLVER] Dispatching payload for dynamic route optimization...`, 200);
+    await addLogDeferred(`[ROUTER] Classifying intent for query: "${processedQuery.substring(0, 45)}${processedQuery.length > 45 ? '...' : ''}"`, 200);
+    if (isTruncated) {
+      await addLogDeferred(`[WARNING] Query length exceeds playground budget. Truncating to 300 chars.`, 100);
+    }
+
+    // Call dynamic classification API
     let targetScores = { code: 10, creative: 10, debug: 10 };
+    let targetRoute: 'code' | 'creative' | 'debug' | 'generic' = 'generic';
     let modelName = 'gemini-2.5-flash';
 
-    if (
-      lowerQuery.includes('rust') ||
-      lowerQuery.includes('sorting') ||
-      lowerQuery.includes('algorithm') ||
-      lowerQuery.includes('code') ||
-      lowerQuery.includes('function')
-    ) {
-      targetRoute = 'code';
-      targetScores = { code: 92, creative: 3, debug: 5 };
-      modelName = 'gemini-2.5-pro'; // Pro for coding
-    } else if (
-      lowerQuery.includes('tagline') ||
-      lowerQuery.includes('database product') ||
-      lowerQuery.includes('marketing') ||
-      lowerQuery.includes('creative') ||
-      lowerQuery.includes('tag')
-    ) {
-      targetRoute = 'creative';
-      targetScores = { code: 2, creative: 94, debug: 4 };
-      modelName = 'gemini-2.5-flash'; // Flash for creative/speed
-    } else if (
-      lowerQuery.includes('docker') ||
-      lowerQuery.includes('logs') ||
-      lowerQuery.includes('crashed') ||
-      lowerQuery.includes('container') ||
-      lowerQuery.includes('debug')
-    ) {
-      targetRoute = 'debug';
-      targetScores = { code: 6, creative: 2, debug: 92 };
-      modelName = 'gemini-1.5-flash'; // 1.5 Flash for fast diagnostics
-    } else {
-      targetRoute = 'generic';
-      targetScores = { code: 34, creative: 33, debug: 33 };
-      modelName = 'gemini-2.5-flash';
+    try {
+      const classResponse = await fetch('/api/classify-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: processedQuery }),
+      });
+
+      if (!classResponse.ok) {
+        throw new Error('Classification request failed');
+      }
+
+      const scores = await classResponse.json();
+      targetScores = {
+        code: scores.code ?? 10,
+        creative: scores.creative ?? 10,
+        debug: scores.debug ?? 10
+      };
+
+      // Determine highest score
+      const maxVal = Math.max(targetScores.code, targetScores.creative, targetScores.debug);
+      if (maxVal === targetScores.code) {
+        targetRoute = 'code';
+        modelName = 'gemini-2.5-pro';
+      } else if (maxVal === targetScores.creative) {
+        targetRoute = 'creative';
+        modelName = 'gemini-2.5-flash';
+      } else {
+        targetRoute = 'debug';
+        modelName = 'gemini-1.5-flash';
+      }
+
+      await addLogDeferred(`[ROUTER] Intent classification completed dynamically using server-side Gemini key.`, 100);
+      await addLogDeferred(`[ROUTER] Dynamic routing scores resolved: { code: ${targetScores.code}%, creative: ${targetScores.creative}%, debug: ${targetScores.debug}% }`, 100);
+
+    } catch (e) {
+      const errMsg = e instanceof Error ? e.message : 'Error';
+      await addLogDeferred(`[WARNING] Server-side classification failed: ${errMsg}. Falling back to keyword heuristics...`, 100);
+      
+      // Fallback heuristics
+      const lowerQuery = processedQuery.toLowerCase();
+      if (
+        lowerQuery.includes('rust') ||
+        lowerQuery.includes('sorting') ||
+        lowerQuery.includes('algorithm') ||
+        lowerQuery.includes('code') ||
+        lowerQuery.includes('function')
+      ) {
+        targetRoute = 'code';
+        targetScores = { code: 92, creative: 3, debug: 5 };
+        modelName = 'gemini-2.5-pro';
+      } else if (
+        lowerQuery.includes('tagline') ||
+        lowerQuery.includes('database product') ||
+        lowerQuery.includes('marketing') ||
+        lowerQuery.includes('creative') ||
+        lowerQuery.includes('tag')
+      ) {
+        targetRoute = 'creative';
+        targetScores = { code: 2, creative: 94, debug: 4 };
+        modelName = 'gemini-2.5-flash';
+      } else if (
+        lowerQuery.includes('docker') ||
+        lowerQuery.includes('logs') ||
+        lowerQuery.includes('crashed') ||
+        lowerQuery.includes('container') ||
+        lowerQuery.includes('debug')
+      ) {
+        targetRoute = 'debug';
+        targetScores = { code: 6, creative: 2, debug: 92 };
+        modelName = 'gemini-1.5-flash';
+      } else {
+        targetRoute = 'generic';
+        targetScores = { code: 34, creative: 33, debug: 33 };
+        modelName = 'gemini-2.5-flash';
+      }
     }
 
-    const systemInstruction = `
-You are an advanced agentic AI assistant on zenith's portfolio.
-Your response MUST be formatted in two distinct parts:
-1. Internal thinking/reasoning process wrapped inside <thinking>...</thinking> tags. Outline your steps, constraints, and algorithmic reasoning. Keep this section under 120 words.
-2. The final answer OUTSIDE the <thinking> tags. If code is requested, output it inside markdown code blocks.
-
-Example structure:
-<thinking>
-- Step 1: Parse requirements.
-- Step 2: Formulate QuickSort logic.
-</thinking>
-\`\`\`rust
-pub fn sort() { ... }
-\`\`\`
-`;
-
-    // Step 1: Animate intent scoring
-    addLog(`[ROUTER] Classifying intent for query: "${processedQuery.substring(0, 45)}${processedQuery.length > 45 ? '...' : ''}"`);
-    if (isTruncated) {
-      addLog(`[WARNING] Query length exceeds playground budget. Truncating to 300 chars.`);
-    }
-
+    // Animate intent scoring
     let frame = 0;
     const scorePromise = new Promise<void>((resolve) => {
       const scoreInterval = setInterval(() => {
@@ -243,9 +285,26 @@ pub fn sort() { ... }
 
     await scorePromise;
 
-    addLog(`[ROUTER] Target route selected: ${targetRoute.toUpperCase()} (${targetScores[targetRoute === 'generic' ? 'code' : targetRoute]}% confidence)`);
-    addLog(`[GATEWAY] Routing content to model: ${modelName}`);
+    const selectedScore = targetRoute === 'generic' ? Math.max(targetScores.code, targetScores.creative, targetScores.debug) : targetScores[targetRoute];
+    await addLogDeferred(`[ROUTER] Target route selected: ${targetRoute.toUpperCase()} (${selectedScore}% confidence)`, 50);
+    await addLogDeferred(`[GATEWAY] Routing content packet to model: ${modelName}`, 50);
     setActiveRoute(targetRoute);
+
+    const systemInstruction = `
+You are an advanced agentic AI assistant on zenith's portfolio.
+Your response MUST be formatted in two distinct parts:
+1. Internal thinking/reasoning process wrapped inside <thinking>...</thinking> tags. Outline your steps, constraints, and algorithmic reasoning. Keep this section under 120 words.
+2. The final answer OUTSIDE the <thinking> tags. If code is requested, output it inside markdown code blocks.
+
+Example structure:
+<thinking>
+- Step 1: Parse requirements.
+- Step 2: Formulate QuickSort logic.
+</thinking>
+\`\`\`rust
+pub fn sort() { ... }
+\`\`\`
+`;
 
     // Call API or fallback
     let rawResponse = '';
@@ -253,17 +312,19 @@ pub fn sort() { ... }
     const startFetchTime = performance.now();
 
     try {
-      addLog(`[API] Establishing secure stream to Gemini network...`);
+      await addLogDeferred(`[API] Establishing secure stream to Gemini network...`, 100);
+      await addLogDeferred(`[API] Handshake successful. Initiating secure session...`, 100);
       rawResponse = await fetchModelResponse(modelName, processedQuery, systemInstruction);
-    } catch (e: any) {
-      addLog(`[API_ERROR] ${e.message || 'Gemini API call failed.'}`);
-      addLog(`[SYSTEM] Falling back to local offline simulation engine.`);
+    } catch (e) {
+      const errMsg = e instanceof Error ? e.message : 'Gemini API call failed.';
+      await addLogDeferred(`[API_ERROR] ${errMsg}`, 100);
+      await addLogDeferred(`[SYSTEM] Falling back to local offline simulation engine.`, 100);
       rawResponse = OFFLINE_RESPONSES[targetRoute] || OFFLINE_RESPONSES.generic;
       isFallback = true;
     }
 
     const elapsedLatency = Math.round(performance.now() - startFetchTime);
-    addLog(`[GATEWAY] Stream established. Parsing reasoning and content blocks...`);
+    await addLogDeferred(`[GATEWAY] Stream established. Parsing reasoning and content blocks...`, 100);
 
     // Parse <thinking> tags
     let thinkingBlock = '';
@@ -281,19 +342,19 @@ pub fn sort() { ... }
     // Typewriter streaming logic
     setTimeout(() => {
       // 1. Type the thinking process inside the logs console first
-      addLog(`\n[THINKING PROCESS]`);
+      setTerminalLogs((prev) => [...prev, `\n[THINKING PROCESS]`]);
       const thinkingLines = thinkingBlock.split('\n');
       let lineIdx = 0;
 
       const printThinkingLines = () => {
         if (lineIdx < thinkingLines.length) {
-          addLog(`  ${thinkingLines[lineIdx]}`);
+          setTerminalLogs((prev) => [...prev, `  ${thinkingLines[lineIdx]}`]);
           lineIdx++;
           playTokenBeep();
           setTimeout(printThinkingLines, 100);
         } else {
           // 2. Stream final response outside thinking blocks in the Monitor
-          addLog(`[STREAM] Output stream open. Dispatching response...`);
+          setTerminalLogs((prev) => [...prev, `[STREAM] Output stream open. Dispatching response...`]);
           
           let charIndex = 0;
           const textLength = finalResponse.length;
@@ -318,8 +379,11 @@ pub fn sort() { ... }
 
             if (charIndex >= textLength) {
               clearInterval(streamTimer);
-              addLog(`[STREAM] Stream closed. 100% of tokens generated.`);
-              addLog(`[SYSTEM] Compiler routing visualizer idle.`);
+              setTerminalLogs((prev) => [
+                ...prev,
+                `[STREAM] Stream closed. 100% of tokens generated.`,
+                `[SYSTEM] Compiler routing visualizer idle.`
+              ]);
               setIsRouting(false);
             }
           }, 35);
