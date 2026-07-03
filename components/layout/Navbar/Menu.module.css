@@ -60,7 +60,7 @@
 /* Mask container for reveal animation */
 .linkMask {
     overflow: hidden;
-    padding: 0.5vw 0;
+    padding: clamp(2px, 0.4vh, 8px) 0;
 }
 
 .link {
@@ -98,7 +98,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: -0.02em;
-    line-height: 1.1;
+    line-height: 1.0;
     color: var(--color-primary-text);
 }
 
@@ -112,7 +112,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: -0.02em;
-    line-height: 1.1;
+    line-height: 1.0;
     color: var(--color-background);
     /* Start fully clipped (hidden) - inset from bottom 100% */
     clip-path: inset(100% 0 0 0);

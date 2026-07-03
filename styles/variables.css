@@ -46,7 +46,7 @@
     --font-size-tagline: clamp(14px, 1.5vw, 20px);
     --font-size-works: 12px;
     --font-size-skills: clamp(16px, 2.5vw, 31px);
-    --font-size-menu: clamp(48px, 12vw, 140px);
+    --font-size-menu: clamp(38px, 6vh + 1.8vw, 110px);
 
     /* Spacing - Fluid */
     --spacing-nav-top: clamp(16px, 3vw, 33px);
