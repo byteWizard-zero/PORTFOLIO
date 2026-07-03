@@ -176,12 +176,12 @@ export const WelcomeScreen = () => {
 
         tl.addLabel("initialsRevealed");
 
-        // 3.5. Glitch Jitter & Decryption Effect on Z and S
-        const originalFirst = INITIALS.first;
-        const originalLast = INITIALS.last;
-        const glyphs = ["X", "Δ", "Ø", "9", "%", "&", "⚡", "0", "1", "★", "✦"];
+        // 3.5. Filmy Glitch & Chromatic Aberration Effect on Z and S (Red, Blue, Pink)
+        const red = "#ff0055";
+        const blue = "#0055ff";
+        const pink = "#ff00ff";
         const glitchTime = 0.45;
-        const steps = 6;
+        const steps = 8;
         const stepDuration = glitchTime / steps;
 
         for (let i = 0; i < steps; i++) {
@@ -190,30 +190,23 @@ export const WelcomeScreen = () => {
           const startTime = `initialsRevealed+=${startTimeOffset}`;
 
           tl.to([mRef.current, aRef.current], {
-            x: isLast ? 0 : () => gsap.utils.random(-8, 8),
-            y: isLast ? 0 : () => gsap.utils.random(-5, 5),
-            skewX: isLast ? 0 : () => gsap.utils.random(-25, 25),
-            scaleY: isLast ? 1 : () => gsap.utils.random(0.8, 1.2),
+            x: isLast ? 0 : () => gsap.utils.random(-12, 12),
+            y: isLast ? 0 : () => gsap.utils.random(-4, 4),
+            skewX: isLast ? 0 : () => gsap.utils.random(-30, 30),
+            scaleX: isLast ? 1 : () => gsap.utils.random(0.7, 1.4),
+            scaleY: isLast ? 1 : () => gsap.utils.random(0.6, 1.3),
             opacity: isLast ? 1 : () => gsap.utils.random(0.5, 1),
             textShadow: isLast 
               ? "none" 
-              : () => `${gsap.utils.random(-5, 5)}px 0 var(--color-accent-purple), ${gsap.utils.random(-5, 5)}px 0 var(--color-accent-teal)`,
+              : () => {
+                  const rx = gsap.utils.random(-8, 8);
+                  const bx = gsap.utils.random(-8, 8);
+                  const px = gsap.utils.random(-5, 5);
+                  return `${rx}px 0 1px ${red}, ${bx}px 0 1px ${blue}, ${px}px 0 3px ${pink}`;
+                },
             duration: stepDuration,
             ease: "none"
           }, startTime);
-
-          // Swap characters to random glyphs during the glitch
-          tl.call(() => {
-            if (mRef.current && aRef.current) {
-              if (isLast) {
-                mRef.current.textContent = originalFirst;
-                aRef.current.textContent = originalLast;
-              } else {
-                mRef.current.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
-                aRef.current.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
-              }
-            }
-          }, undefined, startTime);
         }
     }
 
