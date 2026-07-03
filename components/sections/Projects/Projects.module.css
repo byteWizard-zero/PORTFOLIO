@@ -6,8 +6,8 @@
 }
 
 /* Clear negative margin if it follows the AI visualizer to prevent overlapping */
-:global(#ai-visualizer) + .section {
-    margin-top: 0;
+:global(#ai-visualizer) + #projects {
+    margin-top: 0 !important;
 }
 
 /* Base meta-label styling lives in the shared <MetaLabel> component; this

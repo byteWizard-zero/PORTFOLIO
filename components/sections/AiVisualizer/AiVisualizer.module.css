@@ -1,4 +1,6 @@
 .section {
+  position: relative;
+  z-index: 30;
   padding: clamp(100px, 15vh, 200px) var(--spacing-nav-side);
   background-color: var(--color-background);
   border-bottom: 2px solid var(--color-primary-text);
