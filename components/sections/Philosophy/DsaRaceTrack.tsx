@@ -24,12 +24,12 @@ export function DsaRaceTrack() {
   const reducedMotion = useReducedMotion();
   const animationRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
-  const terminalEndRef = useRef<HTMLDivElement>(null);
+  const terminalBodyRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll the terminal logs
+  // Auto-scroll the terminal logs internally (no page jumping)
   useEffect(() => {
-    if (terminalEndRef.current) {
-      terminalEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (terminalBodyRef.current) {
+      terminalBodyRef.current.scrollTop = terminalBodyRef.current.scrollHeight;
     }
   }, [logs]);
 
@@ -387,7 +387,7 @@ export function DsaRaceTrack() {
             </div>
             <span className={styles.terminalTitle}>system_telemetry.log</span>
           </div>
-          <div className={styles.terminalBody}>
+          <div ref={terminalBodyRef} className={styles.terminalBody} data-lenis-prevent>
             {logs.length === 0 ? (
               <span className={styles.terminalPlaceholder}>Terminal idle. Click "Run Simulation" to execute complexity check...</span>
             ) : (
@@ -405,7 +405,6 @@ export function DsaRaceTrack() {
                 );
               })
             )}
-            <div ref={terminalEndRef} />
           </div>
         </div>
       </div>

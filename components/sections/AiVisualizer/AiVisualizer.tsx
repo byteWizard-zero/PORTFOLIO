@@ -65,7 +65,8 @@ export function AiVisualizer() {
   const [telemetry, setTelemetry] = useState({ latency: 0, tokens: 0, speed: 0, cost: 0 });
   
   const reducedMotion = useReducedMotion();
-  const logsEndRef = useRef<HTMLDivElement>(null);
+  const logsBodyRef = useRef<HTMLDivElement>(null);
+  const outputConsoleRef = useRef<HTMLDivElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
 
   // Play high-frequency stream token beep using native Web Audio
@@ -101,12 +102,19 @@ export function AiVisualizer() {
     }
   };
 
-  // Scroll terminal logs automatically
+  // Auto-scroll the terminal logs internally (no page jumping)
   useEffect(() => {
-    if (logsEndRef.current) {
-      logsEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (logsBodyRef.current) {
+      logsBodyRef.current.scrollTop = logsBodyRef.current.scrollHeight;
     }
   }, [terminalLogs]);
+
+  // Auto-scroll the stream monitor output
+  useEffect(() => {
+    if (outputConsoleRef.current) {
+      outputConsoleRef.current.scrollTop = outputConsoleRef.current.scrollHeight;
+    }
+  }, [outputResponse]);
 
   const addLog = (msg: string) => {
     setTerminalLogs((prev) => [...prev, msg]);
@@ -401,7 +409,7 @@ export function AiVisualizer() {
             {/* Response Area */}
             <div className={styles.monitorOutput}>
               <h4 className={styles.panelTitle}>Stream Monitor</h4>
-              <div className={styles.outputConsole}>
+              <div ref={outputConsoleRef} className={styles.outputConsole} data-lenis-prevent>
                 {outputResponse ? (
                   <pre className={styles.outputText}>{outputResponse}</pre>
                 ) : (
@@ -442,7 +450,7 @@ export function AiVisualizer() {
             </div>
             <span className={styles.logsTitle}>gateway_routing_agent.log</span>
           </div>
-          <div className={styles.logsBody}>
+          <div ref={logsBodyRef} className={styles.logsBody} data-lenis-prevent>
             {terminalLogs.length === 0 ? (
               <span className={styles.logsPlaceholder}>Router pipeline idle. Input prompt to begin telemetry...</span>
             ) : (
@@ -450,7 +458,6 @@ export function AiVisualizer() {
                 <div key={i} className={styles.logLine}>{log}</div>
               ))
             )}
-            <div ref={logsEndRef} />
           </div>
         </div>
       </div>
