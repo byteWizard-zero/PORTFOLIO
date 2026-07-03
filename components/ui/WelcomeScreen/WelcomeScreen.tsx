@@ -176,38 +176,15 @@ export const WelcomeScreen = () => {
 
         tl.addLabel("initialsRevealed");
 
-        // 3.5. Filmy Glitch & Chromatic Aberration Effect on Z and S (Red, Blue, Pink)
-        const red = "#ff0055";
-        const blue = "#0055ff";
-        const pink = "#ff00ff";
-        const glitchTime = 0.45;
-        const steps = 8;
-        const stepDuration = glitchTime / steps;
+        // 3.5. Filmy glitching class trigger right before flight
+        tl.call(() => {
+          initialsRef.current?.classList.add(styles.glitching);
+        }, undefined, "initialsRevealed+=0.2");
 
-        for (let i = 0; i < steps; i++) {
-          const isLast = i === steps - 1;
-          const startTimeOffset = 0.2 + i * stepDuration;
-          const startTime = `initialsRevealed+=${startTimeOffset}`;
-
-          tl.to([mRef.current, aRef.current], {
-            x: isLast ? 0 : () => gsap.utils.random(-12, 12),
-            y: isLast ? 0 : () => gsap.utils.random(-4, 4),
-            skewX: isLast ? 0 : () => gsap.utils.random(-30, 30),
-            scaleX: isLast ? 1 : () => gsap.utils.random(0.7, 1.4),
-            scaleY: isLast ? 1 : () => gsap.utils.random(0.6, 1.3),
-            opacity: isLast ? 1 : () => gsap.utils.random(0.5, 1),
-            textShadow: isLast 
-              ? "none" 
-              : () => {
-                  const rx = gsap.utils.random(-8, 8);
-                  const bx = gsap.utils.random(-8, 8);
-                  const px = gsap.utils.random(-5, 5);
-                  return `${rx}px 0 1px ${red}, ${bx}px 0 1px ${blue}, ${px}px 0 3px ${pink}`;
-                },
-            duration: stepDuration,
-            ease: "none"
-          }, startTime);
-        }
+        // Remove the glitching class right when the travel/flight transition starts
+        tl.call(() => {
+          initialsRef.current?.classList.remove(styles.glitching);
+        }, undefined, "initialsRevealed+=0.65");
     }
 
       // 4. The Travel Transition
@@ -337,9 +314,9 @@ export const WelcomeScreen = () => {
 
         {/* Initials (Center Target) */}
         <div ref={initialsRef} className={styles.initialsContainer}>
-          <span ref={mRef} className={styles.letterM}>{INITIALS.first}</span>
+          <span ref={mRef} className={styles.letterM} data-text={INITIALS.first}>{INITIALS.first}</span>
           <span style={{ width: '0.1em' }}></span> {/* Spacer */}
-          <span ref={aRef} className={styles.letterA}>{INITIALS.last}</span>
+          <span ref={aRef} className={styles.letterA} data-text={INITIALS.last}>{INITIALS.last}</span>
         </div>
       </div>
     </div>
