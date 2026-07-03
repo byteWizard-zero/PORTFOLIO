@@ -69,8 +69,8 @@ export function AboutPageIntro() {
             <Image
               src="/profile1.png"
               alt="Zenith Soumya"
-              width={220}
-              height={220}
+              width={280}
+              height={280}
               priority
               className={styles.profileImage}
             />
