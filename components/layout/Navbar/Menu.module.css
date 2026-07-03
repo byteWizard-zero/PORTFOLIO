@@ -32,7 +32,8 @@
     display: flex;
     justify-content: space-between;
     padding: var(--spacing-nav-side);
-    padding-top: calc(var(--spacing-nav-top) + 60px);
+    padding-top: calc(var(--spacing-nav-top) + 50px);
+    padding-bottom: calc(var(--spacing-nav-side) + 20px);
 }
 
 /* Navigation container - left side */
@@ -48,9 +49,10 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0;
+    justify-content: space-between;
     width: 100%;
     max-width: 1200px;
+    height: 100%;
 }
 
 .linkItem {
@@ -60,7 +62,7 @@
 /* Mask container for reveal animation */
 .linkMask {
     overflow: hidden;
-    padding: clamp(2px, 0.4vh, 8px) 0;
+    padding: 0;
 }
 
 .link {
@@ -164,10 +166,6 @@
     padding-bottom: 60px;
     gap: 40px;
     text-align: right;
-    flex-shrink: 1;
-    min-width: 0;
-    max-width: clamp(200px, 30vw, 400px);
-    overflow: hidden;
 }
 
 .socialGroup {
@@ -187,7 +185,7 @@
 
 .socialLabel {
     font-family: var(--font-navbar);
-    font-size: clamp(11px, 1vw, 14px);
+    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.15em;
@@ -195,7 +193,6 @@
        so the "Social Presence" / "Location" labels read as the same family of
        text against the purple overlay. */
     color: var(--color-primary-text);
-    white-space: nowrap;
 }
 
 .socialList {
@@ -275,7 +272,7 @@
 
 .locationText {
     font-family: var(--font-primary);
-    font-size: clamp(13px, 1.3vw, 18px);
+    font-size: clamp(14px, 1.5vw, 18px);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.02em;
@@ -283,8 +280,6 @@
     color: var(--color-background);
     margin: 0;
     text-align: right;
-    word-break: break-word;
-    overflow-wrap: break-word;
 }
 
 /* Back button */
