@@ -132,14 +132,14 @@ export const WelcomeScreen = () => {
             yPercent: -50
         });
 
-        // 2. The Smooth Cross-Fade Sequence
-        const animDuration = 0.25; // Fade-in and slide-up duration
-        const fadeOutDuration = 0.25; // Fade-out and slide-up-away duration
-        const displayDuration = 0.15; // Time to hold fully visible
-        const overlap = 0.15; // Overlap between consecutive words
+        // 2. The Smooth Sequential Transition (No Overlap)
+        const animDuration = 0.18; // Fade-in and slide-up duration
+        const fadeOutDuration = 0.18; // Fade-out and slide-up-away duration
+        const displayDuration = 0.10; // Time to hold fully visible
+        const totalWordDuration = animDuration + displayDuration + fadeOutDuration;
 
         greetingElements.forEach((el, index) => {
-            const startTime = index * (animDuration + displayDuration - overlap);
+            const startTime = index * totalWordDuration;
 
             tl.to(el, {
                 opacity: 1,
