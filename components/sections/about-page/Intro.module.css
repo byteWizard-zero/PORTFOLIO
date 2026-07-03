@@ -73,7 +73,6 @@
 .profileCard:hover {
   transform: translateY(-8px) rotate(-2.5deg) scale(1.06);
   border-color: var(--color-accent-purple);
-  box-shadow: 0 15px 35px rgba(191, 90, 242, 0.16), 0 0 18px rgba(191, 90, 242, 0.12);
 }
 
 .cardFrame {
