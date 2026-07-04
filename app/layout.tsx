@@ -54,47 +54,53 @@ export const viewport: Viewport = {
 // Run synchronously before paint — next/script's beforeInteractive is
 // unreliable in App Router (fires after hydration), causing a theme flash on
 // dark-mode users and a scroll-position flash on reload. Inline scripts execute
-// at parse time, before React. Three concerns: apply saved dark theme, force
-// manual scroll restoration, and flag the load as fresh for downstream code.
+// at parse time, before React.
+//
+// FOUC prevention strategy:
+// Instead of body{visibility:hidden} (which is inheritable and can be overridden
+// by any child setting visibility:visible), we create an opaque overlay <div>
+// at z-index 9999 with the theme background color. This physically paints over
+// ALL content — nothing can bleed through regardless of z-index, position, or
+// visibility overrides on any child element.
+//
+// The [data-welcome-wrapper] element from WelcomeScreen sits INSIDE body and
+// has its own z-index:9000, but the overlay at z-index:9999 covers it too.
+// We punch a hole for the welcome wrapper using the same overlay div approach:
+// the overlay IS the welcome wrapper's backdrop.
+//
+// On non-"/" pages, the overlay is removed on DOMContentLoaded.
+// On "/", the WelcomeScreen component removes it via the 'welcome-gate' id.
+//
+// bfcache: When the browser restores from bfcache (back/forward), JS state is
+// stale. We force a real reload via the pageshow event.
 const BOOTSTRAP_SCRIPT = `
-(function(){
-  if (typeof window !== "undefined" && window.performance && window.performance.getEntriesByType) {
-    var navs = window.performance.getEntriesByType("navigation");
-    if (navs.length > 0 && navs[0].type === "reload") {
-      var search = window.location.search;
-      if (!search.includes("hard-reload")) {
-        var newSearch = search ? search + "&hard-reload=" + Date.now() : "?hard-reload=" + Date.now();
-        window.location.replace(window.location.pathname + newSearch + window.location.hash);
-        return;
-      }
-    }
-  }
-})();
 (function(){try{if(localStorage.getItem("portfolio_theme")==="dark"){document.documentElement.setAttribute("data-theme","dark")}}catch(e){}})();
 if("scrollRestoration"in history){history.scrollRestoration="manual"}
 window.scrollTo(0,0);
 window.__freshLoad=true;
-if(window.location.pathname==="/"){
-  var _ws=document.createElement("style");
-  _ws.id="welcome-gate";
-  _ws.textContent="body{visibility:hidden!important}[data-welcome-wrapper]{visibility:visible!important;position:fixed!important;inset:0!important;z-index:9000!important;display:flex!important;justify-content:center!important;align-items:center!important;overflow:hidden!important;background-color:var(--color-background,#FFFFFF)!important}[data-initials-container]{visibility:visible!important;position:absolute!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%)!important;display:flex!important;align-items:center!important;justify-content:center!important}[data-theme=dark] [data-welcome-wrapper]{background-color:#171717!important}";
-  document.head.appendChild(_ws);
-}
+(function(){
+  var isDark=document.documentElement.getAttribute("data-theme")==="dark";
+  var bg=isDark?"#171717":"#FFFFFF";
+  var overlay=document.createElement("div");
+  overlay.id="welcome-gate";
+  overlay.setAttribute("aria-hidden","true");
+  overlay.style.cssText="position:fixed;inset:0;z-index:9998;background-color:"+bg+";pointer-events:none;transition:opacity 0.3s ease;";
+  document.body.appendChild(overlay);
+  if(window.location.pathname!=="/"){
+    document.addEventListener("DOMContentLoaded",function(){
+      var g=document.getElementById("welcome-gate");
+      if(g){g.style.opacity="0";setTimeout(function(){g.remove()},350)}
+    });
+  }
+})();
+window.addEventListener("pageshow",function(e){
+  if(e.persisted){window.location.reload()}
+});
 document.addEventListener("dragstart", function(e) {
   if (e.target && e.target.tagName === "IMG") {
     e.preventDefault();
   }
 }, { passive: false });
-document.addEventListener("DOMContentLoaded", function() {
-  if (window.history && window.history.replaceState) {
-    var url = new URL(window.location.href);
-    if (url.searchParams.has("hard-reload")) {
-      url.searchParams.delete("hard-reload");
-      var newUrl = url.pathname + url.search + url.hash;
-      window.history.replaceState({}, "", newUrl);
-    }
-  }
-});
 `;
 
 const personJsonLd = {
