@@ -41,7 +41,15 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
   }, []);
 
   const splitLines = useMemo(() => {
-    const text = typeof children === 'string' ? children : '';
+    // Flatten children to extract all raw text contents
+    const text = React.Children.toArray(children)
+      .map((child) => {
+        if (typeof child === 'string' || typeof child === 'number') {
+          return String(child);
+        }
+        return '';
+      })
+      .join('\n');
     
     // 1. Try splitting by preserved newlines first
     let rawLines = text
