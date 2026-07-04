@@ -41,30 +41,31 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
   }, []);
 
   const splitLines = useMemo(() => {
-    // Flatten children to extract all raw text contents
-    const text = React.Children.toArray(children)
-      .map((child) => {
-        if (typeof child === 'string' || typeof child === 'number') {
-          return String(child);
-        }
-        return '';
-      })
-      .join('\n');
+    const rawLines: string[] = [];
     
-    // 1. Try splitting by preserved newlines first
-    let rawLines = text
-      .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0);
-
-    // 2. Fallback: If JSX stripped the newlines into a single collapsed line, 
-    // split dynamically using sentence boundaries (. / ! / ? / ...) followed by an uppercase letter or slash.
-    if (rawLines.length <= 1) {
-      rawLines = text
-        .split(/(?<=\.|\.\.\.|!|\?)\s+(?=[A-Z/])/)
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0);
-    }
+    React.Children.toArray(children).forEach((child) => {
+      if (typeof child === 'string' || typeof child === 'number') {
+        const childText = String(child).trim();
+        if (!childText) return;
+        
+        if (childText.startsWith('//')) {
+          rawLines.push(childText);
+        } else {
+          let lines = childText
+            .split('\n')
+            .map((l) => l.trim())
+            .filter((l) => l.length > 0);
+            
+          if (lines.length <= 1) {
+            lines = childText
+              .split(/(?<=\.|\.\.\.|!|\?)\s+(?=[A-Z/])/)
+              .map((l) => l.trim())
+              .filter((l) => l.length > 0);
+          }
+          rawLines.push(...lines);
+        }
+      }
+    });
 
     return rawLines.map((lineText, lineIdx) => {
       const isGlitchLine = lineText.startsWith('//');
