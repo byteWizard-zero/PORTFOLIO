@@ -84,7 +84,12 @@ const WELCOME_GATE_CSS = [
   '  justify-content:center!important;',
   '  align-items:center!important;',
   '  overflow:hidden!important;',
+  '  background-color:var(--color-background,#FFFFFF)!important;',
   '}',
+  // Dark theme: if the bootstrap script has already set data-theme="dark"
+  // but variables.css hasn't loaded yet, this hardcoded fallback keeps the
+  // welcome overlay matching the dark background.
+  '[data-theme=dark] [data-welcome-wrapper]{background-color:#171717!important}',
 ].join('');
 
 const personJsonLd = {

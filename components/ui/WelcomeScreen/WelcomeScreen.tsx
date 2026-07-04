@@ -168,14 +168,25 @@ export const WelcomeScreen = () => {
         // 3. Initials Reveal
         // PERF: dropped filter:blur — paint-heavy on Firefox/Linux. scale+opacity
         // alone provide the same perceptual reveal at compositor-only cost.
+        // xPercent/yPercent are pinned explicitly so centering doesn't depend on
+        // the CSS module's transform: translate(-50%, -50%) having loaded — on
+        // cached refreshes the module can arrive after GSAP reads the element.
+        gsap.set(initialsRef.current, {
+            xPercent: -50,
+            yPercent: -50,
+        });
         tl.fromTo(initialsRef.current,
             {
                 scale: 1.2,
                 opacity: 0,
+                xPercent: -50,
+                yPercent: -50,
             },
             {
                 scale: 1,
                 opacity: 1,
+                xPercent: -50,
+                yPercent: -50,
                 duration: 0.5,
                 ease: "power2.out"
             }
