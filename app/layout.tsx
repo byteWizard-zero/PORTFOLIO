@@ -57,6 +57,19 @@ export const viewport: Viewport = {
 // at parse time, before React. Three concerns: apply saved dark theme, force
 // manual scroll restoration, and flag the load as fresh for downstream code.
 const BOOTSTRAP_SCRIPT = `
+(function(){
+  if (typeof window !== "undefined" && window.performance && window.performance.getEntriesByType) {
+    var navs = window.performance.getEntriesByType("navigation");
+    if (navs.length > 0 && navs[0].type === "reload") {
+      var search = window.location.search;
+      if (!search.includes("hard-reload")) {
+        var newSearch = search ? search + "&hard-reload=" + Date.now() : "?hard-reload=" + Date.now();
+        window.location.replace(window.location.pathname + newSearch + window.location.hash);
+        return;
+      }
+    }
+  }
+})();
 (function(){try{if(localStorage.getItem("portfolio_theme")==="dark"){document.documentElement.setAttribute("data-theme","dark")}}catch(e){}})();
 if("scrollRestoration"in history){history.scrollRestoration="manual"}
 window.scrollTo(0,0);
@@ -72,6 +85,16 @@ document.addEventListener("dragstart", function(e) {
     e.preventDefault();
   }
 }, { passive: false });
+document.addEventListener("DOMContentLoaded", function() {
+  if (window.history && window.history.replaceState) {
+    var url = new URL(window.location.href);
+    if (url.searchParams.has("hard-reload")) {
+      url.searchParams.delete("hard-reload");
+      var newUrl = url.pathname + url.search + url.hash;
+      window.history.replaceState({}, "", newUrl);
+    }
+  }
+});
 `;
 
 const personJsonLd = {
