@@ -223,6 +223,7 @@
 
 /* Call Stack Frames */
 .stackFrame {
+  flex-shrink: 0;
   background: rgba(98, 182, 203, 0.05);
   border: 1px solid rgba(98, 182, 203, 0.2);
   padding: 12px 16px;
@@ -269,6 +270,7 @@
 
 /* Heap Objects */
 .heapBlock {
+  flex-shrink: 0;
   background: var(--color-background);
   border: 1px solid var(--color-grid-line);
   padding: 12px 16px;
