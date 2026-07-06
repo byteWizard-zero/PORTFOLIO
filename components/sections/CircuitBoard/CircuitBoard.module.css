@@ -1,0 +1,487 @@
+.boardContainer {
+  width: 100%;
+  max-width: var(--canvas-max-width);
+  margin: 0 auto;
+  padding: calc(var(--spacing-nav-top) + 90px) var(--spacing-nav-side) 80px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-background);
+  background-image: radial-gradient(var(--color-grid-line) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+  background-attachment: fixed;
+  color: var(--color-primary-text);
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 40px;
+}
+
+.headerTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.backBtn {
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  padding: 8px 16px;
+  border: 1px solid var(--color-primary-text);
+  color: var(--color-primary-text);
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.backBtn:hover {
+  background: var(--color-primary-text);
+  color: var(--color-background);
+}
+
+.title {
+  font-family: var(--font-primary);
+  font-size: clamp(24px, 4vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.subtitle {
+  font-family: var(--font-primary);
+  font-size: clamp(14px, 1.5vw, 16px);
+  color: var(--color-text-muted);
+  max-width: 80ch;
+  margin: 0;
+}
+
+/* Main Grid Layout */
+.designerGrid {
+  display: grid;
+  grid-template-columns: 240px 1fr 280px;
+  gap: 30px;
+  flex: 1;
+}
+
+@media screen and (max-width: 1100px) {
+  .designerGrid {
+    grid-template-columns: 220px 1fr;
+  }
+  .telemetryPanel {
+    grid-column: span 2;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .designerGrid {
+    grid-template-columns: 1fr;
+  }
+  .toolboxPanel,
+  .workbenchPanel,
+  .telemetryPanel {
+    grid-column: span 1;
+  }
+}
+
+/* Panels */
+.toolboxPanel,
+.workbenchPanel,
+.telemetryPanel {
+  background: var(--paper);
+  border: 1px solid var(--color-grid-line);
+  border-radius: 6px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.panelTitle {
+  font-family: var(--font-navbar);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary-text);
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--color-grid-line);
+  padding-bottom: 10px;
+}
+
+/* Toolbox */
+.toolboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.groupLabel {
+  font-family: var(--font-navbar);
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.toolBtn {
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--color-grid-line);
+  color: var(--color-primary-text);
+  border-radius: 4px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toolBtn:hover {
+  background: var(--color-primary-text);
+  color: var(--color-background);
+  border-color: var(--color-primary-text);
+}
+
+.toolboxFooter {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.deleteBtn {
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  padding: 10px;
+  background: rgba(229, 115, 115, 0.1);
+  border: 1px solid rgba(229, 115, 115, 0.3);
+  color: #ff5f56;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.deleteBtn:hover {
+  background: #ff5f56;
+  color: #000;
+  border-color: #ff5f56;
+}
+
+.clearBtn {
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  padding: 10px;
+  background: none;
+  border: 1px solid var(--color-primary-text);
+  color: var(--color-primary-text);
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.clearBtn:hover {
+  background: var(--color-primary-text);
+  color: var(--color-background);
+}
+
+/* Workbench area */
+.workbenchPanel {
+  position: relative;
+  height: 520px;
+  background: #090a0d;
+  overflow: hidden;
+  padding: 0;
+  cursor: crosshair;
+}
+
+:global([data-theme="light"]) .workbenchPanel {
+  background: #f8f9fa;
+}
+
+.svgCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Wires animations */
+.wireGlow {
+  pointer-events: auto;
+  cursor: pointer;
+  transition: stroke 0.3s ease;
+}
+
+.wireActive {
+  stroke-dashoffset: 20;
+  animation: flowCable 1s infinite linear;
+}
+
+@keyframes flowCable {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Component Nodes */
+.componentNode {
+  position: absolute;
+  width: 110px;
+  height: 60px;
+  background: rgba(18, 22, 30, 0.9);
+  border: 1.5px solid var(--color-grid-line);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  user-select: none;
+  cursor: grab;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  z-index: 10;
+}
+
+:global([data-theme="light"]) .componentNode {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.componentNode:active {
+  cursor: grabbing;
+}
+
+.nodeSelected {
+  border-color: var(--color-accent-purple);
+  box-shadow: 0 0 8px rgba(186, 104, 200, 0.4);
+}
+
+.nodeTypeSwitch {
+  width: 90px;
+}
+
+.nodeTypeLed {
+  width: 90px;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+/* Pins styling */
+.pin {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #333;
+  border: 1.5px solid #555;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.pin:hover {
+  transform: scale(1.3);
+  background: var(--color-accent-purple);
+  border-color: var(--color-accent-purple);
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-left: -14px;
+}
+
+.outputPin {
+  margin-right: -14px;
+}
+
+.pinActive {
+  background: #62B6CB !important;
+  border-color: #62B6CB !important;
+  box-shadow: 0 0 6px #62B6CB;
+}
+
+.pinConnected {
+  background: #888;
+  border-color: #aaa;
+}
+
+.pinConnecting {
+  animation: pulsePin 0.8s infinite alternate;
+}
+
+@keyframes pulsePin {
+  from {
+    background: #333;
+    box-shadow: none;
+  }
+  to {
+    background: var(--color-accent-purple);
+    box-shadow: 0 0 8px var(--color-accent-purple);
+  }
+}
+
+/* Node Internal elements */
+.nodeBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-align: center;
+}
+
+.gateLabel {
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--color-primary-text);
+}
+
+.nodeTitle {
+  font-family: monospace;
+  font-size: 8px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+/* Inputs / Switch control buttons */
+.switchBtn {
+  font-family: var(--font-navbar);
+  font-size: 9px;
+  padding: 4px 8px;
+  background: #222;
+  border: 1px solid var(--color-grid-line);
+  color: #888;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.switchBtnHigh {
+  background: #62B6CB;
+  color: #000;
+  border-color: #62B6CB;
+  font-weight: 700;
+  box-shadow: 0 0 4px #62B6CB;
+}
+
+/* LED Indicator lights */
+.ledIndicator {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #222;
+  border: 1.5px solid #444;
+  transition: all 0.3s ease;
+}
+
+.ledIndicatorOn {
+  background: #62B6CB;
+  border-color: #62B6CB;
+  box-shadow: 0 0 10px #62B6CB, inset 0 0 4px #fff;
+}
+
+/* Telemetry and Presets panel */
+.presetsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.presetBtn {
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  padding: 12px;
+  background: none;
+  border: 1px solid var(--color-grid-line);
+  color: var(--color-primary-text);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.presetBtn:hover {
+  background: var(--color-primary-text);
+  color: var(--color-background);
+  border-color: var(--color-primary-text);
+}
+
+/* Logs console */
+.logsFooter {
+  background: #0d0d0d;
+  border: 1px solid #222;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  height: 250px;
+  margin-top: 24px;
+}
+
+.logsHeader {
+  background: #171717;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #222;
+}
+
+.dotGroup {
+  display: flex;
+  gap: 6px;
+  margin-right: 16px;
+}
+
+.redDot,
+.yellowDot,
+.greenDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.redDot { background-color: #ff5f56; }
+.yellowDot { background-color: #ffbd2e; }
+.greenDot { background-color: #27c93f; }
+
+.logsTitle {
+  font-family: monospace;
+  font-size: 10px;
+  color: #666;
+  text-transform: lowercase;
+}
+
+.logsBody {
+  padding: 16px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  background: #0a0a0a;
+}
+
+.logLine {
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.logInfo { color: #888; }
+.logInput { color: var(--color-accent-purple); }
+.logLed { color: #62B6CB; }
+.logSystem { color: #555; }
+.logWarning { color: var(--color-accent-gold); }

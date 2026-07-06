@@ -1,45 +1,8 @@
 {
   "username": "1bitVscoder",
-  "total": 323,
-  "generatedAt": "2026-07-04",
+  "total": 338,
+  "generatedAt": "2026-07-06",
   "weeks": [
-    [
-      {
-        "date": "2025-06-29",
-        "count": 0,
-        "level": 0
-      },
-      {
-        "date": "2025-06-30",
-        "count": 0,
-        "level": 0
-      },
-      {
-        "date": "2025-07-01",
-        "count": 0,
-        "level": 0
-      },
-      {
-        "date": "2025-07-02",
-        "count": 0,
-        "level": 0
-      },
-      {
-        "date": "2025-07-03",
-        "count": 0,
-        "level": 0
-      },
-      {
-        "date": "2025-07-04",
-        "count": 0,
-        "level": 0
-      },
-      {
-        "date": "2025-07-05",
-        "count": 0,
-        "level": 0
-      }
-    ],
     [
       {
         "date": "2025-07-06",
@@ -1963,6 +1926,23 @@
         "count": 32,
         "level": 4
       }
+    ],
+    [
+      {
+        "date": "2026-07-05",
+        "count": 7,
+        "level": 1
+      },
+      {
+        "date": "2026-07-06",
+        "count": 8,
+        "level": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null
     ]
   ]
 }

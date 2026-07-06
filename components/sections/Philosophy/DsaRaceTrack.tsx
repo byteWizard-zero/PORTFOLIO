@@ -20,6 +20,7 @@ export function DsaRaceTrack() {
   const [nValue, setNValue] = useState<number>(1000);
   const [sliderVal, setSliderVal] = useState<number>(2); // 2 is index of 1000
   const [raceState, setRaceState] = useState<'idle' | 'running' | 'completed' | 'crashed'>('idle');
+  const [raceType, setRaceType] = useState<'complexity' | 'sorting'>('complexity');
   const [logs, setLogs] = useState<string[]>([]);
   const [progress, setProgress] = useState<LaneProgress>({ o1: 0, ologn: 0, on: 0, on2: 0 });
   const reducedMotion = useReducedMotion();
@@ -101,20 +102,32 @@ export function DsaRaceTrack() {
         on2: isCrash ? 35 : 100,
       });
       setRaceState(isCrash ? 'crashed' : 'completed');
-      setLogs([
-        `[COMPILER] Initializing loop race for N = ${nValue.toLocaleString()}`,
-        `[SUCCESS] O(1) constant search finished in 0.01ms`,
-        `[SUCCESS] O(log N) binary search finished in 0.05ms`,
-        `[SUCCESS] O(N) linear sweep finished in 1.2ms`,
-        isCrash 
-          ? `[FATAL] O(N²) quadratic sort exceeded execution budget! Execution halted.`
-          : `[SUCCESS] O(N²) quadratic sort finished in ${Math.round(nValue * nValue * 0.0001)}ms`,
-      ]);
+      if (raceType === 'complexity') {
+        setLogs([
+          `[COMPILER] Initializing loop race for N = ${nValue.toLocaleString()}`,
+          `[SUCCESS] O(1) constant search finished in 0.01ms`,
+          `[SUCCESS] O(log N) binary search finished in 0.05ms`,
+          `[SUCCESS] O(N) linear sweep finished in 1.2ms`,
+          isCrash 
+            ? `[FATAL] O(N²) quadratic sort exceeded execution budget! Execution halted.`
+            : `[SUCCESS] O(N²) quadratic sort finished in ${Math.round(nValue * nValue * 0.0001)}ms`,
+        ]);
+      } else {
+        setLogs([
+          `[SORTER] Initializing sorting run for N = ${nValue.toLocaleString()} elements`,
+          `[SUCCESS] Bubble Sort (In-place) finished in ${isCrash ? 'HALTED' : Math.round(nValue * nValue * 0.0001) + 'ms'}. Space: O(1)`,
+          `[SUCCESS] Quick Sort (Recursion) finished in 0.2ms. Space: O(log N)`,
+          `[SUCCESS] Merge Sort (Partitioning) finished in 0.4ms. Space: O(N)`,
+        ]);
+      }
       playSweep();
       return;
     }
 
-    addLog(`[COMPILER] Instantiating loop race for N = ${nValue.toLocaleString()}...`);
+    addLog(raceType === 'complexity' 
+      ? `[COMPILER] Instantiating loop race for N = ${nValue.toLocaleString()}...`
+      : `[SORTER] Instantiating sorting algorithm race for N = ${nValue.toLocaleString()} arrays...`
+    );
     startTimeRef.current = performance.now();
     
     // Set up timings based on N (slower durations for smooth pacing)
@@ -195,49 +208,95 @@ export function DsaRaceTrack() {
       });
 
       // Sequential Logging Updates
-      if (pO1 >= 100 && !loggedRef.o1) {
-        loggedRef.o1 = true;
-        addLog(`[RUNNING] O(1) constant time check: 1 operation completed in 0.02ms.`);
-      }
+      if (raceType === 'complexity') {
+        if (pO1 >= 100 && !loggedRef.o1) {
+          loggedRef.o1 = true;
+          addLog(`[RUNNING] O(1) constant time check: 1 operation completed in 0.02ms.`);
+        }
 
-      if (pOlogn >= 100 && !loggedRef.ologn) {
-        loggedRef.ologn = true;
-        const ops = Math.round(Math.log2(nValue));
-        addLog(`[RUNNING] O(log N) binary search: ${ops} operations completed in 0.06ms.`);
-      }
+        if (pOlogn >= 100 && !loggedRef.ologn) {
+          loggedRef.ologn = true;
+          const ops = Math.round(Math.log2(nValue));
+          addLog(`[RUNNING] O(log N) binary search: ${ops} operations completed in 0.06ms.`);
+        }
 
-      if (pOn >= 50 && !loggedRef.onHalf && nValue >= 1000) {
-        loggedRef.onHalf = true;
-        addLog(`[RUNNING] O(N) linear sweep: ${(nValue / 2).toLocaleString()} operations processed...`);
-      }
+        if (pOn >= 50 && !loggedRef.onHalf && nValue >= 1000) {
+          loggedRef.onHalf = true;
+          addLog(`[RUNNING] O(N) linear sweep: ${(nValue / 2).toLocaleString()} operations processed...`);
+        }
 
-      if (pOn >= 100 && !loggedRef.on) {
-        loggedRef.on = true;
-        addLog(`[SUCCESS] O(N) linear sweep finished in ${Math.round(onDuration)}ms.`);
-      }
+        if (pOn >= 100 && !loggedRef.on) {
+          loggedRef.on = true;
+          addLog(`[SUCCESS] O(N) linear sweep finished in ${Math.round(onDuration)}ms.`);
+        }
 
-      // O(N2) Stalling Logs
-      if (nValue >= 10000 && elapsed > 1500 && !loggedRef.on2Warn) {
-        loggedRef.on2Warn = true;
-        addLog(`[WARNING] O(N²) quadratic sort: Cache line thrashing detected. CPU usage 100%.`);
-      }
+        // O(N2) Stalling Logs
+        if (nValue >= 10000 && elapsed > 1500 && !loggedRef.on2Warn) {
+          loggedRef.on2Warn = true;
+          addLog(`[WARNING] O(N²) quadratic sort: Cache line thrashing detected. CPU usage 100%.`);
+        }
 
-      if (crashTriggered) {
-        addLog(`[FATAL] O(N²) Heap Allocation Limit Exceeded! Thread pool blocked.`);
-        addLog(`[SYSTEM] Halting compilation to protect system resources.`);
-        setRaceState('crashed');
-        playSweep();
-        if (animationRef.current) cancelAnimationFrame(animationRef.current);
-        return;
-      }
+        if (crashTriggered) {
+          addLog(`[FATAL] O(N²) Heap Allocation Limit Exceeded! Thread pool blocked.`);
+          addLog(`[SYSTEM] Halting compilation to protect system resources.`);
+          setRaceState('crashed');
+          playSweep();
+          if (animationRef.current) cancelAnimationFrame(animationRef.current);
+          return;
+        }
 
-      // Check for normal completion
-      if (pO1 >= 100 && pOlogn >= 100 && pOn >= 100 && pOn2 >= 100) {
-        addLog(`[SUCCESS] O(N²) quadratic sort completed in ${Math.round(on2Duration)}ms.`);
-        addLog(`[SYSTEM] Loop race finished. CPU temperature nominal.`);
-        setRaceState('completed');
-        playSweep();
-        return;
+        // Check for normal completion
+        if (pO1 >= 100 && pOlogn >= 100 && pOn >= 100 && pOn2 >= 100) {
+          addLog(`[SUCCESS] O(N²) quadratic sort completed in ${Math.round(on2Duration)}ms.`);
+          addLog(`[SYSTEM] Loop race finished. CPU temperature nominal.`);
+          setRaceState('completed');
+          playSweep();
+          return;
+        }
+      } else {
+        // Sorting logs
+        if (pO1 >= 100 && !loggedRef.o1) {
+          loggedRef.o1 = true;
+          addLog(`[RUNNING] Allocating auxiliary array variables and reference blocks...`);
+        }
+
+        if (pOlogn >= 100 && !loggedRef.ologn) {
+          loggedRef.ologn = true;
+          addLog(`[SUCCESS] Quick Sort completed in ${Math.round(olognDuration)}ms. Aux space: O(log N) stack frames.`);
+        }
+
+        if (pOn >= 50 && !loggedRef.onHalf && nValue >= 1000) {
+          loggedRef.onHalf = true;
+          addLog(`[RUNNING] Merge Sort: Partitioning buffers and copying array structures...`);
+        }
+
+        if (pOn >= 100 && !loggedRef.on) {
+          loggedRef.on = true;
+          addLog(`[SUCCESS] Merge Sort finished in ${Math.round(onDuration)}ms. Aux space: O(N) (${nValue.toLocaleString()} allocations).`);
+        }
+
+        // Bubble Sort stalling warning
+        if (nValue >= 10000 && elapsed > 1500 && !loggedRef.on2Warn) {
+          loggedRef.on2Warn = true;
+          addLog(`[WARNING] Bubble Sort: Loop swaps running quadratically. Cache thrashing detected.`);
+        }
+
+        if (crashTriggered) {
+          addLog(`[FATAL] Bubble Sort: Time limit exceeded for elements size ${nValue.toLocaleString()}. Halted.`);
+          addLog(`[SYSTEM] Halting thread to prevent CPU lockup.`);
+          setRaceState('crashed');
+          playSweep();
+          if (animationRef.current) cancelAnimationFrame(animationRef.current);
+          return;
+        }
+
+        if (pO1 >= 100 && pOlogn >= 100 && pOn >= 100 && pOn2 >= 100) {
+          addLog(`[SUCCESS] Bubble Sort finished in ${Math.round(on2Duration)}ms. Aux space: O(1) in-place.`);
+          addLog(`[SYSTEM] Sorting algorithm race finished.`);
+          setRaceState('completed');
+          playSweep();
+          return;
+        }
       }
 
       animationRef.current = requestAnimationFrame(animate);
@@ -255,6 +314,30 @@ export function DsaRaceTrack() {
   };
 
 
+  const getSpacePercentage = () => {
+    if (raceState === 'idle') return 0;
+    
+    if (raceType === 'complexity') {
+      if (nValue <= 10) return 5;
+      if (nValue <= 100) return 15;
+      if (nValue <= 1000) return 30;
+      if (nValue <= 10000) return 55;
+      return 85;
+    } else {
+      const currentProgress = Math.max(progress.o1, progress.ologn, progress.on, progress.on2);
+      if (currentProgress === 0) return 0;
+      
+      const nIndex = N_VALUES.indexOf(nValue); // 0 to 4
+      const ratio = currentProgress / 100;
+      
+      const mergeSpace = (20 + nIndex * 20) * ratio; // Merge is linear
+      const quickSpace = (10 + nIndex * 5) * ratio;  // Quick is log
+      const bubbleSpace = 5 * ratio;                 // Bubble is constant
+      
+      return Math.max(bubbleSpace, quickSpace, mergeSpace);
+    }
+  };
+
   return (
     <div className={styles.raceContainer}>
       <div className={styles.header}>
@@ -262,6 +345,26 @@ export function DsaRaceTrack() {
         <p className={styles.subtitle}>
           Visualizing loop cycles and time complexity growth relative to input size (N).
         </p>
+      </div>
+
+      {/* Race Mode Selector Tabs */}
+      <div className={styles.typeSelector}>
+        <button
+          type="button"
+          className={`${styles.selectorTab} ${raceType === 'complexity' ? styles.selectorTabActive : ''}`}
+          onClick={() => { playClick(); setRaceType('complexity'); resetRace(); }}
+          disabled={raceState === 'running'}
+        >
+          COMPLEXITY CURVES
+        </button>
+        <button
+          type="button"
+          className={`${styles.selectorTab} ${raceType === 'sorting' ? styles.selectorTabActive : ''}`}
+          onClick={() => { playClick(); setRaceType('sorting'); resetRace(); }}
+          disabled={raceState === 'running'}
+        >
+          SORTING ALGORITHMS
+        </button>
       </div>
 
       <div className={styles.arenaLayout}>
@@ -295,71 +398,155 @@ export function DsaRaceTrack() {
           </div>
 
           <div className={styles.tracksGroup}>
-            {/* O(1) Lane */}
-            <div className={styles.lane} data-complexity="o1">
-              <div className={styles.laneHeader}>
-                <span className={styles.complexityBadge} data-complexity="o1">O(1)</span>
-                <span className={styles.complexityName}>Constant Time</span>
-              </div>
-              <div className={styles.track}>
-                <div 
-                  className={styles.progressIndicator} 
-                  style={{ width: `${progress.o1}%` }}
-                />
-                <span className={styles.finishLine}>🏁</span>
-              </div>
-            </div>
+            {/* Dynamic lanes depending on raceType */}
+            {raceType === 'complexity' ? (
+              <>
+                {/* O(1) Lane */}
+                <div className={styles.lane} data-complexity="o1">
+                  <div className={styles.laneHeader}>
+                    <span className={styles.complexityBadge} data-complexity="o1">O(1)</span>
+                    <span className={styles.complexityName}>Constant Time</span>
+                  </div>
+                  <div className={styles.track}>
+                    <div 
+                      className={styles.progressIndicator} 
+                      style={{ width: `${progress.o1}%` }}
+                    />
+                    <span className={styles.finishLine}>🏁</span>
+                  </div>
+                </div>
 
-            {/* O(log N) Lane */}
-            <div className={styles.lane} data-complexity="ologn">
-              <div className={styles.laneHeader}>
-                <span className={styles.complexityBadge} data-complexity="ologn">O(log N)</span>
-                <span className={styles.complexityName}>Logarithmic Time</span>
-              </div>
-              <div className={styles.track}>
-                <div 
-                  className={styles.progressIndicator} 
-                  style={{ width: `${progress.ologn}%` }}
-                />
-                <span className={styles.finishLine}>🏁</span>
-              </div>
-            </div>
+                {/* O(log N) Lane */}
+                <div className={styles.lane} data-complexity="ologn">
+                  <div className={styles.laneHeader}>
+                    <span className={styles.complexityBadge} data-complexity="ologn">O(log N)</span>
+                    <span className={styles.complexityName}>Logarithmic Time</span>
+                  </div>
+                  <div className={styles.track}>
+                    <div 
+                      className={styles.progressIndicator} 
+                      style={{ width: `${progress.ologn}%` }}
+                    />
+                    <span className={styles.finishLine}>🏁</span>
+                  </div>
+                </div>
 
-            {/* O(N) Lane */}
-            <div className={styles.lane} data-complexity="on">
-              <div className={styles.laneHeader}>
-                <span className={styles.complexityBadge} data-complexity="on">O(N)</span>
-                <span className={styles.complexityName}>Linear Time</span>
-              </div>
-              <div className={styles.track}>
-                <div 
-                  className={styles.progressIndicator} 
-                  style={{ width: `${progress.on}%` }}
-                />
-                <span className={styles.finishLine}>🏁</span>
-              </div>
-            </div>
+                {/* O(N) Lane */}
+                <div className={styles.lane} data-complexity="on">
+                  <div className={styles.laneHeader}>
+                    <span className={styles.complexityBadge} data-complexity="on">O(N)</span>
+                    <span className={styles.complexityName}>Linear Time</span>
+                  </div>
+                  <div className={styles.track}>
+                    <div 
+                      className={styles.progressIndicator} 
+                      style={{ width: `${progress.on}%` }}
+                    />
+                    <span className={styles.finishLine}>🏁</span>
+                  </div>
+                </div>
 
-            {/* O(N^2) Lane */}
-            <div 
-              className={`${styles.lane} ${raceState === 'crashed' && nValue >= 10000 ? styles.stalledLane : ''}`} 
-              data-complexity="on2"
-            >
-              <div className={styles.laneHeader}>
-                <span className={styles.complexityBadge} data-complexity="on2">O(N²)</span>
-                <span className={styles.complexityName}>Quadratic Time</span>
-              </div>
-              <div className={styles.track}>
+                {/* O(N^2) Lane */}
                 <div 
-                  className={`${styles.progressIndicator} ${raceState === 'crashed' && nValue >= 10000 ? styles.crashColor : ''}`} 
-                  style={{ width: `${progress.on2}%` }}
-                />
-                {raceState === 'crashed' && nValue >= 10000 ? (
-                  <span className={styles.crashWarning}>⚠️ CRASHED</span>
-                ) : (
-                  <span className={styles.finishLine}>🏁</span>
+                  className={`${styles.lane} ${raceState === 'crashed' && nValue >= 10000 ? styles.stalledLane : ''}`} 
+                  data-complexity="on2"
+                >
+                  <div className={styles.laneHeader}>
+                    <span className={styles.complexityBadge} data-complexity="on2">O(N²)</span>
+                    <span className={styles.complexityName}>Quadratic Time</span>
+                  </div>
+                  <div className={styles.track}>
+                    <div 
+                      className={`${styles.progressIndicator} ${raceState === 'crashed' && nValue >= 10000 ? styles.crashColor : ''}`} 
+                      style={{ width: `${progress.on2}%` }}
+                    />
+                    {raceState === 'crashed' && nValue >= 10000 ? (
+                      <span className={styles.crashWarning}>⚠️ CRASHED</span>
+                    ) : (
+                      <span className={styles.finishLine}>🏁</span>
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Bubble Sort Lane (O(N^2) Time) */}
+                <div 
+                  className={`${styles.lane} ${raceState === 'crashed' && nValue >= 10000 ? styles.stalledLane : ''}`} 
+                  data-complexity="on2"
+                >
+                  <div className={styles.laneHeader}>
+                    <span className={styles.complexityBadge} data-complexity="on2">Bubble</span>
+                    <span className={styles.complexityName}>Bubble Sort - O(N²) Time | O(1) Space</span>
+                  </div>
+                  <div className={styles.track}>
+                    <div 
+                      className={`${styles.progressIndicator} ${raceState === 'crashed' && nValue >= 10000 ? styles.crashColor : ''}`} 
+                      style={{ width: `${progress.on2}%` }}
+                    />
+                    {raceState === 'crashed' && nValue >= 10000 ? (
+                      <span className={styles.crashWarning}>⚠️ HALTED</span>
+                    ) : (
+                      <span className={styles.finishLine}>🏁</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Quick Sort Lane (O(N log N) Time) */}
+                <div className={styles.lane} data-complexity="ologn">
+                  <div className={styles.laneHeader}>
+                    <span className={styles.complexityBadge} data-complexity="ologn">Quick</span>
+                    <span className={styles.complexityName}>Quick Sort - O(N log N) Time | O(log N) Space</span>
+                  </div>
+                  <div className={styles.track}>
+                    <div 
+                      className={styles.progressIndicator} 
+                      style={{ width: `${progress.ologn}%` }}
+                    />
+                    <span className={styles.finishLine}>🏁</span>
+                  </div>
+                </div>
+
+                {/* Merge Sort Lane (O(N log N) Time) */}
+                <div className={styles.lane} data-complexity="on">
+                  <div className={styles.laneHeader}>
+                    <span className={styles.complexityBadge} data-complexity="on">Merge</span>
+                    <span className={styles.complexityName}>Merge Sort - O(N log N) Time | O(N) Space</span>
+                  </div>
+                  <div className={styles.track}>
+                    <div 
+                      className={styles.progressIndicator} 
+                      style={{ width: `${progress.on}%` }}
+                    />
+                    <span className={styles.finishLine}>🏁</span>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Auxiliary Space Complexity Meter */}
+          <div className={styles.spaceComplexityGroup}>
+            <div className={styles.spaceComplexityHeader}>
+              <span>Auxiliary Space Allocations</span>
+              <span>
+                {raceState === 'idle' ? 'O(0) inactive' : (
+                  raceType === 'complexity'
+                    ? `Peak: O(N) memory scale`
+                    : `Active allocation overhead: ${Math.round(getSpacePercentage() * 10)}%`
                 )}
-              </div>
+              </span>
+            </div>
+            <div className={styles.spaceTrack}>
+              <div 
+                className={`${styles.spaceIndicator} ${
+                  raceType === 'sorting' && getSpacePercentage() >= 75 ? styles.spaceIndicatorWarning : ''
+                }`}
+                style={{ width: `${getSpacePercentage()}%` }}
+              />
+              {raceType === 'sorting' && getSpacePercentage() >= 75 && (
+                <span className={styles.spaceWarning}>MEM_LIMIT</span>
+              )}
             </div>
           </div>
 

@@ -1,0 +1,431 @@
+.sectionContainer {
+  padding: 40px;
+  border-radius: 16px;
+  border: 1.5px solid var(--color-primary-text);
+  background-color: var(--color-background);
+  box-shadow: 8px 8px 0px var(--color-primary-text);
+  color: var(--color-primary-text);
+  display: flex;
+  flex-direction: column;
+  transition: background-color var(--duration-normal) var(--ease-out-quart),
+              color var(--duration-normal) var(--ease-out-quart);
+}
+
+.header {
+  margin-bottom: 50px;
+}
+
+.eyebrow {
+  display: block;
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent-purple);
+  margin-bottom: 12px;
+}
+
+.title {
+  font-family: var(--font-primary);
+  font-size: clamp(32px, 5vw, 64px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 0.95;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-family: var(--font-primary);
+  font-size: clamp(16px, 1.8vw, 20px);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+  max-width: 70ch;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+@media screen and (max-width: 900px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Panels */
+.schematicPanel,
+.telemetryPanel {
+  background: var(--paper);
+  border: 1px solid var(--color-grid-line);
+  padding: 30px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.panelTitle {
+  font-family: var(--font-navbar);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary-text);
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--color-grid-line);
+  padding-bottom: 12px;
+}
+
+/* SVG Schematic */
+.schematicWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid var(--color-grid-line);
+}
+
+:global([data-theme="dark"]) .schematicWrapper {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.espSvg {
+  width: 100%;
+  max-height: 260px;
+}
+
+.boardBg {
+  fill: #0F3D2A; /* PCB Green */
+  stroke: #1B5E3A;
+  stroke-width: 2;
+}
+
+:global([data-theme="dark"]) .boardBg {
+  fill: #072216;
+  stroke: #0d3822;
+}
+
+.wireLine {
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 1.5;
+  stroke-dasharray: 4, 4;
+}
+
+.wireActive {
+  stroke: var(--color-accent-purple);
+  stroke-dasharray: 8, 4;
+  animation: pulseWire 1s infinite linear;
+}
+
+@keyframes pulseWire {
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+
+.chipShield {
+  fill: #E5E5E5;
+  stroke: #999;
+  stroke-width: 1.5;
+}
+
+:global([data-theme="dark"]) .chipShield {
+  fill: #222;
+  stroke: #444;
+}
+
+.chipTitle {
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 700;
+  fill: #111;
+}
+
+:global([data-theme="dark"]) .chipTitle {
+  fill: #eee;
+}
+
+.chipSubtitle {
+  font-family: monospace;
+  font-size: 8px;
+  fill: #555;
+}
+
+:global([data-theme="dark"]) .chipSubtitle {
+  fill: #888;
+}
+
+.boardLed {
+  fill: #333;
+  stroke: #555;
+  stroke-width: 1;
+}
+
+.boardLedActive {
+  fill: var(--color-accent-purple);
+  stroke: var(--color-accent-purple);
+  filter: drop-shadow(0 0 6px var(--color-accent-purple));
+}
+
+.pinMetal {
+  fill: #C0C0C0;
+  stroke: #808080;
+  stroke-width: 0.5;
+}
+
+.sensorChip {
+  fill: #333;
+  stroke: #555;
+  stroke-width: 1;
+}
+
+.schematicLabel {
+  font-family: monospace;
+  font-size: 8px;
+  fill: rgba(255, 255, 255, 0.4);
+}
+
+:global([data-theme="light"]) .schematicLabel {
+  fill: rgba(0, 0, 0, 0.4);
+}
+
+/* Controls */
+.schematicControls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ledBtn {
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 12px 20px;
+  background: none;
+  border: 1px solid var(--color-primary-text);
+  color: var(--color-primary-text);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s var(--ease-out-expo);
+  border-radius: 4px;
+}
+
+.ledBtn:hover {
+  background: var(--color-primary-text);
+  color: var(--color-background);
+}
+
+.ledBtnActive {
+  border-color: var(--color-accent-purple);
+  color: var(--color-accent-purple);
+}
+
+.ledBtnActive:hover {
+  background: var(--color-accent-purple);
+  color: #000;
+}
+
+/* Telemetry Panel */
+.controlsGroup {
+  margin-bottom: 30px;
+}
+
+.controlRow {
+  margin-bottom: 20px;
+}
+
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--color-text-muted-strong);
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+
+.rangeInput {
+  width: 100%;
+  height: 2px;
+  appearance: none;
+  background: var(--color-grid-line);
+  outline: none;
+}
+
+.rangeInput::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-primary-text);
+  cursor: pointer;
+}
+
+/* Scope */
+.scopeWrapper {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--color-grid-line);
+  padding: 20px;
+  border-radius: 4px;
+}
+
+:global([data-theme="dark"]) .scopeWrapper {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.scopeHeader {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-navbar);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin-bottom: 12px;
+}
+
+.scopeLiveDot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-accent-purple);
+}
+
+.scopeLiveDot::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-accent-purple);
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulseDot 1s infinite;
+}
+
+.canvasContainer {
+  height: 150px;
+  position: relative;
+  margin-bottom: 20px;
+  border: 1px solid var(--color-grid-line);
+  border-radius: 2px;
+  overflow: hidden;
+  background: #0d0d0d;
+}
+
+.oscilloscopeCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Telemetry Stats Grid */
+.telemetryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media screen and (max-width: 600px) {
+  .telemetryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.telemetryItem {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background);
+  border: 1px solid var(--color-grid-line);
+  padding: 10px;
+  border-radius: 2px;
+}
+
+.tLabel {
+  font-family: var(--font-navbar);
+  font-size: 9px;
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.tValue {
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary-text);
+}
+
+/* Serial Logs Footer */
+.logsFooter {
+  background: #0d0d0d;
+  border: 1px solid #222;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  height: 180px;
+}
+
+.logsHeader {
+  background: #171717;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #222;
+}
+
+.dotGroup {
+  display: flex;
+  gap: 6px;
+  margin-right: 16px;
+}
+
+.redDot,
+.yellowDot,
+.greenDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.redDot { background-color: #ff5f56; }
+.yellowDot { background-color: #ffbd2e; }
+.greenDot { background-color: #27c93f; }
+
+.logsTitle {
+  font-family: monospace;
+  font-size: 10px;
+  color: #666;
+  text-transform: lowercase;
+}
+
+.logsBody {
+  padding: 16px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  background: #0a0a0a;
+}
+
+.logLine {
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.logInfo { color: #888; }
+.logGpio { color: var(--color-accent-purple); }
+.logSensor { color: var(--color-accent-gold); }
+.logSystem { color: #555; }
+.logAdc { color: #62B6CB; }

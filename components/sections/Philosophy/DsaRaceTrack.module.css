@@ -228,7 +228,7 @@
 
 /* Stalling shake animation */
 .stalledLane {
-  animation: stallShake 0.15s ease-in-out infinite;
+  animation: stallShake 0.15s ease-in-out 7;
 }
 
 @keyframes stallShake {
@@ -395,3 +395,84 @@
     width: 100%;
   }
 }
+
+/* Mode Selector Tabs */
+.typeSelector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.selectorTab {
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  padding: 8px 16px;
+  background: var(--color-background);
+  border: 1.5px solid var(--color-primary-text);
+  color: var(--color-primary-text);
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 2px 2px 0px var(--color-primary-text);
+  transition: all 0.2s ease;
+}
+
+.selectorTabActive {
+  background: var(--color-primary-text);
+  color: var(--color-background);
+  box-shadow: none;
+  transform: translate(2px, 2px);
+}
+
+/* Space Complexity */
+.spaceComplexityGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  border-top: 1.5px dashed var(--color-grid-line);
+  padding-top: 20px;
+}
+
+.spaceComplexityHeader {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.spaceTrack {
+  position: relative;
+  height: 12px;
+  border: 1.5px solid var(--color-primary-text);
+  border-radius: 4px;
+  background-color: var(--color-grid-line);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.spaceIndicator {
+  height: 100%;
+  background-color: var(--color-accent-purple);
+  transition: width 0.3s ease;
+}
+
+.spaceIndicatorWarning {
+  background-color: var(--color-accent-gold) !important;
+}
+
+.spaceWarning {
+  position: absolute;
+  right: 6px;
+  font-family: var(--font-navbar);
+  font-size: 8px;
+  font-weight: 700;
+  color: #000;
+  background-color: var(--color-accent-gold);
+  padding: 0px 4px;
+  border-radius: 2px;
+}
+

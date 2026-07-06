@@ -1,0 +1,402 @@
+.sectionContainer {
+  padding: 40px;
+  border-radius: 16px;
+  border: 1.5px solid var(--color-primary-text);
+  background-color: var(--color-background);
+  box-shadow: 8px 8px 0px var(--color-primary-text);
+  color: var(--color-primary-text);
+  display: flex;
+  flex-direction: column;
+  transition: background-color var(--duration-normal) var(--ease-out-quart),
+              color var(--duration-normal) var(--ease-out-quart);
+}
+
+.header {
+  margin-bottom: 50px;
+}
+
+.eyebrow {
+  display: block;
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent-purple);
+  margin-bottom: 12px;
+}
+
+.title {
+  font-family: var(--font-primary);
+  font-size: clamp(32px, 5vw, 64px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 0.95;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-family: var(--font-primary);
+  font-size: clamp(16px, 1.8vw, 20px);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+  max-width: 70ch;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+@media screen and (max-width: 900px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Code Panel */
+.controlPanel {
+  background: var(--paper);
+  border: 1px solid var(--color-grid-line);
+  padding: 30px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.panelTitle {
+  font-family: var(--font-navbar);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary-text);
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--color-grid-line);
+  padding-bottom: 12px;
+}
+
+.codeBlock {
+  background: #0d0d0d;
+  color: #a8dadc;
+  padding: 20px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  border: 1px solid var(--color-grid-line);
+}
+
+.codeLine {
+  display: flex;
+  gap: 16px;
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+
+.lineNumber {
+  color: #444;
+  user-select: none;
+  width: 20px;
+  text-align: right;
+}
+
+.lineContent {
+  white-space: pre-wrap;
+}
+
+.activeCodeLine {
+  background: rgba(98, 182, 203, 0.15);
+  color: var(--color-primary-text);
+  box-shadow: inset 3px 0 0 var(--color-accent-purple);
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 12px 20px;
+  background: none;
+  border: 1px solid var(--color-primary-text);
+  color: var(--color-primary-text);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s var(--ease-out-expo);
+  border-radius: 4px;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--color-primary-text);
+  color: var(--color-background);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btnPrimary {
+  border-color: var(--color-accent-purple);
+  color: var(--color-accent-purple);
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: var(--color-accent-purple);
+  color: #000;
+}
+
+.btnSecondary {
+  border-color: var(--color-accent-gold);
+  color: var(--color-accent-gold);
+}
+
+.btnSecondary:hover:not(:disabled) {
+  background: var(--color-accent-gold);
+  color: #000;
+}
+
+/* Memory Columns Layout */
+.memoryGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media screen and (max-width: 600px) {
+  .memoryGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stackSegment,
+.heapSegment {
+  background: var(--paper);
+  border: 1px solid var(--color-grid-line);
+  padding: 24px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  height: 380px;
+}
+
+.segmentHeader {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-navbar);
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--color-text-muted-strong);
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--color-grid-line);
+  padding-bottom: 10px;
+}
+
+.segmentDetails {
+  font-size: 10px;
+  color: var(--color-accent-purple);
+}
+
+.stackBody,
+.heapBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.placeholder {
+  font-family: var(--font-primary);
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: 40px;
+}
+
+/* Call Stack Frames */
+.stackFrame {
+  background: rgba(98, 182, 203, 0.05);
+  border: 1px solid rgba(98, 182, 203, 0.2);
+  padding: 12px 16px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: slideFrameIn 0.3s var(--ease-out-expo) forwards;
+}
+
+@keyframes slideFrameIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.frameName {
+  font-family: var(--font-navbar);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary-text);
+}
+
+.frameVariables {
+  display: flex;
+  gap: 8px;
+  font-family: monospace;
+  font-size: 11px;
+}
+
+.varLabel {
+  color: var(--color-text-muted);
+}
+
+.varVal {
+  color: var(--color-accent-purple);
+  font-weight: 700;
+}
+
+/* Heap Objects */
+.heapBlock {
+  background: var(--color-background);
+  border: 1px solid var(--color-grid-line);
+  padding: 12px 16px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  overflow: hidden;
+  animation: scaleBlockIn 0.3s var(--ease-out-expo) forwards;
+}
+
+@keyframes scaleBlockIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.heapBlockStale {
+  border-color: var(--color-accent-gold);
+}
+
+.blockAddress {
+  font-family: monospace;
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.blockName {
+  font-family: var(--font-navbar);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary-text);
+}
+
+.blockDetails {
+  display: flex;
+  justify-content: space-between;
+  font-family: monospace;
+  font-size: 10px;
+  color: var(--color-text-muted-strong);
+}
+
+.staleSweepOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(232, 150, 58, 0.1);
+  color: var(--color-accent-gold);
+  font-family: var(--font-navbar);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Logs panel */
+.logsFooter {
+  background: #0d0d0d;
+  border: 1px solid #222;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  height: 180px;
+}
+
+.logsHeader {
+  background: #171717;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #222;
+}
+
+.dotGroup {
+  display: flex;
+  gap: 6px;
+  margin-right: 16px;
+}
+
+.redDot,
+.yellowDot,
+.greenDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.redDot { background-color: #ff5f56; }
+.yellowDot { background-color: #ffbd2e; }
+.greenDot { background-color: #27c93f; }
+
+.logsTitle {
+  font-family: monospace;
+  font-size: 10px;
+  color: #666;
+  text-transform: lowercase;
+}
+
+.logsBody {
+  padding: 16px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  background: #0a0a0a;
+}
+
+.logLine {
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.logInfo { color: #888; }
+.logJvm { color: #555; }
+.logStack { color: var(--color-accent-purple); }
+.logHeap { color: #62B6CB; }
+.logGcWarn { color: var(--color-accent-gold); }
+.logZgc { color: #27c93f; }

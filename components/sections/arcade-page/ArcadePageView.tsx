@@ -1,7 +1,10 @@
 'use client';
 
+import Link from "next/link";
 import { DsaRaceTrack } from "@/components/sections/Philosophy/DsaRaceTrack";
 import { AiVisualizer } from "@/components/sections/AiVisualizer";
+import { IotVisualizer } from "@/components/sections/IotVisualizer/IotVisualizer";
+import { MemoryVisualizer } from "@/components/sections/MemoryVisualizer/MemoryVisualizer";
 import { Contact } from "@/components/sections/Contact";
 import { MetaLabel } from "@/components/ui/MetaLabel";
 import styles from "./ArcadePage.module.css";
@@ -18,6 +21,11 @@ export function ArcadePageView() {
             A testing ground for optimized algorithmic engines, autonomous prompt routing, 
             and telemetry visualization.
           </p>
+          <div className={styles.launchGroup}>
+            <Link href="/arcade/circuit-board" className={styles.launchBtn}>
+              LAUNCH INTERACTIVE LOGIC BOARD SIMULATOR →
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -26,7 +34,17 @@ export function ArcadePageView() {
         <DsaRaceTrack />
       </section>
 
-      {/* Section 2: Agentic AI Flow */}
+      {/* Section 2: Stack & Heap Allocator */}
+      <section className={styles.section} id="memory-visualizer">
+        <MemoryVisualizer />
+      </section>
+
+      {/* Section 3: IoT Telemetry Visualizer */}
+      <section className={styles.section} id="iot-visualizer">
+        <IotVisualizer />
+      </section>
+
+      {/* Section 4: Agentic AI Flow */}
       <AiVisualizer />
 
       {/* Contact Footer */}
