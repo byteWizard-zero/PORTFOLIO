@@ -77,12 +77,9 @@ export function MemoryVisualizer() {
 
   const handleStep = () => {
     playClick();
-    
-    setStepCount((prev) => {
-      const nextStep = prev + 1;
-      executeStep(nextStep);
-      return nextStep;
-    });
+    const nextStep = stepCount + 1;
+    setStepCount(nextStep);
+    executeStep(nextStep);
   };
 
   const executeStep = (step: number) => {
