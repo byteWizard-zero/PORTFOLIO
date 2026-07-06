@@ -60,6 +60,10 @@ export function CircuitBoard() {
       `[TUTORIAL] Drag gates from toolbox, click output pins, and link them to input pins.`
     ]);
     loadHalfAdderPreset(); // Default seed
+
+    return () => {
+      window.dispatchEvent(new CustomEvent('canvas-hover-leave'));
+    };
   }, []);
 
   // Real-Time Propagation Loop
@@ -432,7 +436,13 @@ export function CircuitBoard() {
           className={styles.workbenchPanel}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
+          onMouseEnter={() => {
+            window.dispatchEvent(new CustomEvent('canvas-hover-enter'));
+          }}
+          onMouseLeave={() => {
+            handleMouseUp();
+            window.dispatchEvent(new CustomEvent('canvas-hover-leave'));
+          }}
         >
           {/* SVG canvas connections and grids */}
           <svg className={styles.svgCanvas}>

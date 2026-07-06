@@ -472,6 +472,8 @@ export function CustomCursor() {
     window.addEventListener('tagline-spotlight-leave', handleSpotlightLeave);
     window.addEventListener('scratchcard-hover-enter', handleScratchcardEnter);
     window.addEventListener('scratchcard-hover-leave', handleScratchcardLeave);
+    window.addEventListener('canvas-hover-enter', handleScratchcardEnter);
+    window.addEventListener('canvas-hover-leave', handleScratchcardLeave);
 
     // Event delegation via bubbling pointerover / pointerout instead of
     // capture-phase mouseenter / mouseleave. The capture-phase pair fires for
@@ -520,6 +522,8 @@ export function CustomCursor() {
       window.removeEventListener('tagline-spotlight-leave', handleSpotlightLeave);
       window.removeEventListener('scratchcard-hover-enter', handleScratchcardEnter);
       window.removeEventListener('scratchcard-hover-leave', handleScratchcardLeave);
+      window.removeEventListener('canvas-hover-enter', handleScratchcardEnter);
+      window.removeEventListener('canvas-hover-leave', handleScratchcardLeave);
 
       // PERF: Clean up ticker properly
       if (animateFnRef.current) {
