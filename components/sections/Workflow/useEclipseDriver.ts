@@ -200,7 +200,7 @@ export function useEclipseDriver(
       };
       const buildNames = (staticAll = false) => {
         if (cancelled) return;
-        for (let i = 0; i < N; i++) nameLetters[i] = buildName(stepNames[i] ?? '');
+        for (let i = 0; i < N; i++) nameLetters[i] = buildName((stepNames[i] ?? '').toUpperCase());
         namesBuilt = true;
         if (staticAll) {
           nameLetters.forEach((g) => g.base.forEach((bl, c) => gsap.set([bl.el, g.lit[c].el], { x: 0, y: 0 })));

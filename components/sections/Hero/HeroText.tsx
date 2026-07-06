@@ -114,7 +114,13 @@ export function HeroText() {
     const container = taglineContainerRef.current;
     if (!container) return;
 
-    container.style.setProperty('--spotlight-size', `${SPOTLIGHT_SIZE}px`);
+    gsap.killTweensOf(container, '--spotlight-size');
+    gsap.to(container, {
+      '--spotlight-size': `${SPOTLIGHT_SIZE}px`,
+      duration: 0.45,
+      ease: 'power2.out',
+    });
+
     // PERF: promote spotlight layers only while hovering
     container.classList.add(styles.spotlightActive);
 
@@ -141,8 +147,15 @@ export function HeroText() {
     const container = taglineContainerRef.current;
     if (!container) return;
 
-    container.style.setProperty('--spotlight-size', '0px');
-    container.classList.remove(styles.spotlightActive);
+    gsap.killTweensOf(container, '--spotlight-size');
+    gsap.to(container, {
+      '--spotlight-size': '0px',
+      duration: 0.35,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        container.classList.remove(styles.spotlightActive);
+      }
+    });
 
     // PERF: Stop spotlight ticker when not hovering
     if (spotlightTickerActiveRef.current && spotlightTickerRef.current) {

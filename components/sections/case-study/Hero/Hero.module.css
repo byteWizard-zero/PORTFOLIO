@@ -160,17 +160,18 @@
     justify-content: center;
     min-height: 0;
     /* allow grid track to shrink to available space */
-    transform: translateY(-18%);
-    -webkit-transform: translateY(-18%);
-    -moz-transform: translateY(-18%);
-    -ms-transform: translateY(-18%);
-    -o-transform: translateY(-18%);
+    transform: translateY(0%);
+    -webkit-transform: translateY(0%);
+    -moz-transform: translateY(0%);
+    -ms-transform: translateY(0%);
+    -o-transform: translateY(0%);
 }
 
 .imageCard {
     --card-radius: var(--radius-portrait);
     position: relative;
     width: clamp(420px, 54%, 920px);
+    max-width: 78vh;
     aspect-ratio: 16 / 10;
     border-radius: var(--card-radius);
     box-shadow: 0 5px 10px 20px rgba(0, 0, 0, 0.18);
