@@ -1,6 +1,6 @@
 'use client';
 
-import Link from "next/link";
+import { TransitionLink } from "@/components/transitions";
 import { DsaRaceTrack } from "@/components/sections/Philosophy/DsaRaceTrack";
 import { AiVisualizer } from "@/components/sections/AiVisualizer";
 import { IotVisualizer } from "@/components/sections/IotVisualizer/IotVisualizer";
@@ -22,9 +22,13 @@ export function ArcadePageView() {
             and telemetry visualization.
           </p>
           <div className={styles.launchGroup}>
-            <Link href="/arcade/circuit-board" className={styles.launchBtn}>
+            <TransitionLink 
+              href="/arcade/circuit-board" 
+              className={styles.launchBtn}
+              payload={{ accent: '#62B6CB' }}
+            >
               LAUNCH INTERACTIVE LOGIC BOARD SIMULATOR →
-            </Link>
+            </TransitionLink>
           </div>
         </div>
       </section>

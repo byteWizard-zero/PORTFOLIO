@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
+import { TransitionLink } from '@/components/transitions';
 import { playClick, playSweep } from '@/lib/audio';
 import { useDynamicLenisPrevent } from '@/lib/useDynamicLenisPrevent';
 import styles from './CircuitBoard.module.css';
@@ -363,9 +363,14 @@ export function CircuitBoard() {
       {/* Top Header Controls */}
       <div className={styles.header}>
         <div className={styles.headerTitleGroup}>
-          <Link href="/arcade" className={styles.backBtn} onClick={playClick}>
+          <TransitionLink 
+            href="/arcade" 
+            className={styles.backBtn} 
+            onBeforeTransition={playClick}
+            payload={{ accent: '#62B6CB' }}
+          >
             ← BACK TO LIST
-          </Link>
+          </TransitionLink>
           <h1 className={styles.title}>LOGIC BOARD CIRCUIT DESIGNER</h1>
         </div>
         <p className={styles.subtitle}>
