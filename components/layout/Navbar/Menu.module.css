@@ -545,7 +545,7 @@
 }
 
 .emojiLeftEyeOpen {
-    transform-origin: 7px 11px;
+    transform-origin: 30px 45px;
     animation: eyeLeftOpenAnimation 5s infinite ease-in-out;
 }
 
@@ -555,7 +555,7 @@
 }
 
 .emojiRightEye {
-    transform-origin: 17px 11px;
+    transform-origin: 70px 45px;
     animation: eyeRightAnimation 5s infinite ease-in-out;
 }
 
@@ -573,7 +573,7 @@
 }
 
 .emojiHeart {
-    transform-origin: 12px 14px;
+    transform-origin: 50px 60px;
     animation: heartAnimation 5s infinite ease-in-out;
 }
 
@@ -652,11 +652,11 @@
         opacity: 0;
     }
     60% {
-        transform: translate(2px, -3px) scale(1);
+        transform: translate(10px, -15px) scale(1);
         opacity: 1;
     }
     70% {
-        transform: translate(8px, -12px) scale(1.3);
+        transform: translate(30px, -45px) scale(1.4);
         opacity: 0;
     }
 }
