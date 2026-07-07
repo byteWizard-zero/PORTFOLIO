@@ -212,7 +212,7 @@
       ]
     },
     "nextCase": {
-      "slug": "recipe",
+      "slug": "flavr",
       "counter": "Next case · 02 / 07"
     }
   },
@@ -428,15 +428,15 @@
       "counter": "Next case · 01 / 07"
     }
   },
-  "recipe": {
+  "flavr": {
     "hero": {
-      "title": "RECIPE FINDER",
-      "lede": "A smart AI pantry chef web app powered by Gemini 2.5 Flash. It evaluates ingredients, performs safety validations, and generates beginner-friendly cooking instructions.",
-      "image": "/images/projects/recipe.png",
-      "alt": "Recipe Finder Pantry Chef UI",
+      "title": "FLAVR",
+      "lede": "A high-performance AI pantry chef web app powered by Gemini 2.5 Flash. Synthesizes procedural cooking fry/sizzle soundscapes, runs interactive Cook Mode with voice guidance, and ranks custom recipes based on safety, staples, and dietary constraints.",
+      "image": "/images/projects/flavr.png",
+      "alt": "Flavr Pantry Chef UI",
       "pills": [
         "Web Application · AI Chef",
-        "React · Gemini API · Vercel"
+        "React 19 · Gemini 2.5 Flash · Web Audio API"
       ],
       "badge": "Witness\nPower",
       "backHref": "/"
@@ -445,22 +445,22 @@
       "entries": [
         {
           "label": "Client",
-          "primary": "Recipe Finder",
+          "primary": "Flavr",
           "secondary": "Self-initiated project"
         },
         {
           "label": "Year",
-          "primary": "2024",
+          "primary": "2024 - 2026",
           "secondary": "Live on Vercel"
         },
         {
           "label": "Role",
-          "primary": "Developer",
+          "primary": "Lead Full-Stack Developer",
           "secondary": "Frontend & AI Integration"
         },
         {
           "label": "Stack",
-          "primary": "React · Vite · TypeScript",
+          "primary": "React 19 · Vite · Web Audio",
           "secondary": "Gemini API · Vercel"
         },
         {
@@ -473,14 +473,14 @@
     "context": {
       "label": "Context",
       "facts": [
-        "**Role** AI Developer & Frontend Engineer",
-        "**Deliverable** React Web Application",
-        "**Highlights** Multi-modal parsing, safety validations"
+        "**Role** Lead Developer & Audio Designer",
+        "**Deliverable** Web Application & Audio Synthesis",
+        "**Highlights** Procedural audio, Cook Mode, Speech Synthesis"
       ],
       "body": [
-        "Recipe Finder was born from the common kitchen dilemma: having miscellaneous ingredients but no clear recipe. Standard search engines suggest recipes requiring missing ingredients, leading to grocery runs.",
-        "By leveraging the **Gemini 2.5 Flash** model, Recipe Finder evaluates a user's typed ingredients, validates them for food safety (preventing toxic combinations), and generates clean, structured cooking instructions tailored for beginners.",
-        "The UI is built with React and Tailwind CSS, focusing on speed and minimal layout shifts during generation, offering streaming-like text animations for recipe steps."
+        "Flavr was born from the common kitchen dilemma: having miscellaneous ingredients but no clear recipe. Standard search engines suggest recipes requiring missing ingredients, leading to grocery runs.",
+        "By leveraging the **Gemini 2.5 Flash** model with strict JSON schema outputs, Flavr performs instant safety checks (preventing toxic combinations) and generates beginner-friendly recipes with dynamic substitution recommendations.",
+        "The UI is built with React 19, Vite, and Tailwind CSS. It features an interactive Cook Mode with step-by-step voice guidance (TTS), built-in cooking timers with mechanical tick sounds, and a custom procedural Web Audio synthesis engine that generates realistic frying and oil bubbling soundscapes while the chef is cooking."
       ]
     },
     "vision": {
@@ -489,8 +489,8 @@
       "titleLine2": "optimized by",
       "titleAccent": "intelligence.",
       "body": [
-        "To build a zero-waste cooking companion. No signup barriers, no advertisements—just input what you have and let the model design your meal.",
-        "Every generated recipe includes calorie estimations, macro breakdowns, and step-by-step cooking telemetry to ensure the outcome matches the pantry inventory."
+        "To build a zero-waste cooking companion with zero latency. No signup barriers, no advertisements—just add what you have, quick-add common staples, and let AI design your culinary journey.",
+        "Every generated recipe includes approximate nutritional highlights (calories, protein), ingredient matching analytics, and step-by-step cooking telemetry."
       ]
     },
     "product": {
@@ -499,33 +499,33 @@
       "titleLine2": "uncompromising",
       "titleAccent": "simplicity.",
       "body": [
-        "Users select ingredients via a tags input interface. The backend packs these ingredients into structured prompt templates, querying Gemini for clean JSON outputs.",
-        "Built-in parsing validators inspect the JSON payload before rendering, ensuring formatting mistakes are caught and handled gracefully without breaking the client interface."
+        "Users tag ingredients with autocomplete and redundancy warnings to avoid duplicates (e.g. 'onion' vs 'onions'). The system filters by dietary restriction (Vegan, Vegetarian, Keto) and meal type (Breakfast, Lunch, Dinner).",
+        "A step-by-step Cook Mode provides active visual/timing cues, mechanical timers, and speech synthesis (TTS) reading steps out loud, creating a hands-free kitchen assistant."
       ]
     },
     "architecture": {
       "label": "Architecture",
       "titleLine1": "React frontend",
       "titleAccent": "Gemini orchestration.",
-      "intro": "A fully responsive client web application optimized for desktop and mobile, interacting with the Gemini API for layout-safe recipe compilation.",
+      "intro": "A client-side React 19 application orchestrating Gemini structured JSON responses and synthesizing real-time kitchen audio landscapes via the Web Audio API.",
       "layers": [
         {
           "name": "Frontend Client",
           "tech": [
-            "React",
-            "TypeScript",
+            "React 19",
             "Vite",
-            "Tailwind CSS"
+            "Tailwind CSS",
+            "Web Audio API"
           ],
-          "detail": "Modular UI component architecture handling state for active ingredient tags, selected filter conditions (e.g. vegetarian, gluten-free), and parsed recipe cards."
+          "detail": "Modular UI component architecture managing pantry lists, favorites (persisted locally), active cooking steps, and procedurally generated sizzling sound loops."
         },
         {
           "name": "AI Integration Layer",
           "tech": [
-            "@google/genai",
-            "JSON Schema Validation"
+            "@google/generative-ai",
+            "Structured JSON Schema"
           ],
-          "detail": "Formulates structured instruction prompts and forces JSON mode constraints on Gemini to guarantee type-safe responses matching the UI interface."
+          "detail": "Configures responseMimeType to application/json on Gemini 2.5 Flash to guarantee type-safe recipe models containing nutritional highlights and instructions."
         }
       ],
       "facts": [
@@ -535,14 +535,14 @@
           "caption": "Strict schema responses"
         },
         {
-          "value": "<2s",
+          "value": "<3s",
           "title": "Inference Latency",
           "caption": "Using Gemini 2.5 Flash"
         },
         {
-          "value": "0",
-          "title": "Server overhead",
-          "caption": "Direct API orchestration"
+          "value": "Web Audio",
+          "title": "Procedural Synthesis",
+          "caption": "Real-time cooking soundscapes"
         }
       ]
     },
@@ -556,7 +556,7 @@
           "value": "100",
           "unit": "%",
           "title": "Client side",
-          "caption": "No central database required"
+          "caption": "Local favorites & zero server logs"
         }
       ]
     },
@@ -566,15 +566,15 @@
       "titleAccent": "1bitVscoder.",
       "credits": [
         {
-          "role": "Client & AI Engineering",
+          "role": "Creative Technologist",
           "primary": "Zenith Soumya",
-          "secondary": "AI App Builder"
+          "secondary": "CSE Student @ ITER"
         }
       ],
       "rightLabel": "About Z.S",
       "bio": [
-        "Zenith Soumya is an IoT and AI Developer focused on building optimized software engines and hardware integrations.",
-        "Recipe Finder is deployed publicly on Vercel, letting anyone turn raw ingredients into full, structured culinary plans."
+        "Zenith Soumya is a Computer Science & Engineering student at ITER College who designs optimized DSA engines, IoT architectures, and agentic AI systems.",
+        "Flavr is deployed publicly on Vercel, demonstrating how client-side Web Audio API and Gemini structured outputs can create immersive, zero-overhead utility applications."
       ],
       "actions": [
         {
@@ -597,38 +597,38 @@
     },
     "dashboard": {
       "badge": "In production",
-      "figcaption": "RECIPE FINDER full system architecture overview.",
-      "image": "/images/projects/recipe_dashboard.png",
-      "alt": "RECIPE FINDER system diagram overview"
+      "figcaption": "FLAVR full system architecture overview.",
+      "image": "/images/projects/flavr_dashboard.png",
+      "alt": "FLAVR system diagram overview"
     },
     "toggle": {
       "label": "Telemetry",
       "titleLine1": "Interactive",
-      "titleAccent": "chef interface.",
+      "titleAccent": "cooking tools.",
       "screens": [
         {
           "num": "01",
-          "name": "Pantry Input Surface",
-          "image": "/images/projects/recipe_screen1.png",
+          "name": "Pantry Input & Autocomplete",
+          "image": "/images/projects/flavr_screen1.png",
           "color": "teal",
-          "description": "Demonstrating the Pantry Input Surface functionality built into the core stack.",
-          "meta": "Ingredient tagging"
+          "description": "Manage pantry items with real-time autocompletion, safety checks, and redundancy warnings.",
+          "meta": "Staples & Autocomplete"
         },
         {
           "num": "02",
-          "name": "Safety Validation Layer",
-          "image": "/images/projects/recipe_screen2.png",
+          "name": "AI Sanity Check & Preferences",
+          "image": "/images/projects/flavr_screen2.png",
           "color": "orange",
-          "description": "Demonstrating the Safety Validation Layer functionality built into the core stack.",
-          "meta": "Toxin checks"
+          "description": "Gemini checks if combinations make culinary sense, filtering by dietary needs (e.g. Vegetarian, Keto).",
+          "meta": "Dietary restrictions & validation"
         },
         {
           "num": "03",
-          "name": "Recipe Output Card",
-          "image": "/images/projects/recipe_screen3.png",
+          "name": "Cook Mode & Interactive Timers",
+          "image": "/images/projects/flavr_screen3.png",
           "color": "purple",
-          "description": "Demonstrating the Recipe Output Card functionality built into the core stack.",
-          "meta": "Calorie & Macro breakdown"
+          "description": "Step-by-step guides with integrated voice readout (TTS), procedural frying sounds, and countdown timers.",
+          "meta": "Voice guidance & Synthesized Audio"
         }
       ]
     }

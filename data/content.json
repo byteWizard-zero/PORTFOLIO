@@ -273,9 +273,9 @@
         "featured": true
       },
       {
-        "id": "recipe",
-        "title": "RECIPE FINDER",
-        "image": "/images/projects/recipe.png",
+        "id": "flavr",
+        "title": "FLAVR",
+        "image": "/images/projects/flavr.png",
         "year": "2024",
         "category": "WEB APP · AI PANTRY CHEF",
         "badge": "WITNESS<br>POWER",
@@ -432,8 +432,8 @@
         "marqueeDurationSec": 24
       },
       {
-        "id": "recipe",
-        "title": "recipe finder",
+        "id": "flavr",
+        "title": "flavr",
         "discipline": "Web Application · Gemini API",
         "year": 2024,
         "accent": "#ff990a",
