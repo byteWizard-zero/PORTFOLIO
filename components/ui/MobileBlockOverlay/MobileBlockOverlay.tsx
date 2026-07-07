@@ -26,7 +26,7 @@ export function MobileBlockOverlay() {
         rel="noopener noreferrer"
         className={styles.shopButton}
       >
-        Shop Budget-Friendly Laptops
+        Click Here
       </a>
     </div>
   );
