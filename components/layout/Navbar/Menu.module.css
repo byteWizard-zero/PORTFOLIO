@@ -196,6 +196,20 @@
        so the "Social Presence" / "Location" labels read as the same family of
        text against the purple overlay. */
     color: var(--color-primary-text);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.socialSubLabel {
+    font-family: var(--font-primary);
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0.05em;
+    color: var(--color-background);
+    opacity: 0.65;
+    margin-top: 4px;
 }
 
 .socialList {
@@ -429,6 +443,10 @@
         gap: 12px;
     }
 
+    .socialLabel {
+        align-items: flex-start;
+    }
+
     .locationGroup {
         align-items: flex-start;
         gap: 12px;
@@ -489,6 +507,157 @@
     .backButton {
         width: 56px;
         height: 56px;
+    }
+}
+
+.flirtyLine {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-family: var(--font-primary);
+    font-size: clamp(14px, 1.4vw, 18px);
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    color: var(--color-accent-teal);
+    margin-top: 10px;
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .flirtyLine {
+        justify-content: flex-start;
+    }
+}
+
+.flirtyEmoji {
+    display: inline-flex;
+    margin-left: 12px;
+    width: 48px;
+    height: 48px;
+    position: relative;
+}
+
+.flirtyEmoji svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.emojiLeftEyeOpen {
+    transform-origin: 7px 11px;
+    animation: eyeLeftOpenAnimation 5s infinite ease-in-out;
+}
+
+.emojiLeftEyeWink {
+    opacity: 0;
+    animation: eyeLeftWinkAnimation 5s infinite ease-in-out;
+}
+
+.emojiRightEye {
+    transform-origin: 17px 11px;
+    animation: eyeRightAnimation 5s infinite ease-in-out;
+}
+
+.emojiMouthSmile {
+    animation: mouthSmileAnimation 5s infinite ease-in-out;
+}
+
+.emojiMouthKiss {
+    opacity: 0;
+    animation: mouthKissAnimation 5s infinite ease-in-out;
+}
+
+.emojiBlush {
+    animation: blushAnimation 5s infinite ease-in-out;
+}
+
+.emojiHeart {
+    transform-origin: 12px 14px;
+    animation: heartAnimation 5s infinite ease-in-out;
+}
+
+/* 5s Animation Cycle:
+   0% - 40%: Normal smile
+   40% - 44%: Fast double blink
+   44% - 56%: Normal smile
+   56% - 76%: Wink + blush + floating heart
+   76% - 80%: Return to normal smile
+   80% - 100%: Normal smile
+*/
+
+@keyframes eyeLeftOpenAnimation {
+    0%, 38%, 46%, 54%, 78%, 100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+    40%, 44% {
+        opacity: 1;
+        transform: scaleY(0.1);
+    }
+    56%, 76% {
+        opacity: 0;
+        transform: scaleY(1);
+    }
+}
+
+@keyframes eyeLeftWinkAnimation {
+    0%, 55%, 77%, 100% {
+        opacity: 0;
+    }
+    56%, 76% {
+        opacity: 1;
+    }
+}
+
+@keyframes eyeRightAnimation {
+    0%, 38%, 46%, 100% {
+        transform: scaleY(1);
+    }
+    40%, 44% {
+        transform: scaleY(0.1);
+    }
+}
+
+@keyframes mouthSmileAnimation {
+    0%, 55%, 77%, 100% {
+        opacity: 1;
+    }
+    56%, 76% {
+        opacity: 0;
+    }
+}
+
+@keyframes mouthKissAnimation {
+    0%, 55%, 77%, 100% {
+        opacity: 0;
+    }
+    56%, 76% {
+        opacity: 1;
+    }
+}
+
+@keyframes blushAnimation {
+    0%, 55%, 77%, 100% {
+        opacity: 0;
+    }
+    56%, 76% {
+        opacity: 0.75;
+    }
+}
+
+@keyframes heartAnimation {
+    0%, 57%, 73%, 100% {
+        transform: translate(0, 0) scale(0);
+        opacity: 0;
+    }
+    60% {
+        transform: translate(2px, -3px) scale(1);
+        opacity: 1;
+    }
+    70% {
+        transform: translate(8px, -12px) scale(1.3);
+        opacity: 0;
     }
 }
 

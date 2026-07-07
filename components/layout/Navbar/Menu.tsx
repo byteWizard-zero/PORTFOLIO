@@ -493,7 +493,10 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
 
         <aside ref={socialSectionRef} className={styles.socialSection}>
           <div className={styles.socialGroup}>
-            <span className={styles.socialLabel}>Social Presence</span>
+            <span className={styles.socialLabel}>
+              Social Presence
+              <span className={styles.socialSubLabel}>[currently in a deprecated situation]</span>
+            </span>
             <ul className={styles.socialList}>
               {socialLinks.map((social) => (
                 <li key={social.label} className={styles.socialItem}>
@@ -536,9 +539,26 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
 
           <div className={styles.locationGroup}>
             <span className={styles.socialLabel}>Location</span>
-            <p className={styles.locationText}>{navigation.location.split(',').map((part, i) => (
-              <span key={i}>{part.trim()}{i === 0 && <br />}</span>
-            ))}</p>
+            <p className={styles.locationText}>
+              {navigation.location.split(',').map((part, i) => (
+                <span key={i}>{part.trim()}{i === 0 && <br />}</span>
+              ))}
+              <span className={styles.flirtyLine}>
+                basically in your heart baby...
+                <span className={styles.flirtyEmoji}>
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <ellipse className={styles.emojiBlush} cx="6" cy="14" rx="2.5" ry="1.5" fill="#ff7597" />
+                    <ellipse className={styles.emojiBlush} cx="18" cy="14" rx="2.5" ry="1.5" fill="#ff7597" />
+                    <circle className={styles.emojiLeftEyeOpen} cx="7" cy="11" r="2" fill="currentColor" />
+                    <path className={styles.emojiLeftEyeWink} d="M 5 12 Q 7 10 9 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <circle className={styles.emojiRightEye} cx="17" cy="11" r="2" fill="currentColor" />
+                    <path className={styles.emojiMouthSmile} d="M 10 15 Q 12 18 14 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <path className={styles.emojiMouthKiss} d="M 11 15 Q 12.5 13.5 13 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" />
+                    <path className={styles.emojiHeart} d="M 12 14 C 11.3 12.7, 10 12.7, 10 14.3 C 10 15.7, 12 17.3, 12 17.3 C 12 17.3, 14 15.7, 14 14.3 C 14 12.7, 12.7 12.7, 12 14" fill="#ff3b30" />
+                  </svg>
+                </span>
+              </span>
+            </p>
           </div>
 
           <button
