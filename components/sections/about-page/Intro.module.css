@@ -204,20 +204,22 @@
   animation: glitch-shadow-flicker 0.3s infinite;
 }
 
-/* Red Channel - Shifted Left Slice */
+/* Red/Magenta Channel - Shifted Left Slice */
 .glitchActive::before {
-  left: -4px;
+  left: -5px;
   animation: glitch-slice-1 0.4s infinite linear alternate-reverse;
-  filter: sepia(1) hue-rotate(320deg) saturate(4) brightness(0.95);
-  opacity: 0.8;
+  background-color: #ff0055;
+  background-blend-mode: multiply;
+  mix-blend-mode: screen;
 }
 
-/* Blue & Pink Channel - Shifted Right Slice */
+/* Cyan Channel - Shifted Right Slice */
 .glitchActive::after {
-  left: 4px;
+  left: 5px;
   animation: glitch-slice-2 0.4s infinite linear alternate-reverse;
-  filter: sepia(1) hue-rotate(180deg) saturate(4) brightness(0.95);
-  opacity: 0.8;
+  background-color: #00f0ff;
+  background-blend-mode: multiply;
+  mix-blend-mode: screen;
 }
 
 @keyframes glitch-shadow-flicker {
