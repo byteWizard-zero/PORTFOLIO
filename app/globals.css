@@ -130,27 +130,29 @@ img {
 
 /* ============================================
    CUSTOM SCROLLBAR
-   Modern, minimal scrollbar matching theme
+   Modern, glowing gradient scrollbar matching theme
    ============================================ */
 
 /* Webkit browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent;
+    background: rgba(8, 9, 10, 0.4);
+    border-left: 1px solid rgba(255, 255, 255, 0.02);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--color-grid-line);
-    border-radius: 4px;
-    transition: background 0.2s ease;
+    background: linear-gradient(to bottom, var(--color-accent-purple, #a855f7) 0%, var(--color-accent-teal, #62B6CB) 100%);
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-accent-purple);
+    background: linear-gradient(to bottom, #d946ef 0%, #00f0ff 100%);
+    box-shadow: 0 0 8px rgba(98, 182, 203, 0.3);
 }
 
 ::-webkit-scrollbar-thumb:active {
@@ -165,16 +167,16 @@ img {
 /* Firefox */
 * {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-grid-line) transparent;
+    scrollbar-color: var(--color-accent-purple, #a855f7) rgba(8, 9, 10, 0.4);
 }
 
-/* Firefox hover state via container */
+/* Firefox hover state */
 html {
-    scrollbar-color: var(--color-grid-line) transparent;
+    scrollbar-color: var(--color-accent-purple, #a855f7) rgba(8, 9, 10, 0.4);
 }
 
 html:hover {
-    scrollbar-color: var(--color-accent-purple) transparent;
+    scrollbar-color: var(--color-accent-teal, #62B6CB) rgba(8, 9, 10, 0.4);
 }
 
 
