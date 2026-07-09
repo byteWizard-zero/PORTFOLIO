@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/dev-watch.mjs",
     "prebuild": "node scripts/fetch-contributions.mjs && node scripts/fetch-leetcode.mjs",
     "build": "next build",
     "start": "next start",
