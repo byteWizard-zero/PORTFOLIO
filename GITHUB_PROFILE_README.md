@@ -19,7 +19,7 @@
 
 * **🏫 Academic Base**: Computer Science & Engineering student at **ITER College** (SOA University).
 * **🧠 Focus Areas**: Weaponizing Agentic AI pipelines, Local-First/Offline-First mobile layouts, Embedded IoT systems, and highly optimized Java/DSA loops.
-* **🌐 Portfolio Hub**: [furina-de-fontaine1.vercel.app](https://furina-de-fontaine1.vercel.app)
+* **🌐 Portfolio Hub**: [portfolio-zenith-zero.vercel.app](https://portfolio-zenith-zero.vercel.app)
 * **📍 Current State**: `[currently in a deprecated situation]` (but actively debugging) 
 
 ---
