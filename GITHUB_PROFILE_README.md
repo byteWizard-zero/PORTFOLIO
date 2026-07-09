@@ -73,10 +73,10 @@ total 4
   <table border="0">
     <tr>
       <td width="50%" align="center">
-        <img src="https://github-readme-stats.vercel.app/api?username=byteWizard-zero&show_icons=true&theme=tokyonight&count_private=true&hide_title=false" height="195" />
+        <img src="https://github-stats-extended.vercel.app/api?username=byteWizard-zero&show_icons=true&theme=tokyonight&count_private=true&hide_title=false" height="195" />
       </td>
       <td width="50%" align="center">
-        <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=byteWizard-zero&layout=compact&theme=tokyonight&hide_title=false" height="195" />
+        <img src="https://github-stats-extended.vercel.app/api/top-langs/?username=byteWizard-zero&layout=compact&theme=tokyonight&hide_title=false" height="195" />
       </td>
     </tr>
   </table>
