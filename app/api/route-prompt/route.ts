@@ -13,6 +13,9 @@ export async function POST(request: Request) {
 
     let text = '';
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -28,7 +31,9 @@ export async function POST(request: Request) {
             temperature: 0.7,
           }
         }),
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`Direct API returned status ${response.status}`);

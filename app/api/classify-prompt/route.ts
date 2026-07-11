@@ -26,6 +26,9 @@ Output only the raw JSON. Do not include markdown block markers like \`\`\`json 
 
     let text = '';
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -40,7 +43,9 @@ Output only the raw JSON. Do not include markdown block markers like \`\`\`json 
             responseMimeType: "application/json"
           }
         }),
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`Direct API returned status ${response.status}`);
