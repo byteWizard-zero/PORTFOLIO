@@ -24,32 +24,62 @@ Output only the raw JSON. Do not include markdown block markers like \`\`\`json 
     const model = 'gemini-2.5-flash';
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: `User Prompt: "${prompt}"` }] }],
-        systemInstruction: { parts: [{ text: systemInstruction }] },
-        generationConfig: {
-          maxOutputTokens: 128,
+    let text = '';
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: `User Prompt: "${prompt}"` }] }],
+          systemInstruction: { parts: [{ text: systemInstruction }] },
+          generationConfig: {
+            maxOutputTokens: 128,
+            temperature: 0.1,
+            responseMimeType: "application/json"
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Direct API returned status ${response.status}`);
+      }
+
+      const data = await response.json();
+      text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    } catch (directError) {
+      console.warn("Direct Gemini classification failed, attempting local FreeLLMAPI backup proxy:", directError);
+
+      const proxyResponse = await fetch('http://localhost:3001/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer freellmapi-9a1c00a670d3d3d1a9a7b276f24e8c60e8ad730e2e110bb6`
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [
+            { role: 'system', content: systemInstruction },
+            { role: 'user', content: `User Prompt: "${prompt}"` }
+          ],
           temperature: 0.1,
-          responseMimeType: "application/json"
-        }
-      }),
-    });
+          max_tokens: 128,
+          response_format: { type: "json_object" }
+        }),
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      return NextResponse.json(
-        { error: errorData.error?.message || 'Gemini classification call failed' },
-        { status: response.status }
-      );
+      if (!proxyResponse.ok) {
+        const errorData = await proxyResponse.json().catch(() => ({}));
+        return NextResponse.json(
+          { error: errorData.error?.message || 'FreeLLMAPI proxy call failed' },
+          { status: proxyResponse.status }
+        );
+      }
+
+      const data = await proxyResponse.json();
+      text = data.choices?.[0]?.message?.content || '';
     }
-
-    const data = await response.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
     
     try {
       const scores = JSON.parse(text.trim());

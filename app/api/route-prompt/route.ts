@@ -11,33 +11,62 @@ export async function POST(request: Request) {
 
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        systemInstruction: systemInstruction 
-          ? { parts: [{ text: systemInstruction }] } 
-          : undefined,
-        generationConfig: {
-          maxOutputTokens: 1024,
+    let text = '';
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          systemInstruction: systemInstruction 
+            ? { parts: [{ text: systemInstruction }] } 
+            : undefined,
+          generationConfig: {
+            maxOutputTokens: 1024,
+            temperature: 0.7,
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Direct API returned status ${response.status}`);
+      }
+
+      const data = await response.json();
+      text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    } catch (directError) {
+      console.warn("Direct Gemini API failed, attempting local FreeLLMAPI backup proxy:", directError);
+
+      const proxyResponse = await fetch('http://localhost:3001/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer freellmapi-9a1c00a670d3d3d1a9a7b276f24e8c60e8ad730e2e110bb6`
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [
+            ...(systemInstruction ? [{ role: 'system', content: systemInstruction }] : []),
+            { role: 'user', content: prompt }
+          ],
           temperature: 0.7,
-        }
-      }),
-    });
+          max_tokens: 1024
+        }),
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      return NextResponse.json(
-        { error: errorData.error?.message || 'Gemini API call failed' },
-        { status: response.status }
-      );
+      if (!proxyResponse.ok) {
+        const errorData = await proxyResponse.json().catch(() => ({}));
+        return NextResponse.json(
+          { error: errorData.error?.message || 'FreeLLMAPI proxy call failed' },
+          { status: proxyResponse.status }
+        );
+      }
+
+      const data = await proxyResponse.json();
+      text = data.choices?.[0]?.message?.content || '';
     }
-
-    const data = await response.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
     
     return NextResponse.json({ text });
   } catch (error) {
