@@ -50,12 +50,11 @@ export function LenisProvider({ children }: LenisProviderProps) {
     // produced ~5s of trailing lerp against Hero's ScrollTrigger scrub; 1.8
     // stays clear of that. See docs/perf/animation-baseline.md for history.
     const lenis = new Lenis({
-      duration: 1.8,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // easeOutExpo
+      lerp: 0.05, // Direct interpolation factor (between 0 and 1) for a heavy, consistent, and symmetric kinetic feel
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 0.28, // Set to 0.28 to make scrolling much denser, requiring significantly more scroll turns to navigate contents
+      wheelMultiplier: 0.28, // Make scrolling much denser, requiring significantly more scroll turns to navigate contents
       touchMultiplier: 0.45,  // Adjusted Touch/Trackpad multiplier to match the much denser scroll feel
     });
 
