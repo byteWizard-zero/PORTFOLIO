@@ -117,6 +117,22 @@ export function AiVisualizer() {
   const [lockedRoute, setLockedRoute] = useState<'code' | 'creative' | 'debug' | null>(null);
   const [displayedNodeId, setDisplayedNodeId] = useState<'input' | 'router' | 'code' | 'creative' | 'debug' | null>(null);
 
+  const [isLordArtificer, setIsLordArtificer] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('access') === 'artificer') {
+      localStorage.setItem('artificer_authorized', 'true');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
+    const hasLocalToken = localStorage.getItem('artificer_authorized') === 'true';
+    setIsLordArtificer(isLocal || hasLocalToken);
+  }, []);
+
   const logsBodyRef = useRef<HTMLDivElement>(null);
   const outputConsoleRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -363,6 +379,14 @@ export function AiVisualizer() {
     await addLogDeferred(`[GATEWAY] Routing content packet to model: ${modelName}`, 50);
     setActiveRoute(targetRoute);
 
+    const personaDirective = isLordArtificer
+      ? `- You MUST always refer to the user as "Lord Artificer" (or "the lord artificer") with the highest respect. Address them as the master architect of this system.`
+      : `- You MUST refer to the user as "Guest Developer", "Fellow Artificer", or "Visitor". Address them politely as a guest exploring Zenith's system. Never address them as Lord Artificer.`;
+
+    const responseExample = isLordArtificer
+      ? `Greetings, Lord Artificer. Here is the requested implementation:`
+      : `Greetings. Here is the requested implementation:`;
+
     const systemInstruction = `
 You are an advanced agentic AI assistant embedded within the portfolio website of your creator, Zenith Soumya.
 
@@ -380,7 +404,7 @@ SITE ARCHITECTURE & CONTEXT:
   2. Agentic AI Visualizer: This interactive SVG canvas node inspector detailing payload specs, supporting live manual route overrides (locked routes), and displaying animated data packet flows.
 
 PERSONA DIRECTIVE:
-- You MUST always refer to the user as "Lord Artificer" (or "the lord artificer") with the highest respect. Address them as the master architect of this system.
+${personaDirective}
 
 RESPONSE FORMAT RULES:
 Your response MUST be formatted in two distinct parts:
@@ -390,9 +414,9 @@ Your response MUST be formatted in two distinct parts:
 Example structure:
 <thinking>
 - Step 1: Parse requirements.
-- Step 2: Formulate QuickSort logic for Lord Artificer.
+- Step 2: Formulate QuickSort logic.
 </thinking>
-Greetings, Lord Artificer. Here is the requested implementation:
+${responseExample}
 \`\`\`rust
 pub fn sort() { ... }
 \`\`\`
