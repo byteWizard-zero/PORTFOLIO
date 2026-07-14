@@ -183,7 +183,6 @@
     clip-path: circle(var(--spotlight-size, 0px) at var(--spotlight-x, 50%) var(--spotlight-y, 50%));
     /* Disable pointer events so hover passes through */
     pointer-events: none;
-    user-select: none;
     /* PERF: Remove transition - let GSAP ticker handle smooth updates */
     /* transition: clip-path 0.05s linear; */
 }
