@@ -200,17 +200,10 @@
 /* Tactile Button */
 .tactileBtn {
   cursor: pointer;
-  transition: transform 0.1s;
-  transform-box: fill-box;
-  transform-origin: center;
 }
 
 .tactileBtn:hover {
   filter: brightness(1.15);
-}
-
-.tactileBtn:active {
-  transform: scale(0.96);
 }
 
 /* Interactive pins */
@@ -243,14 +236,12 @@
   fill: #62B6CB;
   stroke: #62B6CB;
   filter: drop-shadow(0 0 3px #62B6CB);
-  transform-box: fill-box;
-  transform-origin: center;
   animation: pulseGlow 1.5s infinite ease-in-out;
 }
 
 @keyframes pulseGlow {
-  0%, 100% { opacity: 0.7; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.25); }
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 
 /* LEDs */
@@ -297,13 +288,6 @@
 /* Interactive Sensor Chip */
 .interactiveSensor {
   cursor: pointer;
-  transition: transform 0.2s;
-  transform-box: fill-box;
-  transform-origin: center;
-}
-
-.interactiveSensor:hover {
-  transform: scale(1.05);
 }
 
 .interactiveSensor:hover rect {
