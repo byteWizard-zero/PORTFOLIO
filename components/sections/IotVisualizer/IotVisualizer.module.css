@@ -201,6 +201,8 @@
 .tactileBtn {
   cursor: pointer;
   transition: transform 0.1s;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .tactileBtn:hover {
@@ -241,6 +243,8 @@
   fill: #62B6CB;
   stroke: #62B6CB;
   filter: drop-shadow(0 0 3px #62B6CB);
+  transform-box: fill-box;
+  transform-origin: center;
   animation: pulseGlow 1.5s infinite ease-in-out;
 }
 
@@ -294,6 +298,8 @@
 .interactiveSensor {
   cursor: pointer;
   transition: transform 0.2s;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .interactiveSensor:hover {
