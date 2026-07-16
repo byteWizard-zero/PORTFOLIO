@@ -43,6 +43,20 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
 
   useScrollLock(lightboxIndex !== null, { compensateScrollbar: true });
 
+  // Stop/Start Lenis scroll during maximized lightbox state
+  useEffect(() => {
+    if (lightboxIndex !== null) {
+      if (window.lenis) {
+        window.lenis.stop();
+      }
+      return () => {
+        if (window.lenis) {
+          window.lenis.start();
+        }
+      };
+    }
+  }, [lightboxIndex]);
+
   // NOTE (F-IN-08): The rAF focus call assumes both mode buttons are always
   // mounted. Roving-tabindex focus management breaks if either button is
   // conditionally unmounted — keep both rendered at all times.
@@ -356,17 +370,6 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
           className={styles.lightboxOverlay}
           onClick={closeLightbox}
         >
-          <button 
-            type="button"
-            className={styles.lightboxClose} 
-            onClick={closeLightbox}
-            aria-label="Close image preview"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
           <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
             <Image
               ref={lightboxImageRef}

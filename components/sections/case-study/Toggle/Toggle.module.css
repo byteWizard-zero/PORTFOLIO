@@ -280,11 +280,9 @@
     width: auto;
     height: auto;
     object-fit: contain;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 
-        0 40px 100px -20px rgba(0, 0, 0, 0.7),
-        0 0 80px -20px rgba(98, 182, 203, 0.3);
+    border-radius: var(--radius-portrait);
+    border: 2px solid var(--color-primary-text);
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.4);
 }
 
 .lightboxCaption {
@@ -306,33 +304,4 @@
 .lightboxCaptionName {
     font-size: 16px;
     color: var(--color-primary-text);
-}
-
-.lightboxClose {
-    position: absolute;
-    top: clamp(24px, 4vw, 40px);
-    right: clamp(24px, 4vw, 40px);
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    cursor: pointer;
-    transition: 
-        background var(--duration-fast) var(--ease-out-expo),
-        transform var(--duration-fast) var(--ease-out-expo);
-}
-
-.lightboxClose:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: scale(1.08);
-}
-
-.lightboxClose svg {
-    width: 20px;
-    height: 20px;
 }
