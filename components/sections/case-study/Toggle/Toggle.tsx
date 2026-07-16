@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { useGSAP } from "@gsap/react";
 import { useBlockFadeIn } from "@/lib/useBlockFadeIn";
 import { useWordLineReveal } from "@/lib/useWordLineReveal";
 import { useReducedMotion } from "@/lib/useReducedMotion";
@@ -9,6 +10,7 @@ import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { animationConfig } from "@/data";
 import type { ToggleContent, ToggleScreen } from "@/data";
 import { MetaLabel } from "@/components/ui/MetaLabel";
+import { useScrollLock } from "@/lib/useScrollLock";
 import styles from "./Toggle.module.css";
 
 const cs = animationConfig.caseStudy;
@@ -33,6 +35,13 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
 
   const [mode, setMode] = useState<Mode>("list");
   const eyebrowId = useId();
+
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const lightboxOverlayRef = useRef<HTMLDivElement>(null);
+  const lightboxImageRef = useRef<HTMLImageElement>(null);
+  const lightboxCaptionRef = useRef<HTMLDivElement>(null);
+
+  useScrollLock(lightboxIndex !== null, { compensateScrollbar: true });
 
   // NOTE (F-IN-08): The rAF focus call assumes both mode buttons are always
   // mounted. Roving-tabindex focus management breaks if either button is
@@ -153,6 +162,64 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
     movePreview(e.clientX, e.clientY);
   };
 
+  const closeLightbox = () => {
+    const overlay = lightboxOverlayRef.current;
+    const image = lightboxImageRef.current;
+    const caption = lightboxCaptionRef.current;
+    if (!overlay || !image || !caption) {
+      setLightboxIndex(null);
+      return;
+    }
+
+    gsap.killTweensOf([overlay, image, caption]);
+
+    gsap.timeline({
+      onComplete: () => {
+        setLightboxIndex(null);
+      }
+    })
+    .to(caption, { y: 15, opacity: 0, duration: 0.25, ease: "power2.in" }, 0)
+    .to(image, { scale: 0.92, opacity: 0, duration: 0.3, ease: "power2.in" }, 0)
+    .to(overlay, { opacity: 0, duration: 0.3, ease: "power2.in" }, 0.05);
+  };
+
+  // Close lightbox on Escape key
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape") {
+        closeLightbox();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [lightboxIndex]);
+
+  useGSAP(() => {
+    if (lightboxIndex === null) return;
+    const overlay = lightboxOverlayRef.current;
+    const image = lightboxImageRef.current;
+    const caption = lightboxCaptionRef.current;
+    if (!overlay || !image || !caption) return;
+
+    gsap.killTweensOf([overlay, image, caption]);
+
+    gsap.fromTo(overlay,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.4, ease: "power2.out" }
+    );
+
+    gsap.fromTo(image,
+      { scale: 0.9, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.15)", delay: 0.05 }
+    );
+
+    gsap.fromTo(caption,
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.4, ease: "power2.out", delay: 0.2 }
+    );
+  }, { dependencies: [lightboxIndex], scope: sectionRef });
+
   return (
     <section
       ref={sectionRef}
@@ -241,6 +308,7 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
                 onMouseEnter={handleRowEnter(idx)}
                 onMouseLeave={handleRowLeave}
                 onMouseMove={handleRowMove}
+                onClick={() => setLightboxIndex(idx)}
               >
                 <span className={styles.rowN}>{s.num}</span>
                 <span className={styles.rowName}>{s.name}</span>
@@ -280,6 +348,43 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
           ))}
         </div>
       </div>
+
+      {/* Graceful Enlarge Lightbox */}
+      {lightboxIndex !== null && (
+        <div
+          ref={lightboxOverlayRef}
+          className={styles.lightboxOverlay}
+          onClick={closeLightbox}
+        >
+          <button 
+            type="button"
+            className={styles.lightboxClose} 
+            onClick={closeLightbox}
+            aria-label="Close image preview"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
+            <Image
+              ref={lightboxImageRef}
+              src={screens[lightboxIndex].image}
+              alt={screens[lightboxIndex].name}
+              width={1920}
+              height={1200}
+              className={styles.lightboxImage}
+              onClick={closeLightbox}
+              unoptimized
+            />
+            <div ref={lightboxCaptionRef} className={styles.lightboxCaption}>
+              <span className={styles.lightboxCaptionNum}>{screens[lightboxIndex].num}</span>
+              <span className={styles.lightboxCaptionName}>{screens[lightboxIndex].name}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
