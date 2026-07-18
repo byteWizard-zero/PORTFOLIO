@@ -49,6 +49,7 @@ export function useBlockFadeIn(
         // context cleanup never reaches them. Track each tween so we
         // can kill it from the cleanup branch if the section unmounts
         // mid-flight.
+        const activeTweens: gsap.core.Tween[] = [];
         let played = false;
         const playFadeIn = () => {
           if (played) return;
