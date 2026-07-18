@@ -252,10 +252,28 @@ export function AboutPageContributions() {
         },
       });
 
-      // Kick off immediately if the section is already in view on load.
-      if (trigger.isActive && !running) {
-        running = true;
-        runCycle();
+      // Fail-safe: IntersectionObserver observes real browser viewport geometry.
+      // If ScrollTrigger cached a stale position (e.g. during cold load while pinned
+      // hero sections settle), IntersectionObserver guarantees snake animation runs
+      // as soon as the section physically enters the viewport.
+      let io: IntersectionObserver | null = null;
+      if (typeof IntersectionObserver !== "undefined") {
+        io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                if (!running) {
+                  running = true;
+                  runCycle();
+                }
+              } else {
+                stop();
+              }
+            });
+          },
+          { rootMargin: "0px 0px -10% 0px", threshold: 0 }
+        );
+        io.observe(section);
       }
 
       // 3D Tilt Hover effect on the grid wrap container
@@ -316,6 +334,7 @@ export function AboutPageContributions() {
       }
 
       return () => {
+        if (io) io.disconnect();
         trigger.kill();
         if (tl) tl.kill();
         if (pending) pending.kill();
