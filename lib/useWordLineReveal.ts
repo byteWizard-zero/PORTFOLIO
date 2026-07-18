@@ -107,6 +107,11 @@ export function useWordLineReveal(
             start,
             once: true,
             onEnter: () => tl?.play(),
+            onRefresh: (self) => {
+              if (self.isActive || self.progress > 0) {
+                tl?.play();
+              }
+            },
           });
 
           // If the element is ALREADY in view or past `start` when async font setup completes,

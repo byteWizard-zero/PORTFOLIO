@@ -51,12 +51,11 @@ export function AboutPageHeroEcho() {
         // from transform-free layout offsets). The load is its exact inverse.
         const cellDy = (cell: HTMLElement) => {
           const row = cell.querySelector<HTMLElement>("[data-echo]");
-          if (!row || !solidRow) return 0;
-          return (
-            solidRow.offsetTop +
-            solidRow.offsetHeight / 2 -
-            (row.offsetTop + row.offsetHeight / 2)
-          );
+          if (!row || !solidRow || !section) return 0;
+          const sectionTop = section.getBoundingClientRect().top;
+          const solidCenter = solidRow.getBoundingClientRect().top - sectionTop + solidRow.getBoundingClientRect().height / 2;
+          const rowCenter = row.getBoundingClientRect().top - sectionTop + row.getBoundingClientRect().height / 2;
+          return solidCenter - rowCenter;
         };
 
         // On-load reveal: the solid word slides up first (the anchor), then each
@@ -146,12 +145,13 @@ export function AboutPageHeroEcho() {
                 : "inset(100% 0% 0% 0%)",
             // Slide each row to the solid word's centre as it retracts; the
             // group's overflow clips it well before it gets there.
-            y: (_i: number, el: HTMLElement) =>
-              solidRow
-                ? solidRow.offsetTop +
-                  solidRow.offsetHeight / 2 -
-                  (el.offsetTop + el.offsetHeight / 2)
-                : 0,
+            y: (_i: number, el: HTMLElement) => {
+              if (!solidRow || !section) return 0;
+              const sectionTop = section.getBoundingClientRect().top;
+              const solidCenter = solidRow.getBoundingClientRect().top - sectionTop + solidRow.getBoundingClientRect().height / 2;
+              const elCenter = el.getBoundingClientRect().top - sectionTop + el.getBoundingClientRect().height / 2;
+              return solidCenter - elCenter;
+            },
             ease: "power1.in",
             duration: 1,
             immediateRender: false,

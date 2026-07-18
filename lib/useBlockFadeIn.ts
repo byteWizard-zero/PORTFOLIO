@@ -49,28 +49,40 @@ export function useBlockFadeIn(
         // context cleanup never reaches them. Track each tween so we
         // can kill it from the cleanup branch if the section unmounts
         // mid-flight.
-        const activeTweens: gsap.core.Tween[] = [];
+        let played = false;
+        const playFadeIn = () => {
+          if (played) return;
+          played = true;
+          resolved.forEach((g) => {
+            if (!g.els.length) return;
+            const tween = gsap.to(g.els, {
+              autoAlpha: 1,
+              y: 0,
+              duration: g.duration ?? FADE_DURATION,
+              ease: g.ease ?? "expo.out",
+              delay: g.delay ?? 0,
+              stagger: g.stagger ?? 0,
+              clearProps: "transform",
+            });
+            activeTweens.push(tween);
+          });
+        };
 
         const trigger = ScrollTrigger.create({
           trigger: section,
           start,
           once: true,
-          onEnter: () => {
-            resolved.forEach((g) => {
-              if (!g.els.length) return;
-              const tween = gsap.to(g.els, {
-                autoAlpha: 1,
-                y: 0,
-                duration: g.duration ?? FADE_DURATION,
-                ease: g.ease ?? "expo.out",
-                delay: g.delay ?? 0,
-                stagger: g.stagger ?? 0,
-                clearProps: "transform",
-              });
-              activeTweens.push(tween);
-            });
+          onEnter: playFadeIn,
+          onRefresh: (self) => {
+            if (self.isActive || self.progress > 0) {
+              playFadeIn();
+            }
           },
         });
+
+        if (trigger.isActive || trigger.progress > 0) {
+          playFadeIn();
+        }
 
         return () => {
           trigger.kill();
