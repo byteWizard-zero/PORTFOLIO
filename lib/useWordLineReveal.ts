@@ -128,6 +128,26 @@ export function useWordLineReveal(
           // their positions; re-measure start/end against the new layout.
           ScrollTrigger.refresh();
 
+          // Fail-safe: IntersectionObserver observes real browser viewport geometry.
+          // If ScrollTrigger cached a stale position (e.g. during cold load while pinned
+          // hero sections settle), IntersectionObserver guarantees tl.play() runs
+          // as soon as the element physically enters the viewport.
+          let io: IntersectionObserver | null = null;
+          if (typeof IntersectionObserver !== "undefined") {
+            io = new IntersectionObserver(
+              (entries) => {
+                entries.forEach((entry) => {
+                  if (entry.isIntersecting) {
+                    if (tl) tl.play();
+                    io?.disconnect();
+                  }
+                });
+              },
+              { rootMargin: "0px 0px -10% 0px", threshold: 0 }
+            );
+            io.observe(root);
+          }
+
           // Recompute groups on resize. ResizeObserver fires for every
           // layout change of the root — exactly when wrap behaviour can
           // shift. Wrapped in rAF so we read after the new layout settles.
@@ -151,6 +171,7 @@ export function useWordLineReveal(
 
         return () => {
           cancelled = true;
+          if (io) io.disconnect();
           if (resizeObserver) resizeObserver.disconnect();
           if (trigger) trigger.kill();
           if (tl) tl.kill();

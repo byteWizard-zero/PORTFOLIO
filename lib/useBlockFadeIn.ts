@@ -85,7 +85,25 @@ export function useBlockFadeIn(
           playFadeIn();
         }
 
+        // Fail-safe: IntersectionObserver observes real browser viewport geometry.
+        // If ScrollTrigger cached a stale position (e.g. during cold load while pinned
+        // hero sections settle), IntersectionObserver guarantees playFadeIn() runs
+        // as soon as the section physically enters the viewport.
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                playFadeIn();
+                io.disconnect();
+              }
+            });
+          },
+          { rootMargin: "0px 0px -10% 0px", threshold: 0 }
+        );
+        io.observe(section);
+
         return () => {
+          io.disconnect();
           trigger.kill();
           activeTweens.forEach((t) => t.kill());
           const allEls = resolved.flatMap((g) => g.els);
