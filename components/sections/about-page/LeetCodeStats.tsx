@@ -127,6 +127,19 @@ export function AboutPageLeetCodeStats() {
         if (acceptEl) acceptEl.textContent = countTarget.acceptance.toFixed(1) + "%";
         if (streakCurEl) streakCurEl.textContent = String(Math.floor(countTarget.streakCurrent));
         if (streakMaxEl) streakMaxEl.textContent = String(Math.floor(countTarget.streakMax));
+      },
+      onComplete: () => {
+        const solvedEl = sectionRef.current?.querySelector(`.${styles.radialNumber}`);
+        const rankEl = sectionRef.current?.querySelectorAll(`.${styles.vitalValue}`)[0];
+        const acceptEl = sectionRef.current?.querySelectorAll(`.${styles.vitalValue}`)[1];
+        const streakCurEl = sectionRef.current?.querySelectorAll(`.${styles.vitalValue}`)[2];
+        const streakMaxEl = sectionRef.current?.querySelectorAll(`.${styles.vitalValue}`)[3];
+        
+        if (solvedEl) solvedEl.textContent = String(totalSolved);
+        if (rankEl) rankEl.textContent = ranking.toLocaleString('en-US');
+        if (acceptEl) acceptEl.textContent = acceptanceRate.toFixed(1) + "%";
+        if (streakCurEl) streakCurEl.textContent = String(leetcodeStats.streakCurrent || 0);
+        if (streakMaxEl) streakMaxEl.textContent = String(leetcodeStats.streakMax || 0);
       }
     });
 

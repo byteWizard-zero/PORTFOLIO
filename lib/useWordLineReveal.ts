@@ -57,6 +57,8 @@ export function useWordLineReveal(
 
         const buildTimeline = () => {
           if (!split || cancelled) return;
+          const wasPlaying = tl ? tl.isActive() : false;
+          const wasCompleted = tl ? (tl.progress() === 1 || tl.totalProgress() === 1) : false;
           if (tl) tl.kill();
           const lineGroups = groupWordsByLine(split.words);
           tl = gsap.timeline({ paused: true, delay });
@@ -67,9 +69,11 @@ export function useWordLineReveal(
               i * lineStagger
             );
           });
-          // If the trigger has already fired (resize after reveal), keep
-          // the words at their resting position rather than playing again.
-          if (trigger && trigger.progress > 0) tl.progress(1, false);
+          if (wasCompleted || (trigger && (trigger.progress > 0 || trigger.isActive))) {
+            tl.progress(1, false);
+          } else if (wasPlaying) {
+            tl.play();
+          }
         };
 
         // Wait for the real font to load before measuring offsetTop —
