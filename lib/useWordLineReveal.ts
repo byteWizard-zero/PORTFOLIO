@@ -53,6 +53,7 @@ export function useWordLineReveal(
         let tl: gsap.core.Timeline | null = null;
         let trigger: ScrollTrigger | null = null;
         let resizeObserver: ResizeObserver | null = null;
+        let io: IntersectionObserver | null = null;
         let cancelled = false;
 
         const buildTimeline = () => {
@@ -132,7 +133,6 @@ export function useWordLineReveal(
           // If ScrollTrigger cached a stale position (e.g. during cold load while pinned
           // hero sections settle), IntersectionObserver guarantees tl.play() runs
           // as soon as the element physically enters the viewport.
-          let io: IntersectionObserver | null = null;
           if (typeof IntersectionObserver !== "undefined") {
             io = new IntersectionObserver(
               (entries) => {
