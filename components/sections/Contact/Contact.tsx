@@ -179,9 +179,9 @@ export function Contact() {
       tl.to(submit, { opacity: 1, y: 0, duration: TIMING.SUBMIT_DURATION }, rows.length);
     }
 
-    // Refresh ScrollTrigger to reconcile pin start/end measurements against
-    // settled DOM layout above the contact section.
-    ScrollTrigger.refresh();
+    // No explicit cleanup — useGSAP's scope handles timeline.kill() (which
+    // internally kills attached ScrollTriggers) and reverts pin layout on
+    // unmount/Fast Refresh.
   }, { scope: sectionRef, dependencies: [reducedMotion] });
 
   function handleSubmit(e: FormEvent) {
