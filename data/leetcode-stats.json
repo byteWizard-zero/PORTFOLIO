@@ -1,17 +1,17 @@
 {
   "username": "zenithsoumya",
-  "totalSolved": 63,
+  "totalSolved": 67,
   "totalQuestions": 3999,
-  "easySolved": 15,
-  "totalEasy": 956,
-  "mediumSolved": 34,
-  "totalMedium": 2088,
-  "hardSolved": 14,
+  "easySolved": 17,
+  "totalEasy": 955,
+  "mediumSolved": 35,
+  "totalMedium": 2089,
+  "hardSolved": 15,
   "totalHard": 955,
-  "acceptanceRate": 93.1,
-  "ranking": 2452374,
-  "contributionPoints": 321,
+  "acceptanceRate": 93.3,
+  "ranking": 2221335,
+  "contributionPoints": 373,
   "reputation": 0,
-  "streakCurrent": 28,
-  "streakMax": 28
+  "streakCurrent": 30,
+  "streakMax": 30
 }
