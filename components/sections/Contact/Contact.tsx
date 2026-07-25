@@ -193,11 +193,11 @@ export function Contact() {
         p.x += p.vx;
         p.y += p.vy;
 
-        // Sand/grain rightward drift physics matching the reference image
-        p.vx *= 0.94;
-        p.vy *= 0.94;
-        p.vx += 0.08; // rightward wind drift
-        p.vy += (Math.random() - 0.5) * 0.08;
+        // Omnidirectional organic expansion & deceleration drag
+        p.vx *= 0.92;
+        p.vy *= 0.92;
+        p.vx += (Math.random() - 0.5) * 0.12;
+        p.vy += (Math.random() - 0.5) * 0.12;
 
         p.life -= 1;
         const lifeRatio = p.life / p.maxLife;
@@ -228,7 +228,7 @@ export function Contact() {
     animFrameRef.current = requestAnimationFrame(render);
   };
 
-  // Spawn Pixel-Perfect Grain Disintegration on Backspace
+  // Spawn Pixel-Perfect Omnidirectional Grain Disintegration on Backspace
   const handleInputBackspace = (char: string, inputEl: HTMLInputElement) => {
     if (reducedMotion || !panelRef.current || !canvasRef.current) return;
 
@@ -262,8 +262,11 @@ export function Contact() {
     const newParticles: DevourParticle[] = [];
     for (let i = 0; i < sampledPixels.length; i++) {
       const sp = sampledPixels[i];
-      const vx = Math.random() * 2.2 + 0.5;
-      const vy = (Math.random() - 0.5) * 1.2;
+      // Omnidirectional 360-degree explosion velocity (up, down, left, right)
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 2.5 + 0.4;
+      const vx = Math.cos(angle) * speed;
+      const vy = Math.sin(angle) * speed;
 
       newParticles.push({
         x: charLeft + sp.x,
