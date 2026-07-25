@@ -2,10 +2,8 @@ import { writeFile, readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
-// Change this to your LeetCode username if different
 const USERNAME = 'zenithsoumya';
 
-// We try two different public API endpoints for reliability
 const API_URLS = [
   `https://leetcode-stats-api.herokuapp.com/${USERNAME}`,
   `https://alfa-leetcode-api.onrender.com/userProfile/${USERNAME}`
@@ -14,7 +12,6 @@ const API_URLS = [
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT_PATH = join(__dirname, '..', 'data', 'leetcode-stats.json');
 
-// Default premium fallback statistics
 const DEFAULT_STATS = {
   username: USERNAME,
   totalSolved: 23,
@@ -41,7 +38,6 @@ function calculateStreaks(submissionCalendar) {
     return { streakCurrent, streakMax };
   }
 
-  // Convert keys (Unix timestamps) to day index since epoch
   const dayIndices = Object.keys(submissionCalendar)
     .map(t => Math.floor(Number(t) / 86400))
     .sort((a, b) => a - b);
@@ -80,20 +76,17 @@ function calculateStreaks(submissionCalendar) {
 
 async function fetchStats() {
   console.log(`\n→ Fetching LeetCode stats for '${USERNAME}'...`);
-  
-  // Try endpoints sequentially
+
   for (const url of API_URLS) {
     try {
       const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
-        
-        // Check if the response contains valid solved problem metrics
+
         if (typeof data.totalSolved === 'number' && data.totalSolved > 0) {
           const totalSubmissions = data.totalSubmissions || [];
           const allSubmissions = totalSubmissions.find(x => x.difficulty === 'All')?.submissions || 1;
-          
-          // Try to get accepted submissions from matchedUserStats
+
           const acSubmissions = data.matchedUserStats?.acSubmissionNum?.find(x => x.difficulty === 'All')?.submissions;
           const totSubmissions = data.matchedUserStats?.totalSubmissionNum?.find(x => x.difficulty === 'All')?.submissions || allSubmissions;
           
@@ -135,7 +128,6 @@ async function fetchStats() {
     }
   }
 
-  // Fallback to existing cache if available
   try {
     const existing = await readFile(OUT_PATH, 'utf8');
     const parsed = JSON.parse(existing);
@@ -147,7 +139,6 @@ async function fetchStats() {
     // Cache doesn't exist or is invalid JSON, proceed to write defaults
   }
 
-  // Fallback to default stats if all else fails
   console.log(`⚠ LeetCode profile not found or API down; writing default fallback stats.`);
   await writeFile(OUT_PATH, JSON.stringify(DEFAULT_STATS, null, 2));
 }

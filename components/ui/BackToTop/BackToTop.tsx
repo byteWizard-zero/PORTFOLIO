@@ -28,10 +28,7 @@ export function BackToTop() {
   if (!enabled) return null;
 
   const handleClick = () => {
-    // If the menu is open, ask it to fold up first. The scroll itself would
-    // otherwise be invisible (overlay covers the viewport, scroll is locked
-    // by useScrollLock) — closing first releases the lock and lets Lenis run
-    // its tween against a viewport the user can actually see.
+
     if (typeof document !== 'undefined') {
       document.dispatchEvent(new CustomEvent('menu:close'));
     }
@@ -55,8 +52,7 @@ export function BackToTop() {
         aria-hidden={!visible}
         tabIndex={visible ? 0 : -1}
         data-visible={visible}
-        // Opt out of the menu's `inert` sweep so this control stays clickable
-        // on top of the menu overlay. See Menu.tsx body-children sweep.
+
         data-menu-passthrough=""
       >
         <svg

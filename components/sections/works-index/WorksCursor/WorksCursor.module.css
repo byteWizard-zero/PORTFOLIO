@@ -1,8 +1,4 @@
-/* WorksCursor
- *
- * Fixed-position custom cursor for the Works Index page.
- * Event-driven: GSAP quickTo on mousemove — no rAF loops.
- */
+
 
 .cursor {
     position: fixed;
@@ -46,7 +42,6 @@
     opacity: 1;
 }
 
-/* Hidden on touch / coarse-pointer devices. */
 @media (hover: none), (pointer: coarse) {
     .cursor {
         display: none;

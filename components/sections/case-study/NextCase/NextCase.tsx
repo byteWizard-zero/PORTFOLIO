@@ -13,15 +13,7 @@ type NextCaseProps = NextCaseContent & {
 };
 
 export const NextCase = ({ slug, counter, target }: NextCaseProps) => {
-  // When the target case study isn't ready yet, rendering an
-  // <a href="#"> with preventDefault is a footgun — middle-click /
-  // Cmd-click / right-click → "Open in new tab" all bypass the onClick
-  // handler and open the current page with a `#`, dumping the user back
-  // at the top of the page they were just on. Render as a non-link
-  // container instead so there is no href for the browser to navigate
-  // to and no link semantics exposed to assistive tech. The visual
-  // treatment (hover invert, grayscale → colour image) is driven by
-  // .link CSS rules which still apply to the <div>.
+
   const inner: ReactNode = (
     <>
       <div className={styles.left}>
@@ -61,10 +53,6 @@ export const NextCase = ({ slug, counter, target }: NextCaseProps) => {
     </>
   );
 
-  // A11y: only expose the `<nav>` landmark when there's actually a link
-  // inside. A nav with no link is announced as an empty navigation landmark
-  // — confusing for screen-reader users. Fall back to a plain <section>
-  // when the next-case target hasn't been published yet.
   if (target) {
     return (
       <nav className={styles.next} aria-label="Next case study">

@@ -6,10 +6,6 @@ import { classifyFaceWord } from './constants';
 import { HEADING_ID, ZONES, formatZoneIndex, zoneRail } from './constants';
 import styles from './ServicesV2.module.css';
 
-/* Static fallback for the V2 tuning-dial. Rendered when `prefers-reduced-motion`
-   is set OR the user is on a coarse-pointer / small-screen device. No scroll
-   hijack, no GSAP — every zone is laid out in flow. Mirrors StaticServices.tsx
-   in the V1 section so the V1/V2 a11y baseline matches. */
 export function StaticServicesV2() {
   return (
     <section id="services" className={styles.wrapper} aria-labelledby={HEADING_ID}>

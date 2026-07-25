@@ -1,14 +1,9 @@
-/* ============================================================
-   CASE STUDY · TOGGLE — Gallery ↔ List view of all screens.
-   Signature interactive section with cursor-following hover
-   preview in list mode.
-   ============================================================ */
+
 
 .toggle {
     padding: clamp(80px, 12vh, 140px) var(--spacing-nav-side);
 }
 
-/* ---------- HEAD ROW — eyebrow/h2 left, mode toggle right ---------- */
 .controls {
     max-width: var(--canvas-max-width);
     margin: 0 auto clamp(36px, 4vw, 56px);
@@ -28,7 +23,6 @@
     color: var(--color-accent-purple);
 }
 
-/* ---------- TOGGLE PILL ---------- */
 .modes {
     display: inline-flex;
     background: var(--color-background);
@@ -58,7 +52,6 @@
     color: var(--color-background);
 }
 
-/* ---------- GALLERY VIEW — asymmetric 12-col magazine grid ---------- */
 .gallery {
     max-width: var(--canvas-max-width);
     margin: 0 auto;
@@ -111,7 +104,6 @@
     text-transform: uppercase;
 }
 
-/* ---------- LIST VIEW — bordered rows ---------- */
 .list {
     max-width: var(--canvas-max-width);
     margin: 0 auto;
@@ -164,11 +156,6 @@
     text-transform: uppercase;
 }
 
-/* ---------- HOVER-PREVIEW THUMB (list mode) ----------
-   `.preview` is a fixed-position window with a single shared stack
-   inside. `left`/`top` are spring-tweened by gsap.quickTo on cursor
-   move; `transform: scale()` toggles visibility; the inner
-   `.previewSlider` exposes one card at a time via translateY. */
 .preview {
     position: fixed;
     pointer-events: none;
@@ -229,7 +216,6 @@
     }
 }
 
-/* ---------- RESPONSIVE ---------- */
 @media (max-width: 1100px) {
     .gallery figure {
         grid-column: span 12 !important;
@@ -249,7 +235,6 @@
     }
 }
 
-/* ---------- LIGHTBOX OVERLAY ---------- */
 .lightboxOverlay {
     position: fixed;
     inset: 0;

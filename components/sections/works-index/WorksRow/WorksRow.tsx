@@ -8,16 +8,14 @@ import { cssVars } from '@/lib/cssVars';
 import styles from './WorksRow.module.css';
 
 export interface WorksRowProps {
-  /** Zero-based index in the index list — drives № display and outline parity. */
+  
   index: number;
   project: WorksIndexProject;
-  /** True when a matching case-study slug exists; gates whether the row is a link. */
+  
   hasCaseStudy: boolean;
-  /** True when another row is the active-hovered one — drops opacity. */
+  
   dimmed?: boolean;
-  /** Bubbled hover state — page-level cursor + dim-other-rows + preview
-   *  coordination. Bubbles the full project so the page can look up the
-   *  case-study hero image for the preview slider. */
+  
   onHoverChange: (hovered: boolean, project: WorksIndexProject) => void;
 }
 
@@ -62,8 +60,6 @@ export function WorksRow({
     </>
   );
 
-  // `data-dim` is a string boolean — present + "true" when the row should
-  // dim. CSS selector matches `[data-dim='true']`.
   const dataDim = dimmed && !hovered ? 'true' : undefined;
 
   if (hasCaseStudy) {
@@ -73,9 +69,7 @@ export function WorksRow({
         className={className}
         style={style}
         data-dim={dataDim}
-        // The visible title lives only inside the aria-hidden marquee, so this
-        // aria-label is the sole accessible name for the link. It must stay
-        // derived from project.title to stay in sync with what the user sees.
+
         aria-label={`Open ${project.title} case study`}
         payload={{
           accent: project.accent,
@@ -92,10 +86,6 @@ export function WorksRow({
     );
   }
 
-  // Non-link branch: a plain div. No aria-disabled (semantically inert on
-  // non-interactive elements — it would only confuse assistive tech). The
-  // sr-only span below provides an accessible name and signals to screen
-  // reader users that this project is not yet navigable.
   return (
     <div
       className={className}
@@ -104,9 +94,7 @@ export function WorksRow({
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
     >
-      {/* The visible title is aria-hidden inside the marquee; this span gives
-       *  screen readers the project name and a "coming soon" cue without
-       *  rendering a fake interactive element. */}
+      
       <span className="sr-only">{project.title} — case study coming soon</span>
       {inner}
     </div>

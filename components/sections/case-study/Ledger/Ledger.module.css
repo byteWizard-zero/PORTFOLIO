@@ -1,7 +1,4 @@
-/* ============================================================
-   CASE STUDY · LEDGER — 5-column vitals strip between the
-   cinematic hero and the editorial reading column.
-   ============================================================ */
+
 
 .ledger {
     border-top: 2px solid var(--color-primary-text);
@@ -54,10 +51,6 @@
     font-weight: 400;
 }
 
-/* ---------- responsive ----------
-   Collapse to 2 columns; the 5th cell spans both columns so the
-   row reads as 2 / 2 / 1.
-*/
 @media (max-width: 1100px) {
     .inner {
         grid-template-columns: repeat(2, 1fr);

@@ -42,8 +42,7 @@ export function SoundToggle() {
     const nextState = !soundOn;
     setSoundEnabled(nextState);
     setSoundOn(nextState);
-    
-    // Play a click confirmation if sound is turned ON
+
     if (nextState) {
       setTimeout(() => {
         playClick();

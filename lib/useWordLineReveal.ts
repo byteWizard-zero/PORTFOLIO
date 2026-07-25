@@ -9,7 +9,6 @@ import {
 import { useTransition } from "@/components/transitions";
 import staggerStyles from "./staggerText.module.css";
 
-// Default word/line reveal tuning (overridable via RevealOptions).
 const WORD_REVEAL_YPERCENT = 110;
 const LINE_STAGGER = 0.12;
 const REVEAL_DURATION = 0.7;
@@ -21,14 +20,10 @@ type RevealOptions = {
   delay?: number;
   start?: string;
   scope?: RefObject<HTMLElement | null>;
-  /** CSS selector for subtrees to leave out of the word split (they get their
-      own entrance animation instead). */
+  
   exclude?: string;
 };
 
-// Awaits document.fonts.ready before grouping words by offsetTop (the
-// fallback-font wrap doesn't match the rendered layout) and re-buckets on
-// resize since the trigger fires only once.
 export function useWordLineReveal(
   target: RefObject<HTMLElement | null>,
   options: RevealOptions = {}
@@ -80,10 +75,6 @@ export function useWordLineReveal(
           }
         };
 
-        // Wait for the real font to load before measuring offsetTop —
-        // fallback-font wrap positions don't match the rendered layout.
-        // Renamed from `start` so it doesn't shadow the `start` option
-        // destructured above (which would silently ignore caller overrides).
         const setupReveal = () => {
           if (cancelled || !root.isConnected) return;
           split = splitTextIntoWords(
@@ -101,9 +92,6 @@ export function useWordLineReveal(
           gsap.set(split.inners, { yPercent: WORD_REVEAL_YPERCENT });
           buildTimeline();
 
-          // document.fonts.ready can resolve after unmount; bail if the
-          // root detached (or the inner cleanup ran) before we wire up
-          // the trigger against a now-orphaned node.
           if (cancelled || !root.isConnected) {
             split?.revert();
             split = null;
@@ -122,19 +110,12 @@ export function useWordLineReveal(
             },
           });
 
-          // If the element is ALREADY in view or past `start` when async font setup completes,
-          // `onEnter` won't fire. Play the timeline immediately so words are never stuck hidden.
           if (trigger.progress > 0 || trigger.isActive) {
             tl?.play();
           }
 
-          // The async font load shifted layout after other triggers cached
-          // their positions; re-measure start/end against the new layout.
           ScrollTrigger.refresh();
 
-          // Recompute groups on resize. ResizeObserver fires for every
-          // layout change of the root — exactly when wrap behaviour can
-          // shift. Wrapped in rAF so we read after the new layout settles.
           if (typeof ResizeObserver !== "undefined") {
             let frame = 0;
             resizeObserver = new ResizeObserver(() => {
@@ -165,9 +146,6 @@ export function useWordLineReveal(
         };
       });
 
-      // mm.revert() invokes the mm.add() inner cleanup above (which sets
-      // cancelled = true); useGSAP does not own the matchMedia registry,
-      // so tear it down on unmount.
       return () => {
         mm.revert();
       };

@@ -1,16 +1,9 @@
-/* ============================================================
-   CASE STUDY · PULL — scroll-pinned testimonial cinema.
-   Act 1: avatar + attribution, top-left (sets the speaker).
-   Act 2: quote build-up, top-right (closes on accented RESPECTS).
-   Act 3: quote resolution, bottom-left (diagonal counterpoint).
-   Driven by useScrubbedActsReveal.
-   ============================================================ */
+
 
 .pull {
     position: relative;
     padding: 0;
-    /* border-top: 2px solid var(--color-primary-text);
-    border-bottom: 2px solid var(--color-primary-text); */
+    
 }
 
 .figure {
@@ -25,15 +18,10 @@
     padding: 0 var(--spacing-nav-side);
     box-sizing: border-box;
     overflow: hidden;
-    /* The case-study Hero clones its image card to <body> with
-       position:fixed; z-index:5 and the exit timeline can leave it
-       lingering at top:0 once Pull's pin extends the document. Stamp
-       a higher z-index on Pull's pinned shell so its content always
-       paints above that lingering card. */
+    
     z-index: 10;
 }
 
-/* ── ACT 1 ────────────────────────────── top-left, small */
 .act1 {
     position: absolute;
     top: clamp(80px, 14vh, 160px);
@@ -71,13 +59,11 @@
     margin-bottom: 4px;
 }
 
-/* ── Quote container — semantic wrapper for screen readers */
 .quote {
     margin: 0;
     padding: 0;
 }
 
-/* Shared quote-act typography */
 .act2,
 .act3 {
     position: absolute;
@@ -93,7 +79,6 @@
     z-index: 1;
 }
 
-/* ── ACT 2 ─────────────────── top-right, right-aligned */
 .act2 {
     top: clamp(100px, 17vh, 180px);
     left: var(--spacing-nav-side);
@@ -101,7 +86,6 @@
     text-align: right;
 }
 
-/* ── ACT 3 ─────────────────── bottom-left, left-aligned */
 .act3 {
     bottom: clamp(100px, 17vh, 180px);
     left: var(--spacing-nav-side);
@@ -118,19 +102,12 @@
     font-style: italic;
 }
 
-/* Italic-glyph clipping override, scoped to Pull only.
-   splitTextIntoWords stamps every word with [data-split-word]; using
-   that attribute lets us reach the hashed staggerText `.word` masks
-   without coupling to their generated class names, and the .act2/.act3
-   ancestor selector keeps the override out of the seven other
-   case-study sections that consume the same staggerText module. */
 .act2 [data-split-word],
 .act3 [data-split-word] {
     overflow: clip;
     overflow-clip-margin: 0.15em;
 }
 
-/* ── Static fallback ──── mobile + reduced motion ──── */
 @media (max-width: 768px) {
     .pull {
         height: auto;
@@ -194,9 +171,6 @@
         bottom: auto;
     }
 
-    /* Desktop + reduced-motion: the giant pinned font stacked
-       vertically would overflow the section. Match the mobile
-       fallback's smaller typography. */
     .act2,
     .act3 {
         font-size: clamp(36px, 6vw, 72px);

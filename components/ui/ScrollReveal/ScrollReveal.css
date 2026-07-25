@@ -14,26 +14,23 @@
   display: inline-block;
 }
 
-/* Container for each line of the quote */
 .reveal-line {
   display: block;
-  margin-bottom: 2.2rem; /* Creates one line of vertical space between sentences */
-  white-space: normal;   /* Allow text to wrap naturally to prevent overflow on mobile */
+  margin-bottom: 2.2rem; 
+  white-space: normal;   
 }
 
 @media (min-width: 769px) {
   .reveal-line {
-    white-space: nowrap; /* Keep every line on a single horizontal line on desktop */
+    white-space: nowrap; 
   }
 }
 
-/* Dynamic theme-colored highlight word */
 .highlight-word {
   color: var(--color-accent-purple);
   transition: color 0.4s var(--ease-out-quart, ease-out);
 }
 
-/* Portal mask for sliding letter elements */
 .portal-mask {
   display: inline-flex;
   overflow: hidden;
@@ -47,7 +44,6 @@
   will-change: transform;
 }
 
-/* Glitch terminal output line */
 .glitch-line {
   font-size: clamp(0.75rem, 1.25vw, 1.0rem) !important;
   text-align: left;
@@ -55,16 +51,14 @@
   margin-top: 1.8rem;
   opacity: 0.8;
   font-family: var(--font-navbar), monospace;
-  white-space: pre-wrap !important; /* Enable console wrap for terminal comment */
+  white-space: pre-wrap !important; 
 }
 
-/* Typewriter letters */
 .typewriter-char {
   display: inline;
   white-space: pre;
 }
 
-/* Blinking terminal console block cursor */
 .terminal-cursor {
   display: inline-block;
   margin-left: 2px;

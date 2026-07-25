@@ -1,5 +1,4 @@
-/* Navbar Component
-   Reference: styles.css lines 111-169 */
+
 
 .navbar {
     position: fixed;
@@ -12,12 +11,7 @@
     align-items: center;
     z-index: var(--z-nav);
     transition: z-index 0s;
-    /* Local foreground token. Flips to white when an
-       [data-nav-theme="dark"] section crosses the navbar's y-band. The
-       indirection matters because GSAP writes inline `background-color`
-       on the hamburger lines during the close animation; inline styles
-       beat class selectors, so we point GSAP at this variable instead
-       and let the cascade decide the actual color. */
+    
     --nav-fg: var(--color-primary-text);
 }
 
@@ -55,8 +49,6 @@
     transition: background-color 0.3s var(--ease-out-expo);
 }
 
-/* Accent middle line stays at literal accent purple in both light and
-   dark navbar states — accent purple reads on both backdrops. */
 .hamburgerLineAccent {
     background-color: var(--color-accent-purple);
 }
@@ -66,7 +58,7 @@
     grid-template-areas: "stack";
     align-items: center;
     overflow: hidden;
-    margin-top: 2px; /* Slight alignment adjustment */
+    margin-top: 2px; 
 }
 
 .navTextItem {
@@ -86,18 +78,13 @@
 }
 
 .navTextClose {
-    color: var(--color-background); /* White when on teal overlay */
-    visibility: hidden; /* Start hidden */
+    color: var(--color-background); 
+    visibility: hidden; 
 }
 
 .navChar {
     display: inline-block;
 }
-
-/* ============================================
-   BRAND MARK (MA) - Center of navbar
-   Revealed via scroll animation from Hero
-   ============================================ */
 
 .navCenterWrapper {
     display: flex;
@@ -105,9 +92,7 @@
 }
 
 .navCenter {
-    /* position: absolute;
-    left: 50%;
-    transform: translateX(-50%); */
+    
     display: flex;
     align-items: center;
     font-family: var(--font-primary);
@@ -116,9 +101,7 @@
     color: var(--nav-fg);
     transition: color 0.3s var(--ease-out-expo);
     line-height: 0.85;
-    /* On home the Hero's scroll timeline reveals the brand by tweening
-       inline opacity 0 → 1. Off-home routes have no Hero, so the brand
-       must be visible by default. */
+    
     opacity: 1;
     pointer-events: none;
     letter-spacing: -6px;
@@ -168,15 +151,6 @@
     }
 }
 
-/* ============================================
-   DARK SECTION OVERRIDE
-   Driven by the IntersectionObserver in Navbar.tsx — sets
-   data-nav-theme="dark" on the navbar element while any
-   [data-nav-theme="dark"] section is crossing the navbar's y-band.
-   One variable flip propagates to every glyph that uses --nav-fg.
-   Accent middle line + "A" letter + "." dot stay at accent purple
-   in both states (they read on both backdrops).
-   ============================================ */
 .navbar[data-nav-theme="dark"] {
     --nav-fg: #fff;
 }

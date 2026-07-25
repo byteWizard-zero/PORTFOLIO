@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './MobileBlockOverlay.module.css';
 
-// Telemetry check steps
 const telemetrySteps = [
   { pending: "Initiating hardware handshake...", done: "Hardware handshake successful." },
   { pending: "Analyzing matrix scale...", done: "Touch scale matches human profile." },
@@ -21,7 +20,7 @@ export function MobileBlockOverlay() {
   useEffect(() => {
     if (isChecked && step < telemetrySteps.length) {
       const timer = setTimeout(() => {
-        // Add the completed log and push next pending log in a single callback
+        
         setLogs(prev => {
           const updated = [...prev, `✓ ${telemetrySteps[step].done}`];
           if (step + 1 < telemetrySteps.length) {
@@ -36,7 +35,7 @@ export function MobileBlockOverlay() {
           }
           return next;
         });
-      }, 950); // Paced telemetry step intervals
+      }, 950); 
 
       return () => clearTimeout(timer);
     }
@@ -50,14 +49,12 @@ export function MobileBlockOverlay() {
 
   return (
     <div className={styles.mobileBlockOverlay} aria-hidden="false">
-      {/* Background ambient glows */}
+      
       <div className={styles.ambientGlowTeal} />
       <div className={styles.ambientGlowPurple} />
 
-      {/* Dynamic scanlines for CRT monitor texture */}
       <div className={styles.scanlines} />
 
-      {/* Floating telemetry headers */}
       <div className={styles.cornerStatsTopLeft}>
         SYS.STATUS: <span className={styles.blinkText}>BLOCKED</span>
       </div>
@@ -149,7 +146,7 @@ export function MobileBlockOverlay() {
                       rel="noopener noreferrer"
                       className={styles.proceedButton}
                       onClick={() => {
-                        // Reset captcha state after short delay on click
+                        
                         setTimeout(() => {
                           setShowCaptcha(false);
                           setIsChecked(false);

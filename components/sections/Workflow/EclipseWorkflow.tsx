@@ -1,13 +1,5 @@
 'use client';
 
-/* ============================================================
-   WORKFLOW · ECLIPSE renderer — markup shell
-   A ✦ eyebrow + step readout, a near-fullscreen eclipse scene (disc,
-   moon, crescent-masked names — all built imperatively by
-   useEclipseDriver), and a bottom-centred detail placard that crossfades
-   per active step.
-   ============================================================ */
-
 import { useRef } from 'react';
 import { content } from '@/data';
 import { useReducedMotion } from '@/lib/useReducedMotion';
@@ -40,7 +32,6 @@ export function EclipseWorkflow() {
           </span>
         </header>
 
-        {/* carries the step names to the imperative SVG-text names */}
         <span data-stepname data-names={stops.map((s) => s.name).join('|')} hidden />
 
         <svg

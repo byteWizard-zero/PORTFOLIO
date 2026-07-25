@@ -29,7 +29,6 @@ export function AboutPageLeetCodeStats() {
   const reducedMotion = useReducedMotion();
   const { hasEntered } = useTransition();
 
-  // Math for SVG circle path
   const solvedPercent = (totalSolved / totalQuestions) * 100;
   const radius = 50;
   const circumference = 2 * Math.PI * radius;
@@ -39,7 +38,6 @@ export function AboutPageLeetCodeStats() {
     if (!hasEntered) return;
     if (!sectionRef.current) return;
 
-    // 1. Animate radial progress ring
     gsap.fromTo(
       sectionRef.current.querySelector(`.${styles.radialIndicator}`),
       { strokeDashoffset: circumference },
@@ -55,7 +53,6 @@ export function AboutPageLeetCodeStats() {
       }
     );
 
-    // 2. Animate progress bars widths
     const bars = sectionRef.current.querySelectorAll(`.${styles.progressBar}`);
     bars.forEach((bar) => {
       const targetWidth = (bar as HTMLElement).style.width || "0%";
@@ -75,7 +72,6 @@ export function AboutPageLeetCodeStats() {
       );
     });
 
-    // 3. Fade/slide in grid cards
     gsap.fromTo(
       [
         sectionRef.current.querySelector(`.${styles.cardMain}`),
@@ -96,7 +92,6 @@ export function AboutPageLeetCodeStats() {
       }
     );
 
-    // 4. Counter ticking numbers animation
     const startRanking = Math.max(0, ranking - 150);
     const countTarget = { 
       solved: 0, 
@@ -146,8 +141,6 @@ export function AboutPageLeetCodeStats() {
       }
     });
 
-
-    // 5. 3D Tilt Hover effect on cardMain and cardBars
     const listeners: { element: HTMLElement; type: string; fn: EventListenerOrEventListenerObject }[] = [];
     
     if (!reducedMotion) {
@@ -232,7 +225,7 @@ export function AboutPageLeetCodeStats() {
         </div>
 
         <div className={styles.contentGrid}>
-          {/* Left Column: Radial progress & overall ranking */}
+          
           <div className={styles.cardMain}>
             <div className={styles.radialContainer}>
               <svg className={styles.radialSvg} viewBox="0 0 120 120">
@@ -280,7 +273,6 @@ export function AboutPageLeetCodeStats() {
             </div>
           </div>
 
-          {/* Right Column: Easy, Medium, Hard breakdown bars */}
           <div className={styles.cardBars}>
             <div className={styles.barGroup} data-difficulty="easy">
               <div className={styles.barHead}>

@@ -2,19 +2,16 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function GET() {
-  
-  // Current time in IST (offset: UTC +5.5 hours)
+
   const now = new Date();
   const utc = now.getTime() + now.getTimezoneOffset() * 60000;
   const istTime = new Date(utc + 3600000 * 5.5);
-  
-  // Robust year/day calculation
+
   const start = new Date('2007-04-07T00:00:00+05:30');
   let years = istTime.getFullYear() - start.getFullYear();
-  
-  // Adjust if anniversary hasn't happened yet this year
+
   const currentAnniversary = new Date(start.getFullYear() + years, start.getMonth(), start.getDate(), 0, 0, 0);
-  // Match timezone offsets
+  
   const anniversaryEpoch = currentAnniversary.getTime();
   
   if (istTime.getTime() < anniversaryEpoch) {
@@ -32,7 +29,6 @@ export async function GET() {
   const uptimeStr = `uptime: ${years} years, ${days} days, ${hours} hours, ${minutes} mins, ${seconds} secs, 1 active developer`;
   const loadStr = `load average: 0.18, 0.42, 0.99`;
 
-  // SVG representation simulating code block font and styling
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="650" height="48" viewBox="0 0 650 48">
   <style>
     .terminal-text {

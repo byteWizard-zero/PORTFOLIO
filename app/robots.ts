@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { siteMetadata } from '@/data';
 
-// Required for output: 'export' — emits a static robots.txt at build time.
 export const dynamic = 'force-static';
 
 export default function robots(): MetadataRoute.Robots {

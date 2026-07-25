@@ -1,17 +1,11 @@
-/* Services V2 — tuning-dial.
-   Ported from services-stack-drum-dial-v3.html (root reference file).
-   Tokens consumed from styles/variables.css; --color-rule + --gap-px are
-   section-local. */
+
 
 .wrapper {
   --color-rule: rgba(27, 32, 40, 0.12);
   --gap-px: 220px;
   position: relative;
   z-index: var(--z-above);
-  /* Projects below uses margin-top: -315px (originally tuned for Philosophy's
-     parallax exit; V1 Services absorbs the same pull). Mirror that buffer
-     proportionally to viewport so the spacing scales with the pinned section's
-     1vh height rather than being a fixed px value tuned for one viewport. */
+  
   margin-bottom: 35vh;
 }
 
@@ -21,9 +15,7 @@
 
 .shell {
   position: relative;
-  /* Stable viewport-relative size on the trigger element so its bounding rect
-     on a live window.resize is independent of the GSAP-inserted pin-spacer.
-     Mirrors Philosophy/Archive's .section { min-height: 100vh }. */
+  
   min-height: 100vh;
 }
 
@@ -32,21 +24,14 @@
   overflow: hidden;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  /* Transparent so the layout-level <InteractiveBackground /> shows through. */
+  
   background: transparent;
 }
 
-/* Base meta-label styling now lives in the shared <MetaLabel> component. */
-
-/* Static fallback only — adds margin around the meta label since it sits
-   outside the .pin grid that normally positions it. */
 .stackMetaLabel {
   margin: 64px 8% 24px;
 }
 
-/* TOP — metaLabel + (lede, bigword) stacked, left-aligned. metaLabel sits
-   flush against the bigword's cap height (no inter-row gap); inside .topRow,
-   the lede is still spaced from the bigword via .topRow's own gap. */
 .top {
   display: flex;
   flex-direction: column;
@@ -74,13 +59,7 @@
   color: var(--color-primary-text);
   text-align: left;
   white-space: nowrap;
-  /* Optical-edge alignment: PP Neue Montreal's left side bearing scales with
-     font-size (~5px at 104px font), so without compensation the bigword's
-     visible glyph stem sits ~5px right of the lede's stem at stacked
-     layouts, looking misaligned. A negative em-based margin-left hangs
-     the entire .word box left so the optical edges line up across all
-     clamp sizes. margin-left is preferred over text-indent because the
-     latter inherits into the inline-block letter masks and double-applies. */
+  
   margin-left: -0.022em;
 }
 
@@ -100,7 +79,6 @@
   color: var(--color-accent-purple);
 }
 
-/* Case-study-style lede — word-mask reveal animation. */
 .lede {
   flex: 0 1 38ch;
   max-width: 38ch;
@@ -111,22 +89,9 @@
   color: var(--color-text-muted-strong, rgba(27, 32, 40, 0.8));
 }
 
-/* Below ~1600px the bigword (white-space:nowrap, ~67vw wide) crowds the
-   lede into a narrow column where it wraps to many lines. With
-   `align-items: flex-end`, the bigword then bottom-anchors to the lede's
-   tall flex row, producing visible empty space between the metaLabel and
-   the bigword. Switch to a column stack so the bigword sits flush below
-   the metaLabel and the lede flows underneath at its content height.
-
-   Note on flex-basis: in column flex the basis is height, not width. The
-   base `.lede` rule's `flex: 0 1 38ch` would otherwise force the lede to
-   ~327px tall (38ch resolved), eating dial space. `flex: 0 0 auto` here
-   makes the lede size to its intrinsic content height. */
 @media (max-width: 1599px) {
   .top {
-    /* Top padding must clear the fixed Navbar hamburger and leave breathing
-       room above the bigword; bottom padding stays tight since the dial
-       sits directly below. */
+    
     padding-top: clamp(88px, 14vh, 136px);
     padding-bottom: clamp(8px, 1.5vh, 16px);
   }
@@ -141,10 +106,7 @@
     flex: 0 0 auto;
     max-width: 60ch;
     width: 100%;
-    /* Restore the 8px bottom margin from the base rule. The column-stack
-       override resets it, but the breathing room between lede and the dial
-       below still matters here just as it did between lede and the section
-       edge in the row layout. */
+    
     margin: 0 0 8px 0;
   }
 }
@@ -166,7 +128,6 @@
   will-change: transform;
 }
 
-/* CENTER — horizontal scrollable strip of tool tokens behind a needle. */
 .dialwrap {
   position: relative;
   overflow: hidden;
@@ -189,7 +150,6 @@
   bottom: 18%;
 }
 
-/* Vertical hairlines at intervals; thicker at zone boundaries. */
 .notches {
   position: absolute;
   inset: 0;
@@ -219,18 +179,13 @@
   width: 1.5px;
 }
 
-/* Tool labels along the dial. */
 .dialStrip {
   position: absolute;
   left: 0;
   top: 0;
   height: 100%;
   display: flex;
-  /* Stretch (not center) so each .dialCell fills the full strip height.
-     The meter bar (.dialBar) and the riding label (.dialTool) are anchored
-     to bottom: 18% to align with the lower dial-rule frame; cells must fill
-     the full strip height so those bottom-anchored children measure against
-     the band rather than collapsing to text height. */
+  
   align-items: stretch;
   will-change: transform;
 }
@@ -251,28 +206,13 @@
   z-index: 1;
   font-size: clamp(18px, 1.8vw, 26px);
   letter-spacing: -0.005em;
-  /* Switzer Variable (dial-only) so applyDial can morph the wght axis as the
-     meter bar grows. Falls back to the site grotesque if the variable face
-     hasn't loaded. The resting weight is set via the axis, not font-weight,
-     so the JS-written font-variation-settings is the single source of truth. */
+  
   font-family: 'Switzer Variable', var(--font-primary);
   font-variation-settings: 'wght' 400;
   color: var(--color-text-muted-strong, rgba(27, 32, 40, 0.8));
-  /* No transition: opacity + transform are written every scrub frame by
-     applyDial, so they track the scroll directly (the scrub itself is the
-     smoother). A transition here would low-pass the label behind its bar.
-     Same applies to font-variation-settings — it's scrubbed per frame. */
+  
 }
 
-/* Meter bar — a thin vertical accent rule that scales up (scaleY) toward the
-   centre needle, drawing a signal peak across the band. Uses the accent CSS
-   var (NOT hardcoded rgba) so both light and dark themes resolve correctly.
-   transform-origin: center bottom so scaleY grows the bar upward from the
-   lower rule; applyDial drives the scale + opacity per frame.
-   height is driven from BAR_MAX_FRACTION via the --bar-max-fraction custom
-   property (set once on mount in DialServicesV2) so the bar's resting height
-   and the JS label-ride math share a single source of truth — editing the
-   constant moves both together, with 0.42 as a safe fallback. */
 .dialBar {
   position: absolute;
   bottom: 18%;
@@ -288,9 +228,6 @@
   z-index: 1;
 }
 
-/* Needle — fixed vertical line + star caps at both ends. Insets top/bottom
-   so the caps don't get clipped by .dialwrap's overflow:hidden where they'd
-   otherwise meet .top and .zones. */
 .needle {
   position: absolute;
   left: 50%;
@@ -321,12 +258,9 @@
   transform: translate(-50%, 90%);
 }
 
-/* BOTTOM — progress strip showing the four zones with a sliding indicator. */
 .zones {
   display: none;
-  /* Column count comes from ZONES.length via inline --zone-count on this
-     element; the literal `4` here is a fallback only and must not be edited
-     to match `content.services.faces` — derivation lives in the TSX. */
+  
   grid-template-columns: repeat(var(--zone-count, 4), 1fr);
   border-top: 1px solid var(--color-rule);
   position: relative;
@@ -337,8 +271,7 @@
   top: 0;
   bottom: 0;
   left: 0;
-  /* width is set inline by DialServicesV2 from ZONES.length so the indicator
-     always spans exactly one zone cell; do not declare a fixed width here. */
+  
   background: var(--color-accent-purple);
   transform: translateX(0%);
   transition: transform 0.7s var(--ease-out-expo);
@@ -380,7 +313,6 @@
   color: var(--color-background);
 }
 
-/* Visually hidden but exposed to assistive tech. Matches Services' .srOnly. */
 .srOnly {
   position: absolute;
   width: 1px;
@@ -393,9 +325,6 @@
   border: 0;
 }
 
-/* Static stacked fallback rendered instead of the pinned dial when the user
-   prefers reduced motion or is on a coarse-pointer / small-screen device.
-   Mirrors StaticServices.tsx in the V1 section. */
 .stack {
   display: grid;
   gap: 64px;

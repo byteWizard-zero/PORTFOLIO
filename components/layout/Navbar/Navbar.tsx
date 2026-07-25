@@ -13,7 +13,7 @@ const INITIALS = content.welcomeScreen.initials;
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  // Separate state for z-index to keep navbar visible during close animation
+  
   const [keepElevated, setKeepElevated] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -23,23 +23,11 @@ export function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === '/';
 
-  // The brand mark's CSS default is opacity:0 because on home the Hero's
-  // scroll timeline animates inline opacity from 0 → 1. On every other
-  // route there's no Hero to drive it, so we tag the element with
-  // data-on-home and let CSS force opacity:1 there. The clearProps below
-  // wipes any inline opacity left behind by the Hero timeline so the CSS
-  // rule isn't shadowed when we land on a non-home route.
   useGSAP(() => {
     const brand = document.getElementById('navbar-brand');
     if (brand) gsap.set(brand, { clearProps: 'opacity' });
   }, { dependencies: [isHome] });
 
-  // Section-driven theme flip. While any [data-nav-theme="dark"] section
-  // crosses the navbar's y-band, set data-nav-theme="dark" on the navbar
-  // so the CSS dark-state overrides take over (white text/lines, accent
-  // purple unchanged). Direct attribute mutation — no React re-renders
-  // during scroll. Native IntersectionObserver runs off the main thread
-  // and only fires on intersection-change, not per frame.
   useEffect(() => {
     const nav = navRef.current;
     if (!nav || typeof IntersectionObserver === 'undefined') return;
@@ -55,17 +43,11 @@ export function Navbar() {
     const buildObserver = () => {
       observer?.disconnect();
       intersecting.clear();
-      // Reset attribute up-front so a rebuild that ends up with zero
-      // targets (e.g., a dark section unmounted) doesn't leave the
-      // navbar stuck in dark mode.
+
       applyTheme();
 
       const rect = nav.getBoundingClientRect();
-      // Clamp to >= 0: IntersectionObserver rejects rootMargin strings
-      // with negative px values ("--12px") as SyntaxError, which would
-      // silently kill the feature. Negative values are reachable on
-      // iOS mid-URL-bar-collapse or any breakpoint where the navbar
-      // sits outside the layout viewport.
+
       const top = Math.max(0, rect.top);
       const bottom = Math.max(0, window.innerHeight - rect.bottom);
       const rootMargin = `-${top}px 0px -${bottom}px 0px`;
@@ -110,7 +92,7 @@ export function Navbar() {
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => {
       if (!prev) {
-        // Opening menu - elevate navbar immediately
+        
         setKeepElevated(true);
       }
       return !prev;
@@ -123,11 +105,10 @@ export function Navbar() {
   }, []);
 
   const handleCloseComplete = useCallback(() => {
-    // Menu close animation is done, safe to lower z-index
+    
     setKeepElevated(false);
   }, []);
 
-  // Initial navbar animation
   useGSAP(() => {
     if (!navRef.current) return;
 
@@ -151,31 +132,25 @@ export function Navbar() {
     );
   }, { scope: navRef });
 
-  // Hamburger morph animation
   useGSAP(() => {
     if (!menuButtonRef.current || hamburgerLinesRef.current.length < 3) return;
 
     const [line1, line2, line3] = hamburgerLinesRef.current;
-    
-    // Select text elements
+
     const menuChars = menuButtonRef.current.querySelectorAll(`.${styles.navTextMenu} .${styles.navChar}`);
     const closeChars = menuButtonRef.current.querySelectorAll(`.${styles.navTextClose} .${styles.navChar}`);
     const closeTextItem = menuButtonRef.current.querySelector(`.${styles.navTextClose}`);
 
-    // Kill any running animations to prevent conflicts
     gsap.killTweensOf([line1, line2, line3, menuChars, closeChars, closeTextItem]);
 
     const brandWrapper = brandWrapperRef.current;
 
     if (isMenuOpen) {
-      // === OPEN STATE ===
 
-      // Hide brand mark
       if (brandWrapper) {
         gsap.to(brandWrapper, { opacity: 0, duration: 0.3, ease: 'power2.in' });
       }
 
-      // 1. Hamburger Morph to X
       gsap.to(line1, {
         rotation: 45,
         y: 8,
@@ -197,7 +172,6 @@ export function Navbar() {
         ease: 'power2.out',
       });
 
-      // 2. Text Animation: MENU exits up, CLOSE enters from down
       if (closeTextItem) gsap.set(closeTextItem, { visibility: 'visible' });
       
       gsap.to(menuChars, {
@@ -221,17 +195,11 @@ export function Navbar() {
       );
 
     } else {
-      // === CLOSED STATE ===
 
-      // Show brand mark (delayed until menu curtain retracts)
       if (brandWrapper) {
         gsap.to(brandWrapper, { opacity: 1, duration: 0.3, ease: 'power2.out', delay: 0.5 });
       }
 
-      // 1. Hamburger Morph back to parallel lines.
-      // Animate back to the CSS token, then clearProps so the cascade
-      // owns the color from here on — protects against a future GSAP
-      // build resolving var() to a stale RGB snapshot mid-tween.
       gsap.to(line1, {
         rotation: 0,
         y: 0,
@@ -256,8 +224,6 @@ export function Navbar() {
         onComplete: () => { gsap.set(line3, { clearProps: 'backgroundColor' }); },
       });
 
-      // 2. Text Animation: CLOSE exits down, MENU enters from up
-      // Ensure CLOSE text remains visible for the exit animation
       if (closeTextItem) gsap.set(closeTextItem, { visibility: 'visible' });
 
       gsap.to(closeChars, {

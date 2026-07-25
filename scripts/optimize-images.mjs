@@ -1,13 +1,4 @@
-// Optimize portfolio rasters to visually-lossless WebP.
-//
-// Walks public/images/{work,projects} for PNG/JPEG sources and writes a sibling
-// .webp: capped at 2880px wide (never upscaled) at quality 88. For the UI
-// screenshots in this project that is perceptually identical to the source at a
-// fraction of the bytes. Run with: `node scripts/optimize-images.mjs`
-// (add --delete to remove the original PNG/JPEG once the .webp is written).
-//
-// Static export forces next/image `unoptimized:true`, so pre-optimizing the
-// source files like this is the only place the win can happen.
+
 
 import { readdir, stat, unlink } from 'node:fs/promises';
 import { join, extname, dirname, basename } from 'node:path';

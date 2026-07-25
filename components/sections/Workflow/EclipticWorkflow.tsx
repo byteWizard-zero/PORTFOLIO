@@ -1,13 +1,5 @@
 'use client';
 
-/* ============================================================
-   WORKFLOW · ECLIPTIC renderer — markup shell
-   A ✦ eyebrow + step readout, a full-bleed edge-on orbit schematic
-   (built imperatively by useEclipticDriver), and a centred detail stack
-   over the sun showing the active step's name as big type, its title and
-   copy.
-   ============================================================ */
-
 import { useRef } from 'react';
 import { content } from '@/data';
 import { useReducedMotion } from '@/lib/useReducedMotion';

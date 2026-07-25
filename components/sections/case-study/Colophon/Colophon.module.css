@@ -1,6 +1,4 @@
-/* ============================================================
-   CASE STUDY · COLOPHON — credits + studio bio (paper bg).
-   ============================================================ */
+
 
 .colophon {
     padding: clamp(80px, 12vh, 140px) var(--spacing-nav-side);
@@ -21,7 +19,7 @@
 }
 
 .eyebrow {
-    /* margin: 0 0 clamp(20px, 3vw, 36px); */
+    
 }
 
 .title {
@@ -34,7 +32,6 @@
     color: var(--color-accent-purple);
 }
 
-/* ---------- CREDITS ---------- */
 .credits {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -74,7 +71,6 @@
     font-size: 16px;
 }
 
-/* ---------- STUDIO BIO ---------- */
 .bio p {
     margin: 0 0 1.2em;
     max-width: 38ch;
@@ -129,7 +125,6 @@
     background: transparent;
 }
 
-/* ---------- RESPONSIVE ---------- */
 @media (max-width: 1100px) {
     .inner {
         grid-template-columns: 1fr;

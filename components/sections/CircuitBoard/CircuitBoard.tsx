@@ -19,9 +19,9 @@ interface ComponentNode {
 interface Wire {
   id: string;
   fromNodeId: string;
-  fromPin: number; // Always 0 for 1-output nodes
+  fromPin: number; 
   toNodeId: string;
-  toPin: number;   // 0 or 1 for inputs
+  toPin: number;   
 }
 
 export function CircuitBoard() {
@@ -36,8 +36,7 @@ export function CircuitBoard() {
 
   const workbenchRef = useRef<HTMLDivElement>(null);
   const logsBodyRef = useRef<HTMLDivElement>(null);
-  // Stable ID counter — replaces Date.now() in render, which is impure and
-  // can produce non-deterministic IDs across concurrent renders.
+
   const idCounterRef = useRef(0);
   const nextId = (prefix: string) => `${prefix}-${++idCounterRef.current}`;
 
@@ -48,15 +47,12 @@ export function CircuitBoard() {
     setLogs((prev) => [...prev, `[${timestamp}] ${msg}`].slice(-25));
   };
 
-  // Auto-scroll logs
   useEffect(() => {
     if (logsBodyRef.current) {
       logsBodyRef.current.scrollTop = logsBodyRef.current.scrollHeight;
     }
   }, [logs]);
 
-  // Presets seeding — declared before the mount useEffect that calls
-  // loadHalfAdderPreset, so the function is defined when the effect runs.
   const loadHalfAdderPreset = () => {
     playSweep();
     const adderNodes: ComponentNode[] = [
@@ -109,7 +105,6 @@ export function CircuitBoard() {
     addLog(`[SYSTEM] Loaded SR Latch Memory Preset.`);
   };
 
-  // Initial Logs + default preset seed
   useEffect(() => {
     setMounted(true);
     setLogs([
@@ -117,7 +112,7 @@ export function CircuitBoard() {
       `[SYSTEM] Workbench grid initialized. Dynamic propagation active.`,
       `[TUTORIAL] Drag gates from toolbox, click output pins, and link them to input pins.`
     ]);
-    loadHalfAdderPreset(); // Default seed
+    loadHalfAdderPreset(); 
 
     return () => {
       window.dispatchEvent(new CustomEvent('canvas-hover-leave'));
@@ -125,7 +120,6 @@ export function CircuitBoard() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Real-Time Propagation Loop
   useEffect(() => {
     if (nodes.length === 0) return;
 
@@ -134,21 +128,17 @@ export function CircuitBoard() {
     let iterations = 0;
     const maxIterations = 35;
 
-    // Fixed-point iteration loop to allow feedback loops (latches) to resolve
     while (changed && iterations < maxIterations) {
       changed = false;
       iterations++;
 
-      // 1. Resolve inputs for each node based on wires
       for (const node of currentNodes) {
-        if (node.type === 'switch') continue; // Inputs are toggled manually
+        if (node.type === 'switch') continue; 
 
         const originalInputs = [...node.inputs];
-        
-        // Clear inputs first
+
         node.inputs = node.inputs.map(() => false);
 
-        // Find incoming connections
         const incomingWires = wires.filter((w) => w.toNodeId === node.id);
         for (const wire of incomingWires) {
           const sourceNode = currentNodes.find((n) => n.id === wire.fromNodeId);
@@ -157,13 +147,11 @@ export function CircuitBoard() {
           }
         }
 
-        // Check if inputs actually changed
         if (node.inputs.some((val, idx) => val !== originalInputs[idx])) {
           changed = true;
         }
       }
 
-      // 2. Compute outputs based on gate logic
       for (const node of currentNodes) {
         const originalOutput = node.output;
 
@@ -187,7 +175,7 @@ export function CircuitBoard() {
             node.output = !(node.inputs[0] || node.inputs[1]);
             break;
           case 'led':
-            node.output = node.inputs[0]; // LED state mirrors input
+            node.output = node.inputs[0]; 
             break;
           default:
             break;
@@ -199,7 +187,6 @@ export function CircuitBoard() {
       }
     }
 
-    // Check for changes to apply to state
     const nodesChanged = JSON.stringify(nodes) !== JSON.stringify(currentNodes);
     if (nodesChanged) {
       setNodes(currentNodes);
@@ -207,7 +194,7 @@ export function CircuitBoard() {
       if (iterations >= maxIterations) {
         addLog(`[WARNING] Oscillatory feedback loop detected! Halted propagation.`);
       } else {
-        // Log LED activations
+        
         currentNodes.forEach((n) => {
           const oldNode = nodes.find((prevNode) => prevNode.id === n.id);
           if (n.type === 'led' && oldNode && n.output !== oldNode.output) {
@@ -218,7 +205,6 @@ export function CircuitBoard() {
     }
   }, [wires, nodes]);
 
-  // Create component node helper
   const addComponent = (type: ComponentNode['type']) => {
     playClick();
     const id = nextId('node');
@@ -242,7 +228,6 @@ export function CircuitBoard() {
     addLog(`[SPAWN] Added component: ${newNode.label}`);
   };
 
-  // Toggle Switch state
   const handleToggleSwitch = (nodeId: string) => {
     playClick();
     setNodes((prev) =>
@@ -257,12 +242,11 @@ export function CircuitBoard() {
     );
   };
 
-  // Handle Pin Click (Connections creation)
   const handlePinClick = (nodeId: string, isOutput: boolean, pinIndex: number) => {
     playClick();
 
     if (!activePin) {
-      // First click: Must start from an output pin to follow direction flow
+      
       if (!isOutput) {
         addLog(`[ERROR] Connections must start from an OUTPUT pin.`);
         return;
@@ -270,7 +254,7 @@ export function CircuitBoard() {
       setActivePin({ nodeId, isOutput, pinIndex });
       addLog(`[CONNECT] Selected output pin from node... click input pin to connect.`);
     } else {
-      // Second click: Must end on an input pin
+      
       if (isOutput) {
         setActivePin(null);
         addLog(`[CONNECT] Connection cancelled (cannot link output to output).`);
@@ -283,7 +267,6 @@ export function CircuitBoard() {
         return;
       }
 
-      // Check if connection already exists
       const exists = wires.some((w) => w.toNodeId === nodeId && w.toPin === pinIndex);
       if (exists) {
         addLog(`[CONNECT] Input pin already has a connection. Remove first.`);
@@ -305,7 +288,6 @@ export function CircuitBoard() {
     }
   };
 
-  // Drag and Drop handlers
   const handleNodeMouseDown = (e: React.MouseEvent, id: string) => {
     if (e.target instanceof HTMLButtonElement || e.target instanceof SVGCircleElement) return;
     
@@ -331,7 +313,6 @@ export function CircuitBoard() {
     const x = e.clientX - rect.left - dragOffset.x;
     const y = e.clientY - rect.top - dragOffset.y;
 
-    // Constrain to workbench bounds
     const boundedX = Math.max(20, Math.min(rect.width - 120, x));
     const boundedY = Math.max(20, Math.min(rect.height - 80, y));
 
@@ -351,9 +332,8 @@ export function CircuitBoard() {
     const node = nodes.find((n) => n.id === selectedNodeId);
     if (!node) return;
 
-    // Delete node
     setNodes((prev) => prev.filter((n) => n.id !== selectedNodeId));
-    // Delete wires connected to node
+    
     setWires((prev) => prev.filter((w) => w.fromNodeId !== selectedNodeId && w.toNodeId !== selectedNodeId));
     setSelectedNodeId(null);
     addLog(`[DELETE] Removed component: ${node.label}`);
@@ -368,11 +348,9 @@ export function CircuitBoard() {
     addLog(`[SYSTEM] Workbench cleared.`);
   };
 
-  // Presets are now declared above the mount useEffect (see lines above).
-
   return (
     <main className={styles.boardContainer}>
-      {/* Top Header Controls */}
+      
       <div className={styles.header}>
         <div className={styles.headerTitleGroup}>
           <TransitionLink 
@@ -391,7 +369,7 @@ export function CircuitBoard() {
       </div>
 
       <div className={styles.designerGrid}>
-        {/* Toolbox column */}
+        
         <div className={styles.toolboxPanel}>
           <h2 className={styles.panelTitle}>Toolbox</h2>
           <div className={styles.toolboxGroup}>
@@ -438,7 +416,6 @@ export function CircuitBoard() {
           </div>
         </div>
 
-        {/* Workbench central column */}
         <div 
           ref={workbenchRef}
           className={styles.workbenchPanel}
@@ -452,9 +429,9 @@ export function CircuitBoard() {
             window.dispatchEvent(new CustomEvent('canvas-hover-leave'));
           }}
         >
-          {/* SVG canvas connections and grids */}
+          
           <svg className={styles.svgCanvas}>
-            {/* Grid Pattern */}
+            
             <defs>
               <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
                 <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(255, 255, 255, 0.04)" strokeWidth="1" />
@@ -462,23 +439,20 @@ export function CircuitBoard() {
             </defs>
             <rect width="100%" height="100%" fill="url(#grid)" />
 
-            {/* SVG Wires (Curved lines) */}
             {mounted && wires.map((wire) => {
               const fromNode = nodes.find((n) => n.id === wire.fromNodeId);
               const toNode = nodes.find((n) => n.id === wire.toNodeId);
               if (!fromNode || !toNode) return null;
 
-              // Node pinout coordinate calculations
               const startX = fromNode.x + 85; 
               const startY = fromNode.y + 25; 
 
               const endX = toNode.x - 5;
-              // If node has 2 inputs, split them vertically
+              
               const toPinCount = toNode.inputs.length;
               const inputSpacing = toPinCount > 1 ? 16 : 0;
               const endY = toNode.y + 25 + (wire.toPin === 0 ? -inputSpacing/2 : inputSpacing/2);
 
-              // Control points for cubic bezier curves
               const cp1X = startX + 50;
               const cp1Y = startY;
               const cp2X = endX - 50;
@@ -489,7 +463,7 @@ export function CircuitBoard() {
 
               return (
                 <g key={wire.id}>
-                  {/* Background thicker line for click hit-box / shadow glow */}
+                  
                   <path 
                     d={pathData} 
                     fill="none" 
@@ -497,7 +471,7 @@ export function CircuitBoard() {
                     strokeWidth="8"
                     className={styles.wireGlow}
                   />
-                  {/* Active telemetry wire */}
+                  
                   <path 
                     d={pathData} 
                     fill="none" 
@@ -511,7 +485,6 @@ export function CircuitBoard() {
             })}
           </svg>
 
-          {/* Render draggable Component Nodes */}
           {mounted && nodes.map((node) => {
             const isSelected = selectedNodeId === node.id;
             const hasOutputs = node.type !== 'led';
@@ -524,7 +497,7 @@ export function CircuitBoard() {
                 style={{ left: node.x, top: node.y }}
                 onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
               >
-                {/* Node Inputs pins */}
+                
                 <div className={styles.inputContainer}>
                   {Array.from({ length: inputCount }).map((_, idx) => {
                     const isConnected = wires.some((w) => w.toNodeId === node.id && w.toPin === idx);
@@ -541,7 +514,6 @@ export function CircuitBoard() {
                   })}
                 </div>
 
-                {/* Node Center Label */}
                 <div className={styles.nodeBody}>
                   {node.type === 'switch' ? (
                     <button 
@@ -559,7 +531,6 @@ export function CircuitBoard() {
                   <span className={styles.nodeTitle}>{node.label}</span>
                 </div>
 
-                {/* Node Output pin */}
                 {hasOutputs && (
                   <button
                     type="button"
@@ -575,9 +546,8 @@ export function CircuitBoard() {
           })}
         </div>
 
-        {/* Presets and Logs right panel */}
         <div className={styles.telemetryPanel}>
-          {/* Preset Buttons */}
+          
           <div className={styles.presetGroup}>
             <h2 className={styles.panelTitle}>Load Circuit Presets</h2>
             <div className={styles.presetsList}>
@@ -590,7 +560,6 @@ export function CircuitBoard() {
             </div>
           </div>
 
-          {/* Telemetry Simulator Log */}
           <div className={styles.logsFooter}>
             <div className={styles.logsHeader}>
               <div className={styles.dotGroup}>

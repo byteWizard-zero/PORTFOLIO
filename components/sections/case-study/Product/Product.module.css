@@ -1,24 +1,13 @@
-/* ============================================================
-   CASE STUDY · PRODUCT — chapter-head with row layout (eyebrow
-   left, display H2 right) + reading column.
-   ============================================================ */
+
 
 .product {
     padding: clamp(80px, 12vh, 140px) var(--spacing-nav-side);
 }
 
-/* ---------- CHAPTER HEAD — eyebrow left, h2 right ---------- */
 .head {
     max-width: var(--canvas-max-width);
     margin: 0 auto clamp(40px, 6vw, 64px);
 }
-
-/* .row {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: clamp(24px, 4vw, 64px);
-    align-items: end;
-} */
 
 .eyebrow {
     margin: 0;
@@ -34,7 +23,6 @@
     color: var(--color-accent-purple);
 }
 
-/* ---------- READING COLUMN ---------- */
 .col {
     max-width: var(--read-col);
     margin: 0 auto;
@@ -55,12 +43,11 @@
 
 .col > p strong {
     font-weight: 700;
-    /* background: var(--highlight-strong); */
+    
     padding: 0 0.04em;
     color: var(--color-accent-purple);
 }
 
-/* ---------- RESPONSIVE — stack chapter-head ---------- */
 @media (max-width: 1100px) {
     .row {
         grid-template-columns: 1fr;

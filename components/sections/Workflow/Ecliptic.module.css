@@ -1,12 +1,4 @@
-/* ============================================================
-   WORKFLOW · ECLIPTIC renderer
-   The solar system seen near edge-on: nested flattened oval orbits, one
-   ✦ sun at the centre, a meridian pointer at the front (bottom). Bodies
-   revolve on scroll with front/back depth; the active step locks at the
-   front and reads as big PP Neue Montreal type in the centre. Geometry is
-   driven imperatively by useEclipticDriver. Accent palette (--wf-*) comes
-   from styles/variables.css.
-   ============================================================ */
+
 
 .ecliptic {
   position: relative;
@@ -24,7 +16,6 @@
   background: transparent;
 }
 
-/* ---- header ---- */
 .head {
   position: absolute;
   inset: clamp(84px, 11vh, 116px) clamp(28px, 5vw, 80px) auto;
@@ -46,7 +37,6 @@
   color: var(--wf-live-accent);
 }
 
-/* ---- schematic ---- */
 .schematic {
   position: absolute;
   inset: 0;
@@ -68,7 +58,6 @@
   transition: fill 0.4s var(--ease-out-expo);
 }
 
-/* ---- central ✦ sun ---- */
 .sunGlow {
   fill: var(--wf-live-accent);
   opacity: 0.12;
@@ -82,7 +71,6 @@
   transition: stroke 0.5s var(--ease-out-expo);
 }
 
-/* ---- planets ---- */
 .planet {
   --p-accent: var(--wf-teal);
 }
@@ -104,7 +92,6 @@
   opacity: 0.22;
 }
 
-/* ---- centred detail (over the sun) ---- */
 .detailWrap {
   position: absolute;
   left: 50%;
@@ -195,7 +182,6 @@
   }
 }
 
-/* ---- reduced-motion / static fallback ---- */
 .isStatic .viewport {
   height: auto;
   padding: 12vh 0 8vh;

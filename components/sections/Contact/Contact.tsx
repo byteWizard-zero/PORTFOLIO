@@ -9,13 +9,6 @@ import styles from './Contact.module.css';
 
 const c = content.contact;
 
-// Scrub-timeline pacing (in timeline units; each row consumes 1 unit).
-// Inside a row:
-//   chars   : 0.00 → 0.65        typewriter stagger
-//   inputs  : 0.25 → 0.65        input wrap fade-up
-//   borders : 0.30 → 0.80        underline width 0% → 100%
-//   chips   : 0.55 → 0.95        chip group fade-up
-//   gap     : 0.95 → 1.00        small breather before next row
 const TIMING = {
   CHAR_DURATION: 0.65,
   CHAR_STAGGER: 0.018,
@@ -31,14 +24,6 @@ const TIMING = {
   SUBMIT_DURATION: 0.5,
 } as const;
 
-// Render a static string as one <span> per character so each glyph can be
-// tweened independently. Whitespace is rendered as a non-breaking space so it
-// doesn't collapse when each char is `display: inline-block` and the parent
-// switches to `white-space: normal` at mobile breakpoints.
-//
-// NOTE (F-IN-01): key={i} (index) is used intentionally. The input is always
-// a static string from the JSON import (see SPLITS at module scope) — the
-// character list never reorders or partially updates, so index keys are safe.
 function splitChars(text: string): ReactNode {
   return Array.from(text).map((ch, i) => (
     <span key={i} className={styles.char}>
@@ -47,8 +32,6 @@ function splitChars(text: string): ReactNode {
   ));
 }
 
-// Content is a static JSON import — splits never change, so build them once
-// at module scope instead of memoizing per render.
 const SPLITS = {
   row1Lead: splitChars(`${c.row1.greeting} ${c.row1.recipient}${c.row1.afterName} `),
   row1Between: splitChars(` ${c.row1.between} `),
@@ -72,7 +55,6 @@ interface DevourParticle {
   maxLife: number;
 }
 
-// Pixel-perfect character bitmap sampler for 1:1 grain disintegration
 function sampleCharacterBitmap(
   char: string,
   fontFamily: string,
@@ -135,11 +117,8 @@ export function Contact() {
   const animFrameRef = useRef<number | null>(null);
   const isAnimatingRef = useRef(false);
 
-  // Maximum mailto: URL length before most OS / mail-client combinations
-  // silently fail (empirically ~2 000 chars; 1 800 gives comfortable headroom).
   const MAILTO_MAX_LENGTH = 1800;
 
-  // Sync canvas size with device pixel ratio
   useEffect(() => {
     const syncCanvasSize = () => {
       if (!canvasRef.current || !panelRef.current) return;
@@ -165,7 +144,6 @@ export function Contact() {
     return () => window.removeEventListener('resize', syncCanvasSize);
   }, []);
 
-  // Animation Loop for 1:1 Grain Noise Disintegration
   const startAnimationLoop = () => {
     if (isAnimatingRef.current) return;
     isAnimatingRef.current = true;
@@ -193,7 +171,6 @@ export function Contact() {
         p.x += p.vx;
         p.y += p.vy;
 
-        // Upward, downward, and rightward expansion physics (NO LEFT DRIFT)
         p.vx *= 0.92;
         p.vy *= 0.92;
         p.vx = Math.max(0, p.vx + Math.random() * 0.05);
@@ -209,7 +186,6 @@ export function Contact() {
           ctx.globalAlpha = p.alpha;
           ctx.fillStyle = p.color;
 
-          // Render exact 1x1 noise grain pixel
           ctx.fillRect(p.x, p.y, p.size, p.size);
 
           ctx.restore();
@@ -228,7 +204,6 @@ export function Contact() {
     animFrameRef.current = requestAnimationFrame(render);
   };
 
-  // Spawn Pixel-Perfect Grain Disintegration (UP, DOWN, RIGHT only — no leftward drift)
   const handleInputBackspace = (char: string, inputEl: HTMLInputElement) => {
     if (reducedMotion || !panelRef.current || !canvasRef.current) return;
 
@@ -256,13 +231,12 @@ export function Contact() {
     const charLeft = (inputRect.left - panelRect.left) + Math.max(0, textWidthBefore - charWidth);
     const charTop = (inputRect.top - panelRect.top) + (inputRect.height - fontSize) / 2 - 2;
 
-    // Extract exact pixel bitmap of erased character
     const sampledPixels = sampleCharacterBitmap(char, fontFamily, fontSize, fontWeight);
 
     const newParticles: DevourParticle[] = [];
     for (let i = 0; i < sampledPixels.length; i++) {
       const sp = sampledPixels[i];
-      // Angle strictly restricted to right-facing semi-circle [-90deg, +90deg] (UP, DOWN, RIGHT)
+      
       const angle = (Math.random() - 0.5) * Math.PI;
       const speed = Math.random() * 2.2 + 0.5;
       const vx = Math.max(0.1, Math.cos(angle) * speed);
@@ -286,7 +260,6 @@ export function Contact() {
     startAnimationLoop();
   };
 
-  // Spawn Master Form Submission Grain Disintegration
   const spawnFormDevourParticles = () => {
     if (!panelRef.current || !formRef.current) return;
     const panelRect = panelRef.current.getBoundingClientRect();
@@ -450,13 +423,10 @@ export function Contact() {
       return;
     }
 
-    // 1. Trigger particle devouring swarm
     spawnFormDevourParticles();
 
-    // 2. Execute mail client directly
     window.location.href = href;
 
-    // 3. Reset form inputs so text devours cleanly into particles
     setName('');
     setCountry('');
     setEmail('');
@@ -474,11 +444,11 @@ export function Contact() {
       <h2 id="contact-heading" className={styles.srOnly}>Contact</h2>
 
       <div ref={panelRef} className={styles.panel}>
-        {/* Particle Canvas Overlay */}
+        
         <canvas ref={canvasRef} className={styles.devourCanvas} aria-hidden="true" />
 
         <form ref={formRef} className={styles.form} onSubmit={handleSubmit} noValidate>
-            {/* Row 1 — greeting + name + country */}
+            
             <div className={styles.row}>
               <span className={styles.text}>{SPLITS.row1Lead}</span>
               <RevealInput
@@ -498,7 +468,6 @@ export function Contact() {
               />
             </div>
 
-            {/* Row 2 — topic chips */}
             <div className={styles.row}>
               <span className={styles.text}>{SPLITS.row2Lead}</span>
               <div className={styles.chipGroup} role="group" aria-label="Topic">
@@ -513,7 +482,6 @@ export function Contact() {
               </div>
             </div>
 
-            {/* Row 3 — email + channel chips */}
             <div className={styles.row}>
               <span className={styles.text}>{SPLITS.row3Lead}</span>
               <RevealInput
@@ -538,7 +506,6 @@ export function Contact() {
               </div>
             </div>
 
-            {/* Row 4 — message */}
             <div className={styles.row}>
               <span className={styles.text}>{SPLITS.row4Lead}</span>
               <RevealInput
@@ -612,7 +579,7 @@ interface RevealInputProps {
   value: string;
   onChange: (v: string) => void;
   placeholder: string;
-  /** Optional override; defaults to `placeholder`. */
+  
   ariaLabel?: string;
   name: string;
   type?: string;
@@ -655,7 +622,6 @@ function RevealInput({
 
     measure();
 
-    // Re-measure after the custom font loads — initial paint uses fallback.
     if (typeof document !== 'undefined' && document.fonts?.ready) {
       let cancelled = false;
       document.fonts.ready
@@ -692,7 +658,7 @@ function RevealInput({
         autoComplete="off"
         style={!grow && width ? { width: `${width}px` } : undefined}
       />
-      {/* Animated underline — width drives 0% → 100% during scroll reveal. */}
+      
       <span className={styles.inputBorder} aria-hidden="true" />
     </span>
   );
@@ -705,15 +671,7 @@ interface ChipProps {
 }
 
 function Chip({ label, selected, onSelect }: ChipProps) {
-  // Two stacked layers (base + clone), each split into per-character spans.
-  // Base rests; clone sits at translateY(100%). On hover the base slides up
-  // off-canvas and the clone slides into place, with a per-char transition
-  // delay creating a left-to-right cascade. The clone is aria-hidden so it
-  // doesn't duplicate the accessible name; visible base spans concatenate
-  // into the button name automatically.
-  //
-  // NOTE (F-IN-01): key={i} on chars is intentional — chip labels come from
-  // the static JSON import (c.row2.options / c.row3.options) and never reorder.
+
   const chars = Array.from(label);
   return (
     <button

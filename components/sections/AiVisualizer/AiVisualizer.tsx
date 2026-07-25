@@ -138,7 +138,6 @@ export function AiVisualizer() {
   const inputRef = useRef<HTMLInputElement>(null);
   const inspectorRef = useRef<HTMLDivElement>(null);
 
-  // Smooth cross-fade transition switcher for Node Inspector contents
   useEffect(() => {
     const targetNodeId = hoveredNodeId;
 
@@ -164,24 +163,19 @@ export function AiVisualizer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hoveredNodeId, lockedRoute]);
 
-  // Apply dynamic lenis-prevent to scrollable containers
   useDynamicLenisPrevent(logsBodyRef);
   useDynamicLenisPrevent(outputConsoleRef);
 
-
-  // Play high-frequency stream token beep using native Web Audio
   const playTokenBeep = () => {
     // disabled
   };
 
-  // Auto-scroll the terminal logs internally (no page jumping)
   useEffect(() => {
     if (logsBodyRef.current) {
       logsBodyRef.current.scrollTop = logsBodyRef.current.scrollHeight;
     }
   }, [terminalLogs]);
 
-  // Auto-scroll the stream monitor output
   useEffect(() => {
     if (outputConsoleRef.current) {
       outputConsoleRef.current.scrollTop = outputConsoleRef.current.scrollHeight;
@@ -198,7 +192,6 @@ export function AiVisualizer() {
     setQuery(presetQuery);
   };
 
-  // Triggers API Call via Server Proxy
   const fetchModelResponse = async (model: string, prompt: string, isLordArtificer: boolean): Promise<string> => {
     const response = await fetch('/api/route-prompt', {
       method: 'POST',
@@ -218,7 +211,6 @@ export function AiVisualizer() {
   const routePrompt = async () => {
     if (isRouting || !query.trim()) return;
 
-    // Fallback limit checking: Truncate very long prompts
     let processedQuery = query;
     let isTruncated = false;
     if (query.length > 300) {
@@ -243,7 +235,6 @@ export function AiVisualizer() {
       });
     };
 
-    // Techy initialization logs
     setTerminalLogs([
       `[GATEWAY] Initializing classification pipeline...`,
       `[RESOLVER] DNS lookup for API endpoint resolved to v1beta.googleapis.com`,
@@ -256,7 +247,6 @@ export function AiVisualizer() {
       await addLogDeferred(`[WARNING] Query length exceeds playground budget. Truncating to 300 chars.`, 100);
     }
 
-    // Call dynamic classification API
     let targetScores = { code: 10, creative: 10, debug: 10 };
     let targetRoute: 'code' | 'creative' | 'debug' | 'generic' = 'generic';
     let modelName = 'gemini-2.5-flash';
@@ -293,7 +283,6 @@ export function AiVisualizer() {
           debug: scores.debug ?? 10
         };
 
-        // Determine highest score
         const maxVal = Math.max(targetScores.code, targetScores.creative, targetScores.debug);
         if (maxVal === targetScores.code) {
           targetRoute = 'code';
@@ -312,8 +301,7 @@ export function AiVisualizer() {
       } catch (e) {
         const errMsg = e instanceof Error ? e.message : 'Error';
         await addLogDeferred(`[WARNING] Server-side classification failed: ${errMsg}. Falling back to keyword heuristics...`, 100);
-        
-        // Fallback heuristics
+
         const lowerQuery = processedQuery.toLowerCase();
         if (
           lowerQuery.includes('rust') ||
@@ -353,7 +341,6 @@ export function AiVisualizer() {
       }
     }
 
-    // Animate intent scoring
     let frame = 0;
     const scorePromise = new Promise<void>((resolve) => {
       const scoreInterval = setInterval(() => {
@@ -421,7 +408,6 @@ pub fn sort() { ... }
 \`\`\`
 `;
 
-    // Call API or fallback
     let rawResponse = '';
     let isFallback = false;
     const startFetchTime = performance.now();
@@ -443,7 +429,6 @@ pub fn sort() { ... }
     const elapsedLatency = Math.round(performance.now() - startFetchTime);
     await addLogDeferred(`[GATEWAY] Stream established. Parsing reasoning and content blocks...`, 100);
 
-    // Parse <thinking> tags
     let thinkingBlock = '';
     let finalResponse = '';
 
@@ -463,9 +448,8 @@ pub fn sort() { ... }
       finalResponse = notice + finalResponse;
     }
 
-    // Typewriter streaming logic
     setTimeout(() => {
-      // 1. Type the thinking process inside the logs console first
+      
       setTerminalLogs((prev) => [...prev, `\n[THINKING PROCESS]`]);
       const thinkingLines = thinkingBlock.split('\n');
       let lineIdx = 0;
@@ -477,7 +461,7 @@ pub fn sort() { ... }
           playTokenBeep();
           setTimeout(printThinkingLines, 100);
         } else {
-          // 2. Stream final response outside thinking blocks in the Monitor
+          
           setTerminalLogs((prev) => [...prev, `[STREAM] Output stream open. Dispatching response...`]);
           
           let charIndex = 0;
@@ -492,7 +476,6 @@ pub fn sort() { ... }
             setOutputResponse(currentText);
             playTokenBeep();
 
-            // Telemetry updates
             const progressRatio = charIndex / textLength;
             setTelemetry({
               latency: isFallback ? Math.round(80 + progressRatio * 150) : elapsedLatency,
@@ -529,9 +512,8 @@ pub fn sort() { ... }
           </p>
         </div>
 
-        {/* Dashboard Grid */}
         <div className={styles.dashboard}>
-          {/* Left Panel: Query Input & Pipeline */}
+          
           <div className={styles.mainPanel}>
             <div className={styles.presets}>
               {PRESETS.map((p) => (
@@ -566,7 +548,6 @@ pub fn sort() { ... }
               </button>
             </div>
 
-            {/* Pipeline Network Canvas Container */}
             <div className={styles.pipelineContainer}>
               <div className={styles.pipelineArea}>
                 <svg className={styles.networkSvg} viewBox="0 0 500 240">
@@ -575,38 +556,31 @@ pub fn sort() { ... }
                       <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255, 255, 255, 0.04)" strokeWidth="1" />
                     </pattern>
                   </defs>
-                  
-                  {/* Grid overlay */}
+
                   <rect width="100%" height="100%" fill="url(#blueprint-grid)" rx="8" />
 
-                  {/* Connection lines (Base Layer) */}
-                  {/* Line: Input -> Router */}
                   <line
                     x1="50" y1="120" x2="160" y2="120"
                     className={`${styles.connLine} ${isRouting ? styles.activeConn : ''}`}
                   />
-                  
-                  {/* Route: Router -> Gemini 3.5 Flash (Code) */}
+
                   <path
                     d="M 190 120 Q 280 40, 370 40"
                     className={`${styles.connLine} ${activeRoute === 'code' ? styles.activeRouteCode : ''}`}
                     fill="none"
                   />
 
-                  {/* Route: Router -> Gemini 2.5 Flash (Creative) */}
                   <line
                     x1="190" y1="120" x2="370" y2="120"
                     className={`${styles.connLine} ${activeRoute === 'creative' ? styles.activeRouteCreative : ''}`}
                   />
 
-                  {/* Route: Router -> Gemini 3.1 Flash Lite (Debug) */}
                   <path
                     d="M 190 120 Q 280 200, 370 200"
                     className={`${styles.connLine} ${activeRoute === 'debug' ? styles.activeRouteDebug : ''}`}
                     fill="none"
                   />
 
-                  {/* Glowing Data Packets Flow (Overlay Layer) */}
                   {isRouting && activeRoute === 'idle' && (
                     <line x1="50" y1="120" x2="160" y2="120" className={styles.packetFlow} />
                   )}
@@ -629,8 +603,6 @@ pub fn sort() { ... }
                     </>
                   )}
 
-                  {/* Interactive Nodes */}
-                  {/* Node: Input */}
                   <g 
                     className={`${styles.interactiveNode} ${hoveredNodeId === 'input' ? styles.nodeHovered : ''}`}
                     onMouseEnter={() => setHoveredNodeId('input')}
@@ -641,7 +613,6 @@ pub fn sort() { ... }
                     <text x="50" y="148" textAnchor="middle" className={styles.nodeLabel}>Input</text>
                   </g>
 
-                  {/* Node: Router */}
                   <g
                     className={`${styles.interactiveNode} ${hoveredNodeId === 'router' ? styles.nodeHovered : ''}`}
                     onMouseEnter={() => setHoveredNodeId('router')}
@@ -651,7 +622,6 @@ pub fn sort() { ... }
                     <text x="165" y="124" textAnchor="middle" className={styles.routerLabel}>Router</text>
                   </g>
 
-                  {/* Node: Gemini 3.5 (Code) */}
                   <g
                     className={`${styles.interactiveNode} ${hoveredNodeId === 'code' ? styles.nodeHovered : ''} ${lockedRoute === 'code' ? styles.nodeLocked : ''}`}
                     onMouseEnter={() => setHoveredNodeId('code')}
@@ -668,7 +638,6 @@ pub fn sort() { ... }
                     </text>
                   </g>
 
-                  {/* Node: Gemini 2.5 (Creative) */}
                   <g
                     className={`${styles.interactiveNode} ${hoveredNodeId === 'creative' ? styles.nodeHovered : ''} ${lockedRoute === 'creative' ? styles.nodeLocked : ''}`}
                     onMouseEnter={() => setHoveredNodeId('creative')}
@@ -685,7 +654,6 @@ pub fn sort() { ... }
                     </text>
                   </g>
 
-                  {/* Node: Gemini 3.1 (Debug) */}
                   <g
                     className={`${styles.interactiveNode} ${hoveredNodeId === 'debug' ? styles.nodeHovered : ''} ${lockedRoute === 'debug' ? styles.nodeLocked : ''}`}
                     onMouseEnter={() => setHoveredNodeId('debug')}
@@ -704,7 +672,6 @@ pub fn sort() { ... }
                 </svg>
               </div>
 
-              {/* Node Inspector Metadata Panel */}
               <div ref={inspectorRef} className={styles.nodeInspector}>
                 {displayedNodeId && NODE_DETAILS[displayedNodeId] ? (
                   <div className={styles.inspectorActive}>
@@ -749,7 +716,6 @@ pub fn sort() { ... }
             </div>
           </div>
 
-          {/* Right Panel: Intent Scores & Response Monitor */}
           <div className={styles.monitorPanel}>
             <div className={styles.scoreBars}>
               <h4 className={styles.panelTitle}>Confidence Classification</h4>
@@ -785,7 +751,6 @@ pub fn sort() { ... }
               </div>
             </div>
 
-            {/* Response Area */}
             <div className={styles.monitorOutput}>
               <h4 className={styles.panelTitle}>Stream Monitor</h4>
               <div ref={outputConsoleRef} className={styles.outputConsole}>
@@ -796,7 +761,6 @@ pub fn sort() { ... }
                 )}
               </div>
 
-              {/* Telemetry Footer */}
               <div className={styles.telemetryGrid}>
                 <div className={styles.telemetryItem}>
                   <span className={styles.tLabel}>LATENCY</span>
@@ -819,7 +783,6 @@ pub fn sort() { ... }
           </div>
         </div>
 
-        {/* Console Logs Footer */}
         <div className={styles.logsFooter}>
           <div className={styles.logsHeader}>
             <div className={styles.dotGroup}>

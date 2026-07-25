@@ -1,9 +1,4 @@
-/* WorksIndex
- *
- * The rows container. Dim-other-rows is now driven by a `dimmed` prop passed
- * down to WorksRow — see WorksRow.module.css's `[data-dim='true']` rule.
- * This module stays purely structural.
- */
+
 
 .root {
     position: relative;

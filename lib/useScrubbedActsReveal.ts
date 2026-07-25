@@ -4,17 +4,16 @@ import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { splitTextIntoWords, type SplitResult } from "@/lib/splitTextIntoWords";
 import staggerStyles from "./staggerText.module.css";
 
-// Scrubbed three-act reveal tuning.
-const REVEAL_YPERCENT = 110; // initial offset of each word's inner span
-const ACT_SCRUB = 0.6; // scrub smoothing for both stage timelines
-const PIN_END = "+=180%"; // pin scrub range (% of viewport)
-const ACT1_START = "top 80%"; // Stage 1 pre-pin trigger start
-const ACT1_END = "top 10%"; // Stage 1 pre-pin trigger end
-const PIN_START = "top top"; // Stage 2 pin start
-const ACT_OFFSET = 0.55; // Act 3 entry on the pin timeline (0 → 1)
-const ACT1_STAGGER = 0.6; // total stagger window for Act 1 words
-const ACT2_STAGGER = 0.45; // total stagger window for Act 2 words
-const ACT3_STAGGER = 0.4; // total stagger window for Act 3 words
+const REVEAL_YPERCENT = 110; 
+const ACT_SCRUB = 0.6; 
+const PIN_END = "+=180%"; 
+const ACT1_START = "top 80%"; 
+const ACT1_END = "top 10%"; 
+const PIN_START = "top top"; 
+const ACT_OFFSET = 0.55; 
+const ACT1_STAGGER = 0.6; 
+const ACT2_STAGGER = 0.45; 
+const ACT3_STAGGER = 0.4; 
 
 interface UseScrubbedActsRevealOptions {
   scope: RefObject<HTMLElement | null>;
@@ -24,28 +23,6 @@ interface UseScrubbedActsRevealOptions {
   act3: RefObject<HTMLElement | null>;
 }
 
-// Three-stage scroll-driven reveal for the Pull testimonial.
-//
-//   Stage 1 — pre-pin: Act 1 (avatar + attribution) reveals as the
-//     section enters the viewport. By the time the section's top edge
-//     hits the viewport's top edge (pin start), Act 1 is fully shown.
-//
-//   Stage 2 — pinned: the sticky shell pins to the viewport.
-//     Act 2 (top-right quote build-up, closes on accented RESPECTS)
-//     rises word-by-word across the first ~half of the pin range,
-//     then Act 3 (bottom-left resolution) rises across the second
-//     half. Pin releases as Act 3 completes — no dead "empty pin" tail.
-//
-// pinType: "fixed" is required because this project uses Lenis on html
-// (the body has overflow-x: hidden which would otherwise hijack the
-// sticky scroll-ancestor). Same rationale as the case-study Dashboard.
-//
-// Triggers are created synchronously (no `document.fonts.ready` wait):
-// deferring would push the pin-spacer DOM insertion past the moment
-// other case-study ScrollTriggers (Hero, Dashboard) cached their
-// start/end positions, causing them to engage at the wrong scroll
-// positions. ScrollTrigger.refresh() is called after creation so any
-// triggers below Pull re-measure against the new document layout.
 export function useScrubbedActsReveal({
   scope,
   sticky,
@@ -100,7 +77,6 @@ export function useScrubbedActsReveal({
             opacity: 0,
           });
 
-          // ── Stage 1: Act 1 reveal (pre-pin) ──
           if (inners1.length) {
             const tl1 = gsap.timeline({
               scrollTrigger: {
@@ -121,11 +97,6 @@ export function useScrubbedActsReveal({
             });
           }
 
-          // ── Stage 2: pin + Act 2 → Act 3 reveal ──
-          // Timeline runs 0 → 1 across the pin scrub range. Act 2
-          // occupies the first half (0 → 0.5), Act 3 the second
-          // (0.55 → 1). The small gap lets Act 2's accented "RESPECTS"
-          // breathe before Act 3 picks up the resolution.
           if (inners2.length || inners3.length) {
             const tl2 = gsap.timeline({
               scrollTrigger: {
@@ -170,14 +141,6 @@ export function useScrubbedActsReveal({
             }
           }
 
-          // Pin-spacer insertion shifts every section below Pull down
-          // by ~180% of the viewport. Refresh forces other case-study
-          // ScrollTriggers (Hero, Dashboard, Toggle) to re-measure so
-          // they engage at the correct scroll positions. Deferred to
-          // the next frame so Hero's own setup (pin + exit timelines,
-          // card body-reparenting) has fully settled before refresh
-          // re-invalidates them — otherwise the exit timeline can
-          // leave the Hero card stuck at top:0 covering Pull.
           const refreshFrame = requestAnimationFrame(() => {
             ScrollTrigger.refresh();
           });
@@ -196,9 +159,6 @@ export function useScrubbedActsReveal({
         }
       );
 
-      // mm.revert() invokes the mm.add() inner cleanup above (killing
-      // triggers and releasing pin-spacers); useGSAP does not own the
-      // matchMedia registry, so tear it down on unmount.
       return () => {
         mm.revert();
       };

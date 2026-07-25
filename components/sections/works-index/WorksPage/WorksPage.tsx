@@ -20,11 +20,6 @@ export function WorksPage() {
   const [cursorHovered, setCursorHovered] = useState(false);
   const [cursorAccent, setCursorAccent] = useState<string | null>(null);
 
-  // Preview slider — same Toggle-pattern as /work2. Filters projects to
-  // those with a resolvable case-study hero image, then drives the slider by
-  // index. Latched on hover-end so the slider doesn't snap back to slot 0
-  // mid-hide. worksIndex.projects is a build-time JSON ref so this memo
-  // runs once.
   const previewEntries = useMemo<WorksPreviewEntry[]>(() => {
     return worksIndex.projects.flatMap((project) => {
       const cs = getCaseStudy(project.id);
@@ -50,8 +45,6 @@ export function WorksPage() {
   const reduced = useReducedMotion();
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  // Intro reveal — runs once after mount, gated by reduced-motion.
-  // Marquees self-gate reduced-motion inside WorksRowMarquee (own module).
   useEffect(() => {
     if (reduced) return undefined;
     const root = rootRef.current;
@@ -77,7 +70,6 @@ export function WorksPage() {
     return () => ctx.revert();
   }, [reduced]);
 
-  // Page-wide accent for the headline dot — kept in sync with the cursor.
   const rootStyle = cursorAccent ? cssVars({ '--accent': cursorAccent }) : undefined;
 
   const count = String(worksIndex.projects.length).padStart(2, '0');
@@ -87,8 +79,7 @@ export function WorksPage() {
       <main className={styles.main}>
         <section className={styles.intro}>
           <h1 className={styles.headline}>
-            {/* Per-glyph spans for the reveal stagger. The final glyph wears
-             *  <em> so the headline-dot ::after pseudo lands on it. */}
+            
             {Array.from(worksIndex.intro.headline).map((char, i, arr) => {
               const isLast = i === arr.length - 1;
               const key = `${char}-${i}`;
@@ -115,8 +106,7 @@ export function WorksPage() {
                 setPreviewIndex(idx);
                 setPreviewVisible(true);
               } else {
-                // Row without a case-study image — hide the preview but
-                // keep slider position latched so it doesn't snap.
+
                 setPreviewVisible(false);
               }
             } else {

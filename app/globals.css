@@ -1,15 +1,9 @@
-/* ============================================
-   GLOBAL STYLES - Zenith Soumya Portfolio
-   ============================================ */
 
-/* Import design tokens and fonts */
+
 @import '../styles/fonts.css';
 @import '../styles/variables.css';
 @import '../styles/animations.css';
 
-/* ============================================
-   RESET & BASE STYLES
-   ============================================ */
 *,
 *::before,
 *::after {
@@ -25,7 +19,6 @@ body {
     overflow-x: hidden;
 }
 
-/* Hide default cursor for custom cursor */
 @media (hover: hover) and (pointer: fine) {
     body {
         cursor: none;
@@ -33,8 +26,7 @@ body {
 }
 
 html {
-    /* Note: scroll-behavior removed - Lenis handles smooth scrolling.
-       CSS scroll-behavior can conflict with Lenis on anchor links and scrollTo() calls */
+    
     scrollbar-gutter: stable;
 }
 
@@ -47,15 +39,13 @@ body {
     text-rendering: optimizeLegibility;
     transition: background-color var(--duration-slow) var(--ease-out-quart),
                 color var(--duration-slow) var(--ease-out-quart);
-    
-    /* Enable text selection globally */
-    -webkit-user-select: text; /* Safari */
-    -moz-user-select: text; /* Firefox */
-    -ms-user-select: text; /* IE10+/Edge */
+
+    -webkit-user-select: text; 
+    -moz-user-select: text; 
+    -ms-user-select: text; 
     user-select: text;
 }
 
-/* Allow text selection in form inputs and textareas */
 input, textarea {
     -webkit-user-select: text;
     -moz-user-select: text;
@@ -63,9 +53,6 @@ input, textarea {
     user-select: text;
 }
 
-/* ============================================
-   TYPOGRAPHY UTILITIES
-   ============================================ */
 .text-purple {
     color: var(--color-accent-purple);
 }
@@ -78,23 +65,16 @@ input, textarea {
     color: var(--color-black);
 }
 
-/* ============================================
-   LINKS
-   ============================================ */
 a {
     color: inherit;
     text-decoration: none;
 }
 
-/* ============================================
-   IMAGES
-   ============================================ */
 img {
     max-width: 100%;
     height: auto;
     display: block;
-    
-    /* Prevent image selection and dragging */
+
     -webkit-user-drag: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -102,9 +82,6 @@ img {
     user-select: none;
 }
 
-/* ============================================
-   ACCESSIBILITY
-   ============================================ */
 .sr-only {
     position: absolute;
     width: 1px;
@@ -117,23 +94,15 @@ img {
     border-width: 0;
 }
 
-/* Focus visible for keyboard navigation */
 :focus-visible {
     outline: 2px solid var(--color-accent-purple);
     outline-offset: 2px;
 }
 
-/* Remove focus outline for mouse users */
 :focus:not(:focus-visible) {
     outline: none;
 }
 
-/* ============================================
-   CUSTOM SCROLLBAR
-   Modern, minimal scrollbar matching theme
-   ============================================ */
-
-/* Webkit browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -157,18 +126,15 @@ img {
     background: var(--color-primary-text);
 }
 
-/* Hide scrollbar corner */
 ::-webkit-scrollbar-corner {
     background: transparent;
 }
 
-/* Firefox */
 * {
     scrollbar-width: thin;
     scrollbar-color: var(--color-grid-line) transparent;
 }
 
-/* Firefox hover state via container */
 html {
     scrollbar-color: var(--color-grid-line) transparent;
 }
@@ -177,12 +143,6 @@ html:hover {
     scrollbar-color: var(--color-accent-purple) transparent;
 }
 
-
-/* ============================================
-   SECTION LAYERING
-   Content sections scroll over the fixed hero.
-   They need opaque backgrounds and higher z-index.
-   ============================================ */
 #philosophy ~ section {
     position: relative;
     z-index: var(--z-above);

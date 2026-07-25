@@ -19,7 +19,6 @@ interface MenuProps {
   onRevealStart?: () => void;
 }
 
-// Map navigation data to component format
 const menuLinks = navigation.mainLinks.map(link => ({
   label: link.label,
   href: link.href,
@@ -31,9 +30,6 @@ const socialLinks = navigation.socialLinks.map(link => ({
   href: link.href,
 }));
 
-
-
-// Custom easing matching Framer Motion [0.76, 0, 0.24, 1]
 const MENU_EASE = 'power4.inOut';
 
 export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuProps) {
@@ -47,14 +43,8 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
   const { triggerTransition } = useTransition();
   const { color: currentAccent } = useAccentColor();
 
-  // Lock body scroll when menu is open. Shared ref-counted lock so Menu,
-  // WelcomeScreen and TransitionProvider can't race each other for
-  // document.body.style.overflow.
   useScrollLock(isOpen);
 
-  // Tracks the deferred post-close scroll so it can be cancelled on unmount
-  // or before a new schedule (prevents scrolling a stale DOM after the menu
-  // is gone or reopened).
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     return () => {
@@ -65,14 +55,6 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
     };
   }, []);
 
-  // A11y: inert background, focus trap, focus restoration.
-  //
-  // - Apply `inert` to every direct child of <body> that isn't the menu so
-  //   Tab/AT can't reach background content behind the curtain.
-  // - On open, capture the previously-focused element (typically the hamburger)
-  //   and move focus to the first link inside the menu.
-  // - On close, restore focus to the captured element.
-  // - While open, Tab/Shift+Tab cycle focus inside the menu.
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -85,9 +67,6 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
           ? document.activeElement
           : null;
 
-      // Mark every body sibling other than the menu as inert. The Menu node
-      // lives somewhere in the tree under <body>; walk up to find which
-      // direct-child ancestor it belongs to and skip that one.
       const menuAncestor = (() => {
         let n: Node | null = menu;
         while (n && n.parentNode && n.parentNode !== document.body) n = n.parentNode;
@@ -98,22 +77,15 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
         if (!(child instanceof HTMLElement)) return;
         if (child === menuAncestor) return;
         if (child.hasAttribute('inert')) return;
-        // Keep the menu trigger's host (e.g. the navbar) interactive — its
-        // toggle button doubles as the close affordance while the menu is open.
+
         if (child.querySelector('[aria-controls="main-menu"]')) return;
-        // Floating controls (ThemeToggle, BackToTop) opt out via this attribute
-        // so they remain clickable on top of the menu overlay. `matches` covers
-        // the case where the body child IS the control (current shape);
-        // `querySelector` survives a future wrapper around the control.
+
         if (child.matches('[data-menu-passthrough]')) return;
         if (child.querySelector('[data-menu-passthrough]')) return;
         child.setAttribute('inert', '');
         inertedSiblings.push(child);
       });
 
-      // Move focus into the menu after the open animation starts so the
-      // first focusable element receives focus. RAF defers past the initial
-      // GSAP set() so the link is interactive.
       const focusFrame = requestAnimationFrame(() => {
         const firstLink = menu.querySelector<HTMLElement>(
           `.${styles.link}, .${styles.backButton}`,
@@ -121,7 +93,6 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
         firstLink?.focus({ preventScroll: true });
       });
 
-      // Focus trap.
       const FOCUSABLE_SELECTOR =
         'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"]), input:not([disabled]), textarea:not([disabled]), select:not([disabled])';
       const handleTrapKey = (e: KeyboardEvent) => {
@@ -154,14 +125,13 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
         cancelAnimationFrame(focusFrame);
         document.removeEventListener('keydown', handleTrapKey);
         inertedSiblings.forEach((el) => el.removeAttribute('inert'));
-        // Restore focus to whatever element opened the menu.
+        
         previouslyFocusedRef.current?.focus({ preventScroll: true });
         previouslyFocusedRef.current = null;
       };
     }
   }, [isOpen]);
 
-  // Handle escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen && !isAnimating.current) {
@@ -172,10 +142,6 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
 
-  // External close requests: passthrough floating controls (e.g. BackToTop)
-  // dispatch `menu:close` to request the menu fold up before their own action
-  // runs. Same in-flight guard as Escape so a request mid-animation is dropped
-  // rather than re-entering the open/close pipeline.
   useEffect(() => {
     const handleExternalClose = () => {
       if (isOpen && !isAnimating.current) onClose();
@@ -184,20 +150,17 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
     return () => document.removeEventListener('menu:close', handleExternalClose);
   }, [isOpen, onClose]);
 
-  // Animation effect
   useEffect(() => {
     if (!menuRef.current || !overlayRef.current || !linksContainerRef.current || !socialSectionRef.current) return;
 
-    // Left side elements
     const links = linksContainerRef.current.querySelectorAll(`.${styles.linkInner}`);
     const linkNumbers = linksContainerRef.current.querySelectorAll(`.${styles.linkNumber}`);
     if (links.length === 0) return;
 
-    // Right side elements (social section)
     const socialLabels = socialSectionRef.current.querySelectorAll(`.${styles.socialLabel}`);
     const socialLinks = socialSectionRef.current.querySelectorAll(`.${styles.socialLink}`);
     const locationText = socialSectionRef.current.querySelector(`.${styles.locationText}`);
-    // Kill any running animations
+    
     gsap.killTweensOf([
       menuRef.current, overlayRef.current, links, linkNumbers,
       socialLabels, socialLinks, locationText
@@ -206,28 +169,23 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
     isAnimating.current = true;
 
     if (isOpen) {
-      // === OPEN ANIMATION ===
 
-      // Show container
       gsap.set(menuRef.current, { visibility: 'visible' });
 
-      // Set initial states - Left side
       gsap.set(overlayRef.current, { clipPath: 'inset(0% 0% 100% 0%)' });
       gsap.set(links, { y: '110%' });
       gsap.set(linkNumbers, { opacity: 0, x: -20 });
 
-      // Set initial states - Right side (social section)
       gsap.set(socialLabels, { opacity: 0, x: 20 });
       gsap.set(socialLinks, { opacity: 0, y: 30 });
       gsap.set(locationText, { opacity: 0 });
-      // Create timeline
+      
       const tl = gsap.timeline({
         onComplete: () => {
           isAnimating.current = false;
         }
       });
 
-      // 1. Overlay clips in from top
       tl.to(overlayRef.current, {
         clipPath: 'inset(0% 0% 0% 0%)',
         duration: 0.7,
@@ -272,16 +230,11 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
       }, 0.7);
 
     } else {
-      // === CLOSE ANIMATION ===
 
-      // Freeze the current accent color on the overlay before changing CSS variable
-      // This ensures the curtain keeps its color while hero text gets the new color
       const currentColor = getComputedStyle(document.documentElement)
         .getPropertyValue('--color-accent-purple').trim();
       overlayRef.current.style.backgroundColor = currentColor;
 
-      // Trigger color change NOW - hero text will have new color when revealed
-      // But curtain keeps old color via inline style above
       onRevealStart?.();
 
       const tl = gsap.timeline({
@@ -289,17 +242,16 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
           if (menuRef.current) {
             gsap.set(menuRef.current, { visibility: 'hidden' });
           }
-          // Clear the inline style so it uses CSS variable again on next open
+          
           if (overlayRef.current) {
             overlayRef.current.style.backgroundColor = '';
           }
           isAnimating.current = false;
-          // Trigger callback after close animation completes
+          
           onCloseComplete?.();
         }
       });
 
-      // 2. Location text fades out
       tl.to(locationText, {
         opacity: 0,
         duration: 0.2,
@@ -351,10 +303,6 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
       return;
     }
 
-    // Route links (e.g. /about) navigate to a different page rather than
-    // scrolling within the current one. Hand them to the page-transition
-    // system so the curtain plays, mirroring TransitionLink. A click while
-    // already on that route just folds the menu up (no same-page transition).
     if (!href.startsWith('#')) {
       e.preventDefault();
       onClose();
@@ -368,14 +316,6 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
       return;
     }
 
-    // CR-01: the hash nav targets (#projects, #services, #contact)
-    // only exist on the home page. When the menu is opened from a
-    // case-study route (e.g. /work/tasktrox), Lenis can't resolve the
-    // selector against a DOM that doesn't contain those sections, so
-    // the unconditional preventDefault + scrollTo silently no-ops and
-    // the menu becomes dead. Detect cross-route and trigger the page
-    // transition to `/#hash` so the curtain plays on the way home; the
-    // anchor scroll then resolves naturally once the home page mounts.
     if (href.startsWith('#') && pathname !== '/') {
       e.preventDefault();
       onClose();
@@ -387,29 +327,20 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
       return;
     }
 
-    // On-home: preserve smooth-scroll behaviour.
     e.preventDefault();
     onClose();
-    // Delay scroll to allow menu close animation. Track the timer so a
-    // second open/close or an unmount cancels it — otherwise it fires
-    // against a stale DOM. Clear any pending one before scheduling anew.
+
     if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     scrollTimeoutRef.current = setTimeout(() => {
       scrollTimeoutRef.current = null;
       if (href === '#contact') {
-        // Contact's form reveals across a scrub-pinned range and is hidden at
-        // the panel top (progress 0). Pace the scroll in two phases so the form
-        // types in at the same speed as a manual scroll instead of racing past
-        // (see scrollToContactReveal). Track the phase-2 timeout for cleanup.
+
         scrollTimeoutRef.current = scrollToContactReveal(scrollTo) ?? null;
       } else if (href === '#projects') {
-        // Same problem as Contact: the first project's split is scrub-tied and
-        // closed at progress 0. Two-phase scroll plays it open at reading pace
-        // and parks on the open card (see scrollToProjectsReveal). Track the
-        // phase-2 timeout for cleanup.
+
         scrollTimeoutRef.current = scrollToProjectsReveal(scrollTo) ?? null;
       } else {
-        scrollTo(href, { duration: 1.8 }); // Lenis smooth scroll with custom duration
+        scrollTo(href, { duration: 1.8 }); 
       }
     }, 800);
   }, [onClose, scrollTo, pathname, triggerTransition, currentAccent]);
@@ -459,7 +390,7 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
                     rel="noopener noreferrer"
                     tabIndex={isOpen ? 0 : -1}
                   >
-                    {/* Base text - white, moves up on hover */}
+                    
                     <span className={styles.socialTextBase}>
                       {social.label.split('').map((char, index) => (
                         <span
@@ -471,7 +402,7 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
                         </span>
                       ))}
                     </span>
-                    {/* Clone text - teal, reveals from below on hover */}
+                    
                     <span className={styles.socialTextClone} aria-hidden="true">
                       {social.label.split('').map((char, index) => (
                         <span
@@ -512,7 +443,6 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
               </span>
             </p>
           </div>
-
 
         </aside>
       </div>

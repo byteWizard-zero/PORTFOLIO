@@ -1,15 +1,5 @@
 'use client';
 
-/* ============================================================
-   WORKFLOW · ECLIPTIC renderer — GSAP driver hook
-   The solar system seen near edge-on: nested flattened oval orbits with a
-   ✦ sun at the centre. Bodies revolve on scroll with front/back depth; the
-   active step swings to the front (bottom) meridian and locks. The scene is
-   built imperatively into the [data-schematic] SVG, then a single pinned
-   ScrollTrigger scrubs a 0..1 progress through `render`. Scroll position is
-   preserved when the pin is torn down (dev variant swap / unmount).
-   ============================================================ */
-
 import { useGSAP } from '@gsap/react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { STAR_PATH } from '@/components/ui/Star';
@@ -21,7 +11,7 @@ const PIN_VH = 3.8;
 const TAU = Math.PI * 2;
 const CX = 600;
 const CY = 350;
-const SUN_SCALE = 2.9; // ✦ scaled from the 24×24 STAR_PATH
+const SUN_SCALE = 2.9; 
 const BODY_R = 11;
 
 interface Orbit {
@@ -53,7 +43,7 @@ function ellipsePath(o: Orbit) {
 }
 
 interface DriverOptions {
-  /** One CSS color per step; its length is the step count. */
+  
   accents: string[];
   reducedMotion: boolean;
 }
@@ -75,25 +65,21 @@ export function useEclipticDriver(
       if (!N) return;
       const totalLabel = String(N).padStart(2, '0');
 
-      // flattened nested ovals (edge-on); outermost last
       const orbits: Orbit[] = [];
       for (let i = 0; i < N; i++) {
         const a = 220 + i * 58;
         orbits.push({ a, b: a * 0.5 });
       }
 
-      // active step locks at the front (bottom, nearest the viewer)
       const lockAngle = Math.PI / 2;
       const phi = (i: number, progress: number) => lockAngle + (progress * (N - 1) - i) * (TAU / N);
 
       svg.replaceChildren();
 
-      // ── orbit paths ──
       orbits.forEach((o) => {
         svg.appendChild(mk('path', { class: styles.ring, d: ellipsePath(o) }));
       });
 
-      // ── meridian pointer at the front (bottom) ──
       const botY = CY + orbits[N - 1].b;
       svg.appendChild(mk('line', { class: styles.meridian, x1: CX, y1: botY + 6, x2: CX, y2: botY + 30 }));
       svg.appendChild(
@@ -103,7 +89,6 @@ export function useEclipticDriver(
         }),
       );
 
-      // ── central ✦ sun ──
       svg.appendChild(mk('circle', { class: styles.sunGlow, cx: CX, cy: CY, r: 56 }));
       svg.appendChild(
         mk('path', {
@@ -113,7 +98,6 @@ export function useEclipticDriver(
         }),
       );
 
-      // ── orbiting bodies (one per step) ──
       const planets: SVGGElement[] = [];
       for (let i = 0; i < N; i++) {
         const g = mk('g', { class: styles.planet });
@@ -126,7 +110,7 @@ export function useEclipticDriver(
 
       const placeAt = (i: number, ph: number) => {
         const p = ellipsePoint(orbits[i], ph);
-        const depth = 0.82 + 0.4 * ((Math.sin(ph) + 1) / 2); // front (lower) = larger
+        const depth = 0.82 + 0.4 * ((Math.sin(ph) + 1) / 2); 
         planets[i].setAttribute('transform', `translate(${p.x.toFixed(2)} ${p.y.toFixed(2)}) scale(${depth.toFixed(3)})`);
       };
       const place = (i: number, progress: number) => placeAt(i, phi(i, progress));
@@ -146,8 +130,6 @@ export function useEclipticDriver(
         setActive(Math.max(0, Math.min(N - 1, Math.round(progress * (N - 1)))));
       };
 
-      // ── reduced motion: rest the bodies spread evenly around the orbits,
-      //    full detail stack ──
       if (reducedMotion) {
         for (let i = 0; i < N; i++) {
           placeAt(i, lockAngle + i * (TAU / N));

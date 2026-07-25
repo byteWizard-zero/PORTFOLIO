@@ -40,14 +40,7 @@ export const Pull = ({ attribution, act2, act3 }: PullContent) => {
     >
       <figure className={styles.figure}>
         <div ref={stickyRef} className={styles.sticky}>
-          {/* Pre-set aria-label on the attribution + the two quote
-              acts: splitTextIntoWords synthesises an aria-label on any
-              root it splits when none exists, which would (a) double-
-              announce the testimonial alongside the <blockquote>'s
-              own aria-label and (b) replace the <b> semantics of the
-              name with an upper-cased flat string. The blockquote's
-              aria-label below is the single source of truth for the
-              quote; the figcaption supplies the speaker. */}
+          
           <figcaption
             ref={act1Ref}
             className={styles.act1}
@@ -65,8 +58,7 @@ export const Pull = ({ attribution, act2, act3 }: PullContent) => {
             aria-label={quoteLabel}
           >
             <div ref={act2Ref} className={styles.act2} aria-hidden="true">
-              {/* Index keys are acceptable here: quote lines are static
-                  build-time content from case-studies.json and never reorder. */}
+              
               {act2.map((line, i) => (
                 <span
                   key={i}
@@ -81,7 +73,7 @@ export const Pull = ({ attribution, act2, act3 }: PullContent) => {
               ))}
             </div>
             <div ref={act3Ref} className={styles.act3} aria-hidden="true">
-              {/* Same as act2: static build-time content. */}
+              
               {act3.map((line, i) => (
                 <span
                   key={i}

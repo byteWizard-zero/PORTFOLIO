@@ -10,24 +10,13 @@ import { MetaLabel } from '@/components/ui/MetaLabel';
 import { content } from '@/data';
 import styles from './Archive.module.css';
 
-// ============================================
-// PORTAL ANIMATION UTILITIES — copied from RevealText.tsx
-// so the two sections share identical motion behavior.
-// ============================================
-
 type Direction = 'up' | 'down' | 'left' | 'right';
 const DIRECTIONS: Direction[] = ['up', 'down', 'left', 'right'];
 const PORTAL_DISTANCE = 110;
-// Minimum and maximum additional jitter (ms) for the continuous letter-loop scheduler.
+
 const PORTAL_LOOP_MIN_MS = 3000;
 const PORTAL_LOOP_JITTER_MS = 3000;
 
-// Archive hold: once the section fills the viewport, pin it for this many
-// viewport-heights of scroll, then release toward Contact. The statement and
-// foot stay PUT during the hold (no scroll-linked drift) — the only motion is
-// the portal-letter loops, which run on their own timers. Smoothness on
-// entry/exit comes from anticipatePin + this runway, not a scrubbed tween.
-// Tunable. See .planning/projects-archive-handoff/PLAN-v5-stacked.md.
 const ARCHIVE_PIN_VH = 1.0;
 
 const getRandomDirection = (): Direction =>
@@ -59,8 +48,6 @@ const getOppositeDirection = (direction: Direction): Direction => {
   }
 };
 
-// Single portal loop — letter exits one direction and re-enters from the
-// opposite. Used for both the initial reveal and the continuous async loops.
 const triggerPortalLoop = (letterElement: HTMLElement) => {
   if (gsap.isTweening(letterElement)) return;
   const direction = getRandomDirection();
@@ -86,8 +73,6 @@ const triggerPortalLoop = (letterElement: HTMLElement) => {
     });
 };
 
-// ============================================
-
 export function Archive() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
@@ -109,7 +94,6 @@ export function Archive() {
     });
   }, [archive.statement, archive.highlights]);
 
-  // Hover any letter to fire its own portal loop on demand.
   const handleLetterHover = useCallback((e: MouseEvent<HTMLSpanElement>) => {
     const letter = e.currentTarget.querySelector(`.${styles.portalLetter}`) as HTMLElement | null;
     if (letter) triggerPortalLoop(letter);
@@ -127,7 +111,6 @@ export function Archive() {
       const highlightWords = statement.querySelectorAll<HTMLElement>(`.${styles.highlightWord}`);
       const portalLetters = statement.querySelectorAll<HTMLElement>(`.${styles.portalLetter}`);
 
-      // ----- Initial states -----
       gsap.set(highlightWords, { opacity: 0 });
       portalLetters.forEach((letter) => {
         const dir = getRandomDirection();
@@ -138,10 +121,9 @@ export function Archive() {
       let revealed = false;
       let asyncStarted = false;
       let mounted = true;
-      // Tracked so cleanup can kill the post-reveal scheduler before it fires.
+      
       let asyncStartDelayedCall: gsap.core.Tween | null = null;
 
-      // After the initial reveal, each letter loops independently every 3–6s.
       const startAsyncLoops = () => {
         if (asyncStarted || !mounted) return;
         asyncStarted = true;
@@ -170,8 +152,6 @@ export function Archive() {
         });
       };
 
-      // Initial letter stagger reveal — flip the word container visible,
-      // then animate each letter back to x:0/y:0 with random jitter.
       const revealLetters = () => {
         if (revealed) return;
         revealed = true;
@@ -198,7 +178,6 @@ export function Archive() {
         );
       };
 
-      // Meta-label entrance — same as Philosophy's labelTween.
       const labelTween = gsap.from(label, {
         scrollTrigger: { trigger: section, start: 'top 80%' },
         x: -50,
@@ -207,14 +186,12 @@ export function Archive() {
         ease: ANIMATION_CONFIG.ease.outQuart,
       });
 
-      // Trigger the letter stagger once the statement enters view.
       const revealTrigger = ScrollTrigger.create({
         trigger: statement,
         start: 'top 80%',
         onEnter: revealLetters,
       });
 
-      // Color shift — add .hlOn so highlight words transition to accent.
       const colorTrigger = ScrollTrigger.create({
         trigger: statement,
         start: 'top 55%',
@@ -223,7 +200,6 @@ export function Archive() {
         onLeaveBack: () => section.classList.remove(styles.hlOn),
       });
 
-      // Foot — quiet fade-up after the highlight bar lands.
       const footTween = gsap.from(foot.children, {
         scrollTrigger: { trigger: foot, start: 'top 85%' },
         y: 24,
@@ -233,19 +209,6 @@ export function Archive() {
         ease: 'power3.out',
       });
 
-      // Pin the Archive once it fills the viewport, then release toward Contact.
-      // Animation-free pin: the statement and foot stay exactly in place while
-      // pinned (an earlier scrubbed parallax made the statement appear to float
-      // with the scroll). pinType fixed + invalidateOnRefresh match the repo
-      // convention.
-      //
-      // anticipatePin is intentionally 0. It engages the pin early scaled by
-      // scroll velocity, but our velocity is Lenis-smoothed (LenisProvider drives
-      // Lenis off gsap.ticker, no normalizeScroll) — so at the Projects→Archive
-      // seam the prediction overshot and snapped the opaque section up to top:0 a
-      // few frames before the scroll arrived (the "magnet pull"). With it off the
-      // section locks exactly when its top reaches the viewport top; the overlap
-      // runway alone carries the entry, so there is no early yank.
       const archivePin = ScrollTrigger.create({
         trigger: section,
         start: 'top top',
@@ -258,18 +221,13 @@ export function Archive() {
       });
 
       return () => {
-        // Preserve scroll across teardown: killing the pin removes its spacer,
-        // which shortens the document and makes the browser clamp scrollY —
-        // visible as a page jump on route-change / StrictMode remount. Capture
-        // once around the whole cleanup and restore at the end (same pattern as
-        // ServicesV2's pin cleanup).
+
         const savedScrollY = window.scrollY;
-        // Block any in-flight callbacks from re-arming after teardown.
+        
         mounted = false;
-        // Kill the post-reveal scheduler so it can't fire startAsyncLoops
-        // after unmount and leak a fresh AbortController + timeouts.
+
         if (asyncStartDelayedCall) asyncStartDelayedCall.kill();
-        // Abort pending continuous loops first, then clear any in-flight timeouts.
+        
         if (abortControllerRef.current) abortControllerRef.current.abort();
         timeoutsRef.current.forEach((id) => window.clearTimeout(id));
         timeoutsRef.current = [];
@@ -277,9 +235,7 @@ export function Archive() {
         if (footTween.scrollTrigger) footTween.scrollTrigger.kill();
         revealTrigger.kill();
         colorTrigger.kill();
-        // Remove the highlight class that colorTrigger stamps; without this
-        // Fast-Refresh / matchMedia revoke leaves hlOn in place and the
-        // re-mounted trigger never re-fires the onEnter.
+
         section.classList.remove(styles.hlOn);
         archivePin.kill();
         if (window.scrollY !== savedScrollY) window.scrollTo(0, savedScrollY);
@@ -344,11 +300,7 @@ export function Archive() {
             className={styles.cta}
             aria-label={`${archive.cta} — full index of works`}
             payload={{
-              // Use the LIVE current accent (same pattern as Menu and the
-              // /work2 back-link). Hardcoding a palette value here would
-              // force-write that color into --color-accent-purple at exit
-              // and stick on the destination page until the user clicks
-              // back, which is the bug we were seeing.
+
               accent: currentAccent,
               title: 'Works',
               slug: 'works',
@@ -356,7 +308,7 @@ export function Archive() {
             }}
           >
             <span className={styles.ctaTextWrap}>
-              {/* Base text — primary color, slides up on hover */}
+              
               <span className={styles.ctaTextBase}>
                 {archive.cta.split('').map((char, i) => (
                   <span
@@ -368,7 +320,7 @@ export function Archive() {
                   </span>
                 ))}
               </span>
-              {/* Clone text — accent color, slides in from below on hover */}
+              
               <span className={styles.ctaTextClone} aria-hidden="true">
                 {archive.cta.split('').map((char, i) => (
                   <span

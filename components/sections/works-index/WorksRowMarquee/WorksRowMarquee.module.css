@@ -1,12 +1,4 @@
-/* WorksRowMarquee
- *
- * Infinite horizontal title ticker for a single Works Index row.
- * Pure CSS keyframe animation — no JS rAF loops, no scroll-velocity coupling.
- *
- * All state (paused, inverted) is owned by this module — driven via props.
- * Parent components NEVER reach into these class names from outside (avoids
- * the brittle `:global([class*='...'])` substring trap).
- */
+
 
 .viewport {
     position: relative;
@@ -34,13 +26,10 @@
     will-change: transform;
 }
 
-/* Paused state — owned by this module, toggled via prop. */
 .track.paused {
     animation-play-state: paused;
 }
 
-/* Each copy carries exactly 50% of the track width — keyframe end value
- * matches layout regardless of glyph metrics. */
 .copy {
     flex: 0 0 50%;
     display: inline-flex;
@@ -66,13 +55,11 @@
     transition: color 0.4s var(--ease-out-quart, ease), -webkit-text-stroke 0.4s var(--ease-out-quart, ease);
 }
 
-/* Outline variant — even-indexed rows use this for rhythm. */
 .chunk.outline {
     color: transparent;
     -webkit-text-stroke: 1.5px var(--color-primary-text);
 }
 
-/* Inverted (parent flooded with accent → marquee renders white). */
 .inverted .chunk {
     color: #fff;
 }

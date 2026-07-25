@@ -33,12 +33,10 @@ export function ScratchCard({ children, onReveal }: ScratchCardProps) {
 
     const drawCover = (w: number, h: number, context: CanvasRenderingContext2D) => {
       const theme = document.documentElement.getAttribute('data-theme') || 'light';
-      
-      // Clear canvas
+
       context.globalCompositeOperation = 'source-over';
       context.clearRect(0, 0, w, h);
 
-      // Cover background gradient
       const grad = context.createLinearGradient(0, 0, w, h);
       if (theme === 'dark') {
         grad.addColorStop(0, '#1c1e26');
@@ -50,16 +48,15 @@ export function ScratchCard({ children, onReveal }: ScratchCardProps) {
       context.fillStyle = grad;
       context.fillRect(0, 0, w, h);
 
-      // Security terminal decorative lines
       context.strokeStyle = theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(27, 32, 40, 0.2)';
       context.lineWidth = 1.5;
-      // Top-left corner mark
+      
       context.beginPath();
       context.moveTo(12, 20);
       context.lineTo(12, 12);
       context.lineTo(20, 12);
       context.stroke();
-      // Bottom-right corner mark
+      
       context.beginPath();
       context.moveTo(w - 12, h - 20);
       context.lineTo(w - 12, h - 12);
@@ -77,7 +74,7 @@ export function ScratchCard({ children, onReveal }: ScratchCardProps) {
         canvas.width = width * dpr;
         canvas.height = height * dpr;
         
-        ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform matrix
+        ctx.setTransform(1, 0, 0, 1, 0, 0); 
         ctx.scale(dpr, dpr);
 
         drawCover(width, height, ctx);
@@ -117,7 +114,7 @@ export function ScratchCard({ children, onReveal }: ScratchCardProps) {
   const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
     if (revealed) return;
     isDrawingRef.current = true;
-    setTextOpacity(0); // Fade text out immediately on start scratching
+    setTextOpacity(0); 
     const pt = getCoordinates(e);
     if (pt) {
       lastPointRef.current = pt;
@@ -127,8 +124,7 @@ export function ScratchCard({ children, onReveal }: ScratchCardProps) {
 
   const draw = (e: React.MouseEvent | React.TouchEvent) => {
     if (revealed) return;
-    
-    // Stop drawing if the user released the click while dragging outside the canvas
+
     if ('buttons' in e && (e as React.MouseEvent).buttons === 0) {
       isDrawingRef.current = false;
       lastPointRef.current = null;
@@ -140,8 +136,7 @@ export function ScratchCard({ children, onReveal }: ScratchCardProps) {
     if (pt && lastPointRef.current) {
       scratch(pt.x, pt.y, lastPointRef.current.x, lastPointRef.current.y);
       lastPointRef.current = pt;
-      
-      // Perform throttled calculations for real-time decryption completion
+
       strokeCountRef.current++;
       if (strokeCountRef.current % 10 === 0) {
         checkScratchPercentage();
@@ -163,7 +158,7 @@ export function ScratchCard({ children, onReveal }: ScratchCardProps) {
     if (!ctx) return;
 
     ctx.globalCompositeOperation = 'destination-out';
-    ctx.strokeStyle = 'rgba(0, 0, 0, 1)'; // Force solid opacity so it scratches off completely on the first pass
+    ctx.strokeStyle = 'rgba(0, 0, 0, 1)'; 
     ctx.lineWidth = 32;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
@@ -188,12 +183,10 @@ export function ScratchCard({ children, onReveal }: ScratchCardProps) {
     const w = canvas.width;
     const h = canvas.height;
 
-    // Read pixel data to compute transparent ratio
     const imageData = ctx.getImageData(0, 0, w, h);
     const data = imageData.data;
     let transparent = 0;
 
-    // Sample every 4th pixel index for faster calculation
     for (let i = 3; i < data.length; i += 16) {
       if (data[i] === 0) {
         transparent++;
@@ -211,8 +204,7 @@ export function ScratchCard({ children, onReveal }: ScratchCardProps) {
   const revealAll = () => {
     setRevealed(true);
     const canvas = canvasRef.current;
-    
-    // Restore the custom cursor when the scratch layer is fully unlocked/revealed
+
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('scratchcard-hover-leave'));
     }
@@ -242,12 +234,11 @@ export function ScratchCard({ children, onReveal }: ScratchCardProps) {
         WebkitUserSelect: 'none',
       }}
     >
-      {/* Hidden Content */}
+      
       <div style={{ width: '100%', height: '100%' }}>
         {children}
       </div>
 
-      {/* Scratch Layer */}
       <canvas
         ref={canvasRef}
         onMouseDown={startDrawing}
@@ -288,7 +279,6 @@ export function ScratchCard({ children, onReveal }: ScratchCardProps) {
         }}
       />
 
-      {/* Decrypt Terminal Text Overlay */}
       {!revealed && (
         <div
           style={{

@@ -1,11 +1,5 @@
 "use client";
 
-/* ABOUT PAGE · Experience
-   A numbered editorial list in the case-study reading rhythm: index + role
-   on the left, org / period / stack on the right. The row text reveals on
-   scroll with the same per-word/line mask as the Profile section; the head
-   block-fades. From content.about.experience (placeholder rows carry a dagger). */
-
 import { useRef } from "react";
 import { useBlockFadeIn } from "@/lib/useBlockFadeIn";
 import { useWordLineReveal } from "@/lib/useWordLineReveal";
@@ -28,20 +22,12 @@ export function AboutPageExperience() {
       { targets: [headRef], y: cs.blockFade.yShort, duration: cs.blockFade.durationShort },
     ],
   });
-  // Reveal the row text with the exact same animation as the Profile section:
-  // a per-word, per-line masked slide-up. The content carries no block fade
-  // (profile's reading column doesn't either), so the word reveal reads on its
-  // own rather than dissolving into an opacity fade. Points and pills opt out
-  // of the word split — they get their own entrance below.
+
   useWordLineReveal(listRef, {
     scope: sectionRef,
     exclude: "[data-point], [data-pill]",
   });
-  // Points reveal with the same masked slide-up as the Profile/word text: the
-  // inner span rises from behind its clipping li (yPercent 110 → 0) while the li
-  // fades (so the diamond bullet doesn't show before its text arrives). Pills
-  // pop. Each fires per-element as it scrolls in, so points deep in the list
-  // still animate when reached instead of playing off-screen.
+
   useEnterReveal(sectionRef, [
     {
       selector: "[data-point]",

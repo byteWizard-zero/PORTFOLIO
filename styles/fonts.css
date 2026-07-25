@@ -1,6 +1,4 @@
-/* ============================================
-   FONTS - PP Neue Montreal (Local)
-   ============================================ */
+
 
 @font-face {
     font-family: 'PP Neue Montreal';
@@ -17,14 +15,6 @@
     font-style: normal;
     font-display: swap;
 }
-
-/* ============================================
-   Switzer Variable — scoped to the ServicesV2 dial labels only.
-   A true variable font (wght axis) so the dial-tool text can morph its
-   weight continuously as the meter bar grows toward the needle. Declared
-   with the full 100–900 range; .dialTool drives it via font-variation-settings.
-   TODO: convert .ttf → .woff2 if/when we adopt Switzer site-wide.
-   ============================================ */
 
 @font-face {
     font-family: 'Switzer Variable';

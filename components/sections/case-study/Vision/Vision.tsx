@@ -11,19 +11,9 @@ import styles from "./Vision.module.css";
 
 const cs = animationConfig.caseStudy;
 
-// titleLine1 carries the word that originally lived inside a
-// <span className={styles.titleUnderline}>. The data layer is flat strings,
-// so the underline is re-applied here by wrapping a specific word in the
-// underline span.
-//
-// When `titleUnderlineWord` is supplied in the data, that exact word (first
-// occurrence) is wrapped — allowing the emphasised word to be any word in the
-// string. When it is absent, we fall back to the last word of titleLine1 to
-// preserve the visual for all existing case studies without requiring a data
-// migration.
 function renderUnderlinedTitleLine1(line: string, underlineWord?: string) {
   if (underlineWord) {
-    // Explicit override: find the first occurrence of the target word and wrap it.
+    
     const idx = line.indexOf(underlineWord);
     if (idx !== -1) {
       const head = line.slice(0, idx);
@@ -38,7 +28,7 @@ function renderUnderlinedTitleLine1(line: string, underlineWord?: string) {
     }
     // Word not found in string (data mismatch) — fall through to lastIndexOf.
   }
-  // Fallback: underline the trailing word (position-based, legacy behaviour).
+  
   const lastSpace = line.lastIndexOf(" ");
   if (lastSpace === -1) {
     return <span className={styles.titleUnderline}>{line}</span>;
@@ -104,8 +94,7 @@ export const Vision = ({
       </div>
 
       <div ref={colRef} className={styles.col}>
-        {/* Index keys are acceptable here: body paragraphs are static
-            build-time content from case-studies.json and never reorder. */}
+        
         {body.map((paragraph, i) => (
           <p key={i}>{renderInline(paragraph)}</p>
         ))}

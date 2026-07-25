@@ -1,19 +1,5 @@
 "use client";
 
-/* ABOUT PAGE · Contributions — GitHub heatmap with a snake that eats it.
-   The last-year contribution grid (built at build time into
-   data/github-contributions.json) rendered as an SVG heatmap of green cells,
-   with a snake — in the page's live accent — that roams the grid and consumes
-   every lit cell. It starts at a RANDOM contribution and always heads for the
-   nearest remaining one (a greedy nearest-neighbour tour), so the eating order
-   feels organic rather than a left-to-right sweep. Movement is continuous: the
-   head glides along the route and the body trails it smoothly (the route IS the
-   body's spine, sampled at a constant lag per segment). Each bite is a quick
-   accent flash, then the cell drains to empty. Auto-plays once when scrolled
-   into view, then loops forever: the grid regrows and a fresh random sweep
-   begins. The loop is gated to when the section is on-screen (no off-screen
-   CPU). Under reduced motion the grid is shown static and the snake omitted. */
-
 import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
@@ -24,23 +10,17 @@ import { SectionLabel } from "@/components/sections/case-study/SectionLabel";
 import { playSweep } from "@/lib/audio";
 import styles from "./Contributions.module.css";
 
-// Cell geometry in SVG user units (the viewBox scales to fit the container).
 const CELL = 13;
 const GAP = 3;
 const STEP = CELL + GAP;
 const ROWS = 7;
 
-// Snake tuning.
-const TAIL = 8; // head + 7 trailing segments
-const SEG_GAP = 1; // route-index spacing between body segments
-// Constant pace: the snake always crosses one cell in this many seconds (1/8 s
-// → 8 cells per second), so the total run scales with the route and is NOT
-// capped to a fixed duration — it takes as long as it takes to eat everything.
+const TAIL = 8; 
+const SEG_GAP = 1; 
+
 const SECS_PER_CELL = 0.125;
 const headOpacity = (k: number) => Math.max(0.18, 1 - k * 0.1);
 
-// Loop rhythm: the grid sits empty this long after a sweep, then regrows and a
-// fresh sweep begins; LEAD_IN holds the regrown grid before the snake re-enters.
 const CYCLE_PAUSE = 1.1;
 const LEAD_IN = 0.7;
 
@@ -62,9 +42,6 @@ export function AboutPageContributions() {
   const reduced = useReducedMotion();
   const { total, weeks } = githubContributions;
 
-  // Fixed locale so the thousands separator is identical on server and client
-  // (the runtime default locale differs between Node and the browser → hydration
-  // mismatch otherwise).
   const totalLabel = total.toLocaleString("en-US");
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -84,7 +61,6 @@ export function AboutPageContributions() {
       const cellByKey = new Map<string, SVGRectElement>();
       cells.forEach((c) => cellByKey.set(c.dataset.key as string, c));
 
-      // The lit contributions are the snake's food.
       const targets: Pt[] = [];
       const litKeys = new Set<string>();
       cells.forEach((c) => {
@@ -98,12 +74,10 @@ export function AboutPageContributions() {
       const eaten = new Set<string>();
 
       const biteCell = (cell: SVGRectElement) => {
-        // Pure colour bite: a hard accent flash, then a CSS transition drains the
-        // cell to empty. (No scale pulse — GSAP scaling an SVG <rect> fights the
-        // CSS transform-box and makes the cell lurch from the SVG origin.)
+
         cell.dataset.eaten = "true";
-        cell.classList.add(styles.biting); // instant accent flash …
-        gsap.delayedCall(0.12, () => cell.classList.remove(styles.biting)); // … then drains
+        cell.classList.add(styles.biting); 
+        gsap.delayedCall(0.12, () => cell.classList.remove(styles.biting)); 
       };
 
       const eatAt = (route: Pt[], i: number) => {
@@ -115,10 +89,6 @@ export function AboutPageContributions() {
         }
       };
 
-      // Greedy nearest-neighbour tour: random start, then always walk to the
-      // closest remaining lit cell (orthogonal staircase steps, alternating
-      // axes so it reads diagonal/organic). Lit cells crossed en route are
-      // consumed too, so the whole grid is eaten. Returns the cell-by-cell spine.
       const buildRoute = (): Pt[] => {
         if (!targets.length) return [];
         const visited = new Set<string>();
@@ -150,16 +120,13 @@ export function AboutPageContributions() {
             else row += Math.sign(dr);
             route.push({ col, row });
             const k = `${col}-${row}`;
-            if (litKeys.has(k)) visited.add(k); // eat-as-you-pass
+            if (litKeys.has(k)) visited.add(k); 
           }
           cur = best;
         }
         return route;
       };
 
-      // Sample the route polyline at a continuous parameter and place the head +
-      // tail. The body shares the head's path, each segment lagging by SEG_GAP,
-      // so the snake bends smoothly through every turn.
       const positionSnake = (route: Pt[], t: number) => {
         for (let k = 0; k < TAIL; k += 1) {
           const seg = segs[k];
@@ -197,12 +164,10 @@ export function AboutPageContributions() {
       let pending: gsap.core.Tween | null = null;
       let running = false;
 
-      // One sweep: regrow the grid, hold it, eat it, slither off — then (while
-      // still on-screen) schedule the next cycle, so it loops forever.
       const runCycle = () => {
         if (!targets.length) return;
         if (tl) tl.kill();
-        reset(); // remove data-eaten → cells transition back to green
+        reset(); 
         const route = buildRoute();
         const proxy = { p: 0 };
         let lastEaten = -1;
@@ -224,7 +189,7 @@ export function AboutPageContributions() {
             positionSnake(route, t);
           },
         });
-        // Slither the tail off once the grid is consumed.
+        
         tl.to(segs, { autoAlpha: 0, duration: 0.6, stagger: 0.05 }, ">-0.1");
       };
 
@@ -237,7 +202,6 @@ export function AboutPageContributions() {
         }
       };
 
-      // Run the loop only while the section is on-screen.
       const trigger = ScrollTrigger.create({
         trigger: section,
         start: "top 85%",
@@ -254,9 +218,6 @@ export function AboutPageContributions() {
         },
       });
 
-
-
-      // 3D Tilt Hover effect on the grid wrap container
       const gridWrap = section.querySelector<HTMLElement>(`.${styles.gridWrap}`);
       const listeners: { element: HTMLElement; type: string; fn: EventListenerOrEventListenerObject }[] = [];
       
@@ -270,8 +231,7 @@ export function AboutPageContributions() {
           const y = mouseEvent.clientY - rect.top;
           const normX = (x / rect.width) - 0.5;
           const normY = (y / rect.height) - 0.5;
-          
-          // Subtle tilt for a large grid container (max 6 degrees tilt)
+
           const rotateX = -normY * 6;
           const rotateY = normX * 6;
           

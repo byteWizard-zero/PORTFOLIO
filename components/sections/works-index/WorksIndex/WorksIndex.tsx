@@ -8,17 +8,12 @@ import styles from './WorksIndex.module.css';
 export interface WorksIndexProps {
   projects: WorksIndexProject[];
   legend: WorksIndexContent['legend'];
-  /** Set of slugs that have a matching case study. Gates link rendering. */
+  
   caseStudySlugs: ReadonlySet<string>;
-  /** Bubbled to the page for cursor + preview coordination. Bubbles the
-   *  full project (or null on leave) so the page can resolve the
-   *  case-study hero image for the preview slider. */
+  
   onRowHoverChange: (hovered: boolean, project: WorksIndexProject | null) => void;
 }
 
-/** Grace period (ms) before bubbling a "no row hovered" signal up. Long
- *  enough that a same-tick sibling enter can cancel the off-signal — short
- *  enough that a real exit feels immediate. */
 const LEAVE_DEFER_MS = 60;
 
 export function WorksIndex({
@@ -30,8 +25,6 @@ export function WorksIndex({
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const leaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Clear any pending leave-defer on unmount so a stale "off" doesn't fire
-  // after the component has gone.
   useEffect(() => () => {
     if (leaveTimerRef.current !== null) {
       clearTimeout(leaveTimerRef.current);
@@ -42,8 +35,7 @@ export function WorksIndex({
   const handleHover = useCallback(
     (project: WorksIndexProject, hovered: boolean) => {
       if (hovered) {
-        // Cancel any deferred leave from the previous row — the cursor stays
-        // grown and just swaps colour.
+
         if (leaveTimerRef.current !== null) {
           clearTimeout(leaveTimerRef.current);
           leaveTimerRef.current = null;
@@ -51,10 +43,9 @@ export function WorksIndex({
         setHoveredId(project.id);
         onRowHoverChange(true, project);
       } else {
-        // Local state clears immediately when this row was the active one.
+        
         setHoveredId((current) => (current === project.id ? null : current));
-        // Defer the page-level "off" so a sibling enter (which fires AFTER
-        // this leave in DOM order) can cancel it before the cursor flickers.
+
         if (leaveTimerRef.current !== null) clearTimeout(leaveTimerRef.current);
         leaveTimerRef.current = setTimeout(() => {
           leaveTimerRef.current = null;

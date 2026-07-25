@@ -63,8 +63,7 @@ export const Product = ({
       </div>
 
       <div ref={colRef} className={styles.col}>
-        {/* Index keys are acceptable here: body paragraphs are static
-            build-time content from case-studies.json and never reorder. */}
+        
         {body.map((paragraph, i) => (
           <p key={i}>{renderInline(paragraph)}</p>
         ))}

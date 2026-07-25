@@ -1,14 +1,5 @@
 'use client';
 
-/* ============================================================
-   WORKFLOW · ECLIPSE renderer — GSAP driver hook
-   A dark body slides off a light disc; the growing crescent of accent
-   light sweeps a masked big name, ending on a corona bloom. The scene is
-   built imperatively into the [data-schematic] SVG, then a single pinned
-   ScrollTrigger scrubs a 0..1 progress through `render`. Scroll position
-   is preserved when the pin is torn down (dev variant swap / unmount).
-   ============================================================ */
-
 import { useGSAP } from '@gsap/react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import type { RefObject } from 'react';
@@ -23,24 +14,17 @@ import { getRandomDirection, getDirectionTransform } from '@/lib/portalAnimation
 import styles from './Eclipse.module.css';
 
 const SVGNS = 'http://www.w3.org/2000/svg';
-const PIN_VH = 7.5; // scroll runway (viewport-heights) while pinned
+const PIN_VH = 7.5; 
 const CX = 600;
 const CY = 350;
-const R = 215; // light disc radius
-const RMOON = 232; // dark body radius
+const R = 215; 
+const RMOON = 232; 
 const MASK_ID = 'wf-eclipse-mask';
 
-// Step-detail content reveal — the same line-mask word stagger the
-// case-study sections use (see useWordLineReveal): each line's words slide up
-// from behind a clip line. Driven here by step activation rather than a
-// one-shot ScrollTrigger, so it replays every time a step becomes active.
 const WORD_YPERCENT = 110;
 const LINE_STAGGER = 0.12;
 const REVEAL_DURATION = 0.7;
 
-// Step-name entrance — the hero name's portal: each letter is clipped to its
-// own box and slides in from a random direction (110% of the box), staggered.
-// Replayed each time a step becomes active. Matches HeroText's timing.
 const NAME_STAGGER = 0.08;
 const NAME_DURATION = 0.5;
 
@@ -56,7 +40,7 @@ function mk<K extends keyof SVGElementTagNameMap>(
 }
 
 interface DriverOptions {
-  /** One CSS color per step; its length is the step count. */
+  
   accents: string[];
   reducedMotion: boolean;
 }
@@ -82,7 +66,6 @@ export function useEclipseDriver(
 
       svg.replaceChildren();
 
-      // ── mask: the lit disc minus the sliding dark body ──
       const defs = mk('defs', {});
       const mask = mk('mask', { id: MASK_ID, maskUnits: 'userSpaceOnUse' });
       mask.appendChild(mk('circle', { cx: CX, cy: CY, r: R, fill: '#fff' }));
@@ -91,7 +74,6 @@ export function useEclipseDriver(
       defs.appendChild(mask);
       svg.appendChild(defs);
 
-      // ── lit glow disc (masked to the revealed crescent), rim, corona, moon ──
       svg.appendChild(mk('circle', { class: styles.glow, cx: CX, cy: CY, r: R, mask: `url(#${MASK_ID})` }));
       svg.appendChild(mk('circle', { class: styles.discEdge, cx: CX, cy: CY, r: R }));
       const corona = mk('circle', { class: styles.corona, cx: CX, cy: CY, r: R + 6 });
@@ -99,10 +81,6 @@ export function useEclipseDriver(
       const moon = mk('circle', { class: styles.moon, cx: CX, cy: CY, r: RMOON });
       svg.appendChild(moon);
 
-      // ── names: muted base + accent-lit copy masked to the crescent.
-      //    Each name is split into one <text> per letter so it can rise into
-      //    view letter-by-letter on activation (hero name entrance). Letters
-      //    are measured (per-glyph x) once fonts are ready — see buildNames. ──
       const baseGroup = mk('g', {});
       const litGroup = mk('g', { mask: `url(#${MASK_ID})` });
       svg.appendChild(baseGroup);
@@ -115,10 +93,6 @@ export function useEclipseDriver(
       type PortalLetter = { el: SVGTextElement; offX: number; offY: number };
       const nameLetters: Array<{ base: PortalLetter[]; lit: PortalLetter[] }> = [];
 
-      // Build one name as per-letter, per-glyph-clipped <text> matching the hero
-      // name's portal: each letter sits in its own clip box and slides in from a
-      // random direction (110% of its box) when shown. The base + lit layers
-      // share one measured geometry (and direction) so they stay aligned.
       const buildName = (name: string): { base: PortalLetter[]; lit: PortalLetter[] } => {
         const measure = mk('text', {
           class: styles.nameBase, x: CX, y: CY,
@@ -177,8 +151,6 @@ export function useEclipseDriver(
         };
       };
 
-      // Portal entrance: each letter slides from its random offset to rest,
-      // clipped to its own box, staggered left-to-right.
       const showName = (i: number) => {
         const g = nameLetters[i];
         if (!g) return;
@@ -210,9 +182,6 @@ export function useEclipseDriver(
         if (activeIndex >= 0) showName(activeIndex);
       };
 
-      // Per-step content reveals (title + copy), populated once fonts are
-      // ready (see buildReveals below). Null until then; setActive no-ops
-      // against missing entries and buildReveals plays the active step.
       const reveals: Array<{ play: () => void; reset: () => void } | null> =
         details.map(() => null);
       const setActive = (i: number) => {
@@ -240,7 +209,6 @@ export function useEclipseDriver(
         setActive(Math.max(0, Math.min(N - 1, Math.floor(progress * N - 1e-6))));
       };
 
-      // ── reduced motion: full reveal, every name shown, no pin/animation ──
       if (reducedMotion) {
         maskMoon.setAttribute('cx', '-400');
         maskMoon.setAttribute('cy', '-400');
@@ -271,10 +239,6 @@ export function useEclipseDriver(
       });
       render(trigger.progress);
 
-      // Split each step's title + copy into masked words and build a paused
-      // line-stagger timeline — the case-study content reveal, replayed per
-      // step. Wait for fonts so offsetTop line-grouping matches the real wrap,
-      // then reveal whichever step is already active.
       const splits: SplitResult[] = [];
       const buildReveals = () => {
         if (cancelled) return;

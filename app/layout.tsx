@@ -21,10 +21,7 @@ const doppioOne = Doppio_One({
   subsets: ["latin"],
   variable: "--font-navbar",
   display: "swap",
-  // The navbar brand (the only above-the-fold consumer) is hidden/animated in
-  // during the welcome→hero handoff, so the font isn't painted at first load.
-  // Preloading it buys nothing and triggers Firefox's "preloaded but not used"
-  // warning. display:swap still handles the fallback when it does paint.
+
   preload: false,
 });
 
@@ -55,28 +52,6 @@ export const viewport: Viewport = {
   themeColor: siteMetadata.themeColor,
 };
 
-// Run synchronously before paint — next/script's beforeInteractive is
-// unreliable in App Router (fires after hydration), causing a theme flash on
-// dark-mode users and a scroll-position flash on reload. Inline scripts execute
-// at parse time, before React.
-//
-// FOUC prevention strategy:
-// Instead of body{visibility:hidden} (which is inheritable and can be overridden
-// by any child setting visibility:visible), we create an opaque overlay <div>
-// at z-index 9999 with the theme background color. This physically paints over
-// ALL content — nothing can bleed through regardless of z-index, position, or
-// visibility overrides on any child element.
-//
-// The [data-welcome-wrapper] element from WelcomeScreen sits INSIDE body and
-// has its own z-index:9000, but the overlay at z-index:9999 covers it too.
-// We punch a hole for the welcome wrapper using the same overlay div approach:
-// the overlay IS the welcome wrapper's backdrop.
-//
-// On non-"/" pages, the overlay is removed on DOMContentLoaded.
-// On "/", the WelcomeScreen component removes it via the 'welcome-gate' id.
-//
-// bfcache: When the browser restores from bfcache (back/forward), JS state is
-// stale. We force a real reload via the pageshow event.
 const BOOTSTRAP_SCRIPT = `
 (function(){try{if(localStorage.getItem("portfolio_theme")==="dark"){document.documentElement.setAttribute("data-theme","dark")}}catch(e){}})();
 if("scrollRestoration"in history){history.scrollRestoration="manual"}
@@ -125,7 +100,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={doppioOne.variable} suppressHydrationWarning>
-        {/* See BOOTSTRAP_SCRIPT above — pre-paint theme + scroll-restoration bootstrap. */}
+        
         <script
           dangerouslySetInnerHTML={{
             __html: BOOTSTRAP_SCRIPT,

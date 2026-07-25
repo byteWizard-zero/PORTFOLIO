@@ -12,7 +12,7 @@ import styles from "./ArcadePage.module.css";
 export function ArcadePageView() {
   return (
     <main className={styles.main}>
-      {/* Intro Header Section */}
+      
       <section className={styles.heroSection}>
         <div className={styles.headerContent}>
           <MetaLabel>Interactive Systems</MetaLabel>
@@ -33,25 +33,20 @@ export function ArcadePageView() {
         </div>
       </section>
 
-      {/* Section 1: Complexity Race Arena */}
       <section className={styles.section} id="race-arena">
         <DsaRaceTrack />
       </section>
 
-      {/* Section 2: Stack & Heap Allocator */}
       <section className={styles.section} id="memory-visualizer">
         <MemoryVisualizer />
       </section>
 
-      {/* Section 3: IoT Telemetry Visualizer */}
       <section className={styles.section} id="iot-visualizer">
         <IotVisualizer />
       </section>
 
-      {/* Section 4: Agentic AI Flow */}
       <AiVisualizer />
 
-      {/* Contact Footer */}
       <Contact />
     </main>
   );

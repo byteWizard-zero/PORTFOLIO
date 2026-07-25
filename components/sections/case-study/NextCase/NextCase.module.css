@@ -1,7 +1,4 @@
-/* ============================================================
-   CASE STUDY · NEXT CASE — funky-card style call-out for the
-   following case study. Inverts to ink-on-white on hover.
-   ============================================================ */
+
 
 .next {
     border-top: 2px solid var(--color-primary-text);
@@ -108,7 +105,6 @@
     border-color: var(--color-background);
 }
 
-/* ---------- IMAGE PANEL ---------- */
 .imageWrap {
     position: relative;
     overflow: hidden;
@@ -157,7 +153,6 @@
     transform: rotate(8deg);
 }
 
-/* ---------- RESPONSIVE ---------- */
 @media (max-width: 1100px) {
     .link {
         grid-template-columns: 1fr;

@@ -3,7 +3,6 @@ import { type RefObject } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useTransition } from "@/components/transitions";
 
-// Default block-fade tuning (overridable per-group via BlockFadeGroup).
 const FADE_Y = 24;
 const FADE_DURATION = 0.9;
 const FADE_START = "top 88%";
@@ -48,11 +47,6 @@ export function useBlockFadeIn(
           if (g.els.length) gsap.set(g.els, { autoAlpha: 0, y: g.y ?? FADE_Y });
         });
 
-        // WR-02: the fade-in tweens are created lazily inside onEnter,
-        // *after* useGSAP's gsap-context capture window has closed, so
-        // context cleanup never reaches them. Track each tween so we
-        // can kill it from the cleanup branch if the section unmounts
-        // mid-flight.
         const activeTweens: gsap.core.Tween[] = [];
         let played = false;
         const playFadeIn = () => {
@@ -97,8 +91,6 @@ export function useBlockFadeIn(
         };
       });
 
-      // mm.revert() invokes the mm.add() inner cleanup above; useGSAP does
-      // not own the matchMedia registry, so tear it down on unmount.
       return () => {
         mm.revert();
       };

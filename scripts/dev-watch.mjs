@@ -14,7 +14,6 @@ const FILES_TO_WATCH = [
 
 console.log('🚀 [Dev Watcher] Starting Next.js Dev Server and Auto-Sync Daemon...');
 
-// Refresh stats on startup to ensure they are never stale
 console.log('📊 [Dev Watcher] Fetching latest contributions and LeetCode stats...');
 try {
   execSync('node scripts/fetch-contributions.mjs', { stdio: 'inherit', cwd: rootDir });
@@ -23,7 +22,6 @@ try {
   console.error('⚠️ [Dev Watcher] Failed to fetch latest stats on startup:', error.message);
 }
 
-// Spawn Next.js dev server
 const nextDev = spawn('npx', ['next', 'dev'], {
   stdio: 'inherit',
   shell: true,
@@ -34,14 +32,12 @@ nextDev.on('close', (code) => {
   process.exit(code || 0);
 });
 
-// Helper to run git commands
 function syncFileToGit(file) {
   try {
     const relativePath = path.relative(rootDir, file).replace(/\\/g, '/');
-    
-    // Check if file is actually modified
+
     const status = execSync(`git status --porcelain "${relativePath}"`, { cwd: rootDir }).toString().trim();
-    if (!status) return; // No changes to commit
+    if (!status) return; 
 
     console.log(`\n📦 [Auto-Sync] Detected changes in: ${relativePath}`);
     console.log(`Staging and committing...`);
@@ -56,13 +52,11 @@ function syncFileToGit(file) {
   }
 }
 
-// Debounce map to prevent redundant commits during rapid consecutive file saves
 const debounceTimers = {};
 
 FILES_TO_WATCH.forEach(relPath => {
   const fullPath = path.join(rootDir, relPath);
-  
-  // Ensure watched files exist so watchFile doesn't fail
+
   if (!fs.existsSync(fullPath)) {
     const dir = path.dirname(fullPath);
     if (!fs.existsSync(dir)) {
@@ -71,7 +65,6 @@ FILES_TO_WATCH.forEach(relPath => {
     fs.writeFileSync(fullPath, relPath.endsWith('.json') ? '{}' : '');
   }
 
-  // watchFile polls for changes reliably on all platforms, including Windows
   fs.watchFile(fullPath, { interval: 1000 }, (curr, prev) => {
     if (curr.mtimeMs !== prev.mtimeMs) {
       if (debounceTimers[relPath]) {
@@ -79,11 +72,10 @@ FILES_TO_WATCH.forEach(relPath => {
       }
       debounceTimers[relPath] = setTimeout(() => {
         syncFileToGit(fullPath);
-      }, 2000); // 2-second debounce to let file writes fully write to disk
+      }, 2000); 
     }
   });
   console.log(`👀 [Watcher] Tracking for auto-sync: ${relPath}`);
 
-  // Sync immediately on startup if already modified
   syncFileToGit(fullPath);
 });

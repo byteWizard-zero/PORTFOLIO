@@ -1,8 +1,5 @@
-/* ============================================
-   CSS ANIMATIONS - Keyframes
-   ============================================ */
 
-/* Skills Bar Marquee Animation - Seamless version using CSS custom property */
+
 @keyframes scroll-skills-seamless {
     0% {
         transform: translateX(0);
@@ -12,7 +9,6 @@
     }
 }
 
-/* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

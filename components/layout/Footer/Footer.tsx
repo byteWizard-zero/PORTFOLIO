@@ -54,7 +54,7 @@ export function Footer() {
   return (
     <footer className={styles.footer} role="contentinfo">
       <div className={styles.inner}>
-        {/* Top Telemetry Bar */}
+        
         <div className={styles.topBar}>
           <div className={styles.clockContainer}>
             <span>Bhubaneswar, IN</span>
@@ -66,9 +66,8 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Main 4-Column Grid */}
         <div className={styles.grid}>
-          {/* Col 1: Brand & Creator Identity */}
+          
           <div className={styles.col}>
             <h2 className={styles.brandName}>Zenith Soumya</h2>
             <p className={styles.brandTitle}>IoT & AI Developer · CSE Engineer</p>
@@ -77,7 +76,6 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Col 2: Directory Matrix */}
           <div className={styles.col}>
             <div className={styles.colHeading}>Directory</div>
             <ul className={styles.linkList}>
@@ -92,7 +90,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Col 3: Social Protocols */}
           <div className={styles.col}>
             <div className={styles.colHeading}>Social Protocol</div>
             <ul className={styles.linkList}>
@@ -112,7 +109,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Col 4: Engineering Telemetry */}
           <div className={styles.col}>
             <div className={styles.colHeading}>Engineered With</div>
             <div className={styles.tagGroup}>
@@ -125,7 +121,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className={styles.bottomBar}>
           <p className={styles.copyright}>
             © {new Date().getFullYear()} Zenith Soumya · All Rights Reserved

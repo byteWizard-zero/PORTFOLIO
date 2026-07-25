@@ -1,7 +1,4 @@
-/* ============================================================
-   CASE STUDY · CONTEXT — editorial reading column with
-   sticky marginalia. First single-column reading moment.
-   ============================================================ */
+
 
 .context {
     padding: clamp(80px, 12vh, 140px) var(--spacing-nav-side);
@@ -15,7 +12,6 @@
         1fr [page-end];
 }
 
-/* ---------- MARGINALIA — left aside ---------- */
 .margin {
     grid-column: margin-start / col-start;
     margin: 0;
@@ -43,7 +39,6 @@
     margin-bottom: 6px;
 }
 
-/* ---------- READING COLUMN — body copy with editorial ramp ---------- */
 .col {
     grid-column: col-start / col-end;
     max-width: var(--read-col);
@@ -64,7 +59,7 @@
 
 .col > p strong {
     font-weight: 700;
-    /* background: var(--highlight-strong); */
+    
     padding: 0 0.04em;
     color: var(--color-accent-purple);
 }
@@ -80,7 +75,6 @@
     font-weight: 700;
 }
 
-/* ---------- RESPONSIVE — collapse to single column ---------- */
 @media (max-width: 1100px) {
     .context {
         grid-template-columns: 1fr;

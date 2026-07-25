@@ -1,8 +1,4 @@
-/* ============================================================
-   CASE STUDY · ARCHITECTURE — layered system diagram + facts.
-   Mirrors Outcomes' bordered-grid language; the layer stack
-   reads top-to-bottom like a real architecture diagram.
-   ============================================================ */
+
 
 .architecture {
     padding: clamp(80px, 12vh, 140px) var(--spacing-nav-side);
@@ -38,7 +34,6 @@
     font-weight: 500;
 }
 
-/* ---------- LAYER STACK ---------- */
 .stack {
     max-width: var(--canvas-max-width);
     margin: 0 auto;
@@ -106,7 +101,6 @@
     align-self: center;
 }
 
-/* ---------- FACTS STRIP ---------- */
 .facts {
     max-width: var(--canvas-max-width);
     margin: clamp(28px, 3vw, 40px) auto 0;
@@ -167,7 +161,6 @@
     letter-spacing: 0;
 }
 
-/* ---------- RESPONSIVE ---------- */
 @media (max-width: 900px) {
     .layer {
         grid-template-columns: 1fr;

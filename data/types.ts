@@ -1,8 +1,5 @@
-// Type definitions for portfolio data files
 
-// ============================================
-// Site Metadata Types
-// ============================================
+
 export interface OpenGraphData {
   title: string;
   description: string;
@@ -34,9 +31,6 @@ export interface SiteMetadata {
   person: PersonData;
 }
 
-// ============================================
-// Content Types
-// ============================================
 export interface HeroContent {
   firstName: string;
   lastName: string;
@@ -75,39 +69,37 @@ export interface PhilosophyContent {
 }
 
 export interface WorkflowStop {
-  /** Short step name, e.g. "Discover". */
+  
   name: string;
-  /** Headline for the active step. */
+  
   title: string;
-  /** Supporting copy for the active step. */
+  
   copy: string;
-  /** Optional word inside `copy` to underline with the step accent (first match). */
+  
   emphasis?: string;
-  /** Brand palette key driving this step's accent. One of: 'teal' | 'red' |
-   *  'orange' | 'green' (maps to the --wf-* vars in styles/variables.css).
-   *  Typed as string because content is sourced from JSON. */
+  
   accent: string;
 }
 
 export interface WorkflowContent {
-  /** Eyebrow, e.g. "How I work". */
+  
   label: string;
-  /** Ordered process steps rendered by the Workflow section. */
+  
   stops: WorkflowStop[];
 }
 
 export interface ExperienceEntry {
   role: string;
   org: string;
-  /** Engagement type, e.g. "Independent venture", "Full-time". */
+  
   kind: string;
-  /** Display period, e.g. "2024 — Present". */
+  
   period: string;
   summary: string;
-  /** Responsibility bullets (optional detail under the summary). */
+  
   points?: string[];
   tags?: string[];
-  /** true = sample/placeholder content awaiting real data. */
+  
   placeholder?: boolean;
 }
 
@@ -123,65 +115,55 @@ export interface EducationEntry {
   institution: string;
   period: string;
   detail?: string;
-  /** Coursework / focus bullets (optional detail under the card). */
+  
   points?: string[];
   placeholder?: boolean;
 }
 
-/** A formal title or attached certificate carried by a credential, e.g. the
- *  RNCP state title that an ESGI degree confers. Rendered as a "certified as"
- *  line beneath the parent credential so it is never duplicated as its own row. */
 export interface CredentialTitle {
-  /** Title name, e.g. "Application & Software Solutions Developer". */
+  
   label: string;
-  /** Issuing reference / level, e.g. "RNCP Level 6" or "WebForce3". */
+  
   ref: string;
 }
 
-/** Unified credential record for the /about Credentials ledger. Merges what
- *  used to live in separate `education` + `certifications` arrays so a degree
- *  and the state title it confers are ONE entry, not two. */
 export interface CredentialEntry {
-  /** Display period, e.g. "2024 → 2025" or "2023". */
+  
   period: string;
-  /** Programme / credential name. */
+  
   credential: string;
-  /** Institution, e.g. "ESGI · Paris". */
+  
   institution: string;
-  /** Type chip: "Degree" | "Course" | "Foundation". */
+  
   kind: string;
-  /** Optional status note, e.g. "In progress". */
+  
   status?: string;
-  /** Formal titles / attached certs conferred by this credential. */
+  
   titles?: CredentialTitle[];
-  /** Coursework / focus bullets. */
+  
   points?: string[];
 }
 
 export interface AboutContent {
-  /** Eyebrow / rotated meta-label, e.g. "About". */
+  
   label: string;
-  /** Verb-stack lines, rendered uppercase. The LAST entry carries the
-   *  accent + spotlight-reveal treatment. */
+  
   verbs: string[];
-  /** Supporting lede paragraph. */
+  
   lede: string;
-  /** Meta row items, joined with middot separators. A item matching
-   *  "Currently building TASKTROX" is rendered in the accent color. */
+  
   meta: string[];
-  /** Profile narrative paragraphs (may contain **bold** markup). */
+  
   bio: string[];
-  /** Dev note flagging placeholder CV data. */
+  
   _cvNote?: string;
-  /** Work history (newest first). */
+  
   experience: ExperienceEntry[];
-  /** Unified, de-duplicated credentials ledger (degrees + their titles +
-   *  standalone courses) shown on the /about page. Newest first. */
+  
   credentials: CredentialEntry[];
-  /** @deprecated Legacy split arrays kept only for the unmounted home About
-   *  exploration variants. The /about page reads `credentials` instead. */
+  
   certifications: CertificationEntry[];
-  /** @deprecated See `certifications`. */
+  
   education: EducationEntry[];
 }
 
@@ -189,11 +171,7 @@ export interface ServiceFace {
   word: string;
   rail: string;
   label: string;
-  /**
-   * Trusted HTML. Only the `<b>` tag is expected for inline emphasis. Rendered
-   * via `dangerouslySetInnerHTML`; do NOT populate from any source other than
-   * checked-in `content.json` without a sanitization pass.
-   */
+  
   copy: string;
   tools: string[];
 }
@@ -201,9 +179,7 @@ export interface ServiceFace {
 export interface ServicesContent {
   label: string;
   headline: { lead: string; accent: string };
-  /**
-   * Trusted HTML. Only the `<b>` tag is expected. See `ServiceFace.copy`.
-   */
+  
   intro: string;
   faces: ServiceFace[];
 }
@@ -229,7 +205,7 @@ export interface Project {
   badgeColor?: string;
   badgeTextColor?: string;
   badgeShadowColor?: string;
-  /** When true, the project is shown in the home page Projects section. Order-independent. */
+  
   featured?: boolean;
 }
 
@@ -239,16 +215,16 @@ export interface ProjectsContent {
 }
 
 export interface WorksIndexProject {
-  /** Matches the case-study slug when one exists (gates the TransitionLink). */
+  
   id: string;
-  /** Display title. Casing is canonical; presentation may lowercase it. */
+  
   title: string;
-  /** Comma- or interpunct-separated discipline string ("Brand · Product · Web"). */
+  
   discipline: string;
   year: number;
-  /** Hex color — must be a member of design-tokens.accentPalette. */
+  
   accent: string;
-  /** Marquee scroll duration in seconds (per-row cadence). */
+  
   marqueeDurationSec: number;
 }
 
@@ -297,9 +273,6 @@ export interface Content {
   contact: ContactContent;
 }
 
-// ============================================
-// Navigation Types
-// ============================================
 export interface NavLink {
   id: string;
   label: string;
@@ -320,9 +293,6 @@ export interface Navigation {
   location: string;
 }
 
-// ============================================
-// Design Tokens Types
-// ============================================
 export interface ColorTokens {
   background: string;
   text: {
@@ -398,9 +368,6 @@ export interface DesignTokens {
   zIndex: ZIndexTokens;
 }
 
-// ============================================
-// Animation Config Types
-// ============================================
 export interface DurationConfig {
   fast: number;
   normal: number;
@@ -470,9 +437,6 @@ export interface AnimationConfig {
   caseStudy: CaseStudyAnimationConfig;
 }
 
-// ============================================
-// Feature Config Types
-// ============================================
 export interface CursorTrailConfig {
   count: number;
   sizes: number[];
@@ -558,9 +522,6 @@ export interface Features {
   backToTop: BackToTopConfig;
 }
 
-// ============================================
-// Case Study Types
-// ============================================
 export interface CaseStudyHeroContent {
   title: string;
   lede: string;
@@ -594,12 +555,7 @@ export interface VisionContent {
   titleLine2: string;
   titleAccent: string;
   body: string[];
-  /**
-   * Optional: the exact word in titleLine1 to wrap in the underline span.
-   * When omitted, the component falls back to underlining the last word of
-   * titleLine1 (legacy position-based behaviour). Populate this field when
-   * the emphasised word is not the last word in the string.
-   */
+  
   titleUnderlineWord?: string;
 }
 
@@ -668,11 +624,11 @@ export interface OutcomesContent {
 }
 
 export interface ArchitectureLayer {
-  /** Layer name, e.g. "Client", "API", "Data", "Runtime". */
+  
   name: string;
-  /** Tech chips for the layer, e.g. ["Next.js", "Tailwind"]. */
+  
   tech: string[];
-  /** One-line description (supports inline <b> via renderInline). */
+  
   detail: string;
 }
 
@@ -687,7 +643,7 @@ export interface ArchitectureContent {
   label: string;
   titleLine1: string;
   titleAccent: string;
-  /** Lead paragraph (supports inline <b>). */
+  
   intro: string;
   layers: ArchitectureLayer[];
   facts: ArchitectureFact[];
@@ -736,48 +692,32 @@ export interface CaseStudy {
 
 export type CaseStudies = Record<string, CaseStudy>;
 
-// ---------------------------------------------------------------------------
-// Transitions
-// ---------------------------------------------------------------------------
-
 export interface TransitionsConfig {
-  /** Registry key of the default page-transition effect. Must match a key in
-   *  components/transitions/registry.ts (e.g. 'iris-bloom'). */
+  
   defaultEffect: string;
-  /** Fallback strategy when prefers-reduced-motion: reduce is active. */
+  
   reducedMotionFallback: 'crossfade' | 'none';
-  /** Duration (seconds) of the reduced-motion fallback. */
+  
   reducedMotionDuration: number;
-  /** Per-effect config namespace. Each effect reads its own block via its
-   *  registry key, so adding an effect cannot break another effect's tuning.
-   *  Shape of each value is effect-specific; the registry key is the source
-   *  of truth for what is valid. */
+  
   effects?: Record<string, Record<string, unknown>>;
 }
 
-// ---------------------------------------------------------------------------
-// GitHub contributions (built at build time by scripts/fetch-contributions.mjs)
-// ---------------------------------------------------------------------------
-
-/** One day in the GitHub contribution heatmap. */
 export interface ContributionCell {
-  /** ISO date, YYYY-MM-DD. */
+  
   date: string;
-  /** Contribution count for the day. */
+  
   count: number;
-  /** GitHub intensity bucket, 0 (none) → 4 (most). */
+  
   level: 0 | 1 | 2 | 3 | 4;
 }
 
-/** The full last-year contribution grid, arranged as Sun→Sat week columns.
- *  Leading/trailing padding days are `null` so the grid has clean empty
- *  corners like GitHub's. Sourced from data/github-contributions.json. */
 export interface GithubContributions {
   username: string;
-  /** Total contributions in the last year. */
+  
   total: number;
-  /** ISO date the file was generated. */
+  
   generatedAt: string;
-  /** Week columns; each is 7 entries (Sun→Sat), `null` for padding. */
+  
   weeks: Array<Array<ContributionCell | null>>;
 }

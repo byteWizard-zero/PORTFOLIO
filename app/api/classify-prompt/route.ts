@@ -20,14 +20,13 @@ Output only the raw JSON. Do not include markdown block markers like \`\`\`json 
     let text = '';
     let success = false;
 
-    // 1. Try Direct Gemini API (Fast, no cold starts)
     if (apiKey) {
       try {
         const model = 'gemini-2.5-flash';
         const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
         
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 6500); // 6.5s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 6500); 
 
         const response = await fetch(endpoint, {
           method: 'POST',
@@ -55,7 +54,6 @@ Output only the raw JSON. Do not include markdown block markers like \`\`\`json 
       }
     }
 
-    // 2. Try Proxy Fallback (Safe fallback if direct fails/times out, or API key missing)
     if (!success) {
       try {
         const proxyBase = (process.env.OPENAI_API_BASE || 'https://my-freellmapi-proxy.onrender.com/v1').replace(/\/$/, '');
@@ -65,7 +63,7 @@ Output only the raw JSON. Do not include markdown block markers like \`\`\`json 
         }
         
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2000); // 2s timeout to avoid Vercel 504 timeouts if proxy is cold
+        const timeoutId = setTimeout(() => controller.abort(), 2000); 
 
         const proxyResponse = await fetch(`${proxyBase}/chat/completions`, {
           method: 'POST',
@@ -96,7 +94,6 @@ Output only the raw JSON. Do not include markdown block markers like \`\`\`json 
       }
     }
 
-    // Parse scores if classification was successful
     if (success && text) {
       try {
         const scores = JSON.parse(text.trim());
@@ -112,7 +109,6 @@ Output only the raw JSON. Do not include markdown block markers like \`\`\`json 
       }
     }
 
-    // Clean 503 Service Unavailable so frontend can cleanly trigger offline heuristics
     return NextResponse.json({ error: 'Classification pipeline exhausted' }, { status: 503 });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Internal server error';

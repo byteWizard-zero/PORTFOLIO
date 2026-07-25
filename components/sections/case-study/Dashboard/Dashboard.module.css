@@ -1,10 +1,4 @@
-/* ============================================================
-   CASE STUDY · DASHBOARD — full-bleed pin that shrinks the image
-   down to the case-study Hero's imageCard slot. Mirrors Hero's
-   grow-from-slot animation in reverse: enters at 100vw × 100vh,
-   pins, scrubs through a shrink + radius/shadow recovery, and
-   parks at the slot rect before unpinning.
-   ============================================================ */
+
 
 .dashboard {
     position: relative;
@@ -12,12 +6,6 @@
     overflow: hidden;
 }
 
-/* Hidden, layout-active placeholder. The .slot's rendered rect is
-   the destination the frame tweens into — same width/aspect rule
-   as Hero's imageCard so the two animations bookend at matching
-   sizes. Wrapper recreates Hero's `.middle` constraints (canvas
-   max-width, nav-side padding, centered) so the 54% width
-   resolves against the same effective canvas. */
 .slotWrap {
     position: absolute;
     inset: 0;
@@ -41,15 +29,6 @@
     border-radius: var(--radius-portrait);
 }
 
-/* ---------- FRAME — the animated card ---------- */
-/* CSS defaults give the no-JS / reduced-motion path a full-bleed
-   image. The motion-enabled path overrides everything inline.
-   --card-radius is the GSAP-tweenable variable that drives
-   border-radius — using a custom property sidesteps the
-   inconsistent serialization of getComputedStyle(...).borderRadius
-   (some browsers return an empty shorthand when the value comes
-   from a clamp()-resolved CSS variable). Mirrors the Hero card
-   pattern. */
 .frame {
     position: absolute;
     inset: 0;
@@ -58,11 +37,7 @@
     border-radius: var(--card-radius);
     overflow: hidden;
     box-shadow: none;
-    /* will-change intentionally omitted: width/height/left/top cause
-       reflow regardless of layer promotion, so a permanent compositor
-       layer on a fullscreen element is wasted memory for an animation
-       that runs only during the brief pin scrub. The inner .image
-       keeps will-change:transform for its parallax. */
+    
 }
 
 .image {
@@ -73,7 +48,6 @@
     will-change: transform;
 }
 
-/* ---------- BADGE — top-right, cyan variant (overlay) ---------- */
 .badge {
     position: absolute;
     top: 5%;
@@ -96,7 +70,6 @@
     transform: rotate(-8deg);
 }
 
-/* ---------- CORNER CAPTION — bottom-left, glassy pill ---------- */
 .corner {
     position: absolute;
     left: clamp(28px, 3vw, 48px);

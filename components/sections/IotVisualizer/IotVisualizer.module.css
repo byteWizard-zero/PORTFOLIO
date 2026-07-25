@@ -56,7 +56,6 @@
   }
 }
 
-/* Panels */
 .schematicPanel,
 .telemetryPanel {
   background: var(--paper);
@@ -78,7 +77,6 @@
   padding-bottom: 12px;
 }
 
-/* SVG Schematic */
 .schematicWrapper {
   display: flex;
   justify-content: center;
@@ -99,7 +97,6 @@
   max-height: 280px;
 }
 
-/* Matte Black PCB Board Background */
 .boardBg {
   fill: #121316;
   stroke: #22262f;
@@ -147,7 +144,6 @@
   }
 }
 
-/* Chip Styles */
 .interactiveChip {
   cursor: pointer;
   transition: opacity 0.2s;
@@ -197,7 +193,6 @@
   fill: #6b7280;
 }
 
-/* Tactile Button */
 .tactileBtn {
   cursor: pointer;
 }
@@ -206,7 +201,6 @@
   filter: brightness(1.15);
 }
 
-/* Interactive pins */
 .pinInteractive {
   cursor: pointer;
 }
@@ -244,7 +238,6 @@
   50% { opacity: 1; }
 }
 
-/* LEDs */
 .boardLed {
   fill: #333;
   stroke: #555;
@@ -274,7 +267,6 @@
   stroke: #444;
 }
 
-/* Schematic Tiny Text Labels */
 .schematicTinyLabel {
   font-family: monospace;
   font-size: 6px;
@@ -285,7 +277,6 @@
   fill: rgba(0, 0, 0, 0.5);
 }
 
-/* Interactive Sensor Chip */
 .interactiveSensor {
   cursor: pointer;
 }
@@ -294,7 +285,6 @@
   stroke: #FFB800;
 }
 
-/* Controls Grid */
 .schematicControls {
   display: flex;
   flex-direction: column;
@@ -351,7 +341,6 @@
   border-color: #da3036;
 }
 
-/* Pin Inspector */
 .inspectorContainer {
   margin-top: 4px;
 }
@@ -427,7 +416,6 @@
 :global([data-theme="dark"]) .gpio { background: rgba(217, 234, 211, 0.12); color: #b6d7a8; border: 1px solid rgba(217, 234, 211, 0.25); }
 :global([data-theme="dark"]) .gnd { background: rgba(255, 255, 255, 0.06); color: #cccccc; border: 1px solid rgba(255, 255, 255, 0.1); }
 
-/* Telemetry Panel Controls */
 .controlsGroup {
   margin-bottom: 30px;
 }
@@ -464,7 +452,6 @@
   cursor: pointer;
 }
 
-/* Scope */
 .scopeWrapper {
   display: flex;
   flex-direction: column;
@@ -526,7 +513,6 @@
   display: block;
 }
 
-/* Telemetry Stats Grid */
 .telemetryGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -563,7 +549,6 @@
   color: var(--color-primary-text);
 }
 
-/* Serial Logs Footer */
 .logsFooter {
   background: #0d0d0d;
   border: 1px solid #222;

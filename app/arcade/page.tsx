@@ -8,9 +8,6 @@ export const metadata: Metadata = {
   alternates: { canonical: '/arcade' },
 };
 
-/* Dedicated Arcade page — composed of Complexity Race Arena and Agentic AI Flow 
-   rendered stacked from top to bottom. Navbar, transitions and providers come 
-   from the root layout. */
 export default function ArcadeRoute() {
   return <ArcadePageView />;
 }

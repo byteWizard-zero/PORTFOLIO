@@ -56,7 +56,6 @@
   }
 }
 
-/* Code Panel */
 .controlPanel {
   background: var(--paper);
   border: 1px solid var(--color-grid-line);
@@ -163,7 +162,6 @@
   color: #000;
 }
 
-/* Memory Columns Layout */
 .memoryGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -221,7 +219,6 @@
   margin-top: 40px;
 }
 
-/* Call Stack Frames */
 .stackFrame {
   flex-shrink: 0;
   background: rgba(98, 182, 203, 0.05);
@@ -268,7 +265,6 @@
   font-weight: 700;
 }
 
-/* Heap Objects */
 .heapBlock {
   flex-shrink: 0;
   background: var(--color-background);
@@ -333,7 +329,6 @@
   align-items: center;
 }
 
-/* Logs panel */
 .logsFooter {
   background: #0d0d0d;
   border: 1px solid #222;

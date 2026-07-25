@@ -16,7 +16,7 @@ interface StackFrame {
 interface HeapBlock {
   address: string;
   name: string;
-  size: number; // in bytes
+  size: number; 
   refCount: number;
   isStale: boolean;
 }
@@ -43,8 +43,7 @@ export function MemoryVisualizer() {
   ]);
   const [stepCount, setStepCount] = useState(0);
   const [isGcRunning, setIsGcRunning] = useState(false);
-  // Initial values set directly in useState to avoid cascading re-renders
-  // from synchronous setState inside useEffect.
+
   const [logs, setLogs] = useState<string[]>([
     `[JVM] Virtual Machine initialized. Stack limit: 1024 frames.`,
     `[JVM] Heap structure aligned. Garbage collector: ZGC.`,
@@ -62,7 +61,6 @@ export function MemoryVisualizer() {
     setLogs((prev) => [...prev, `[${timestamp}] ${msg}`].slice(-30));
   };
 
-  // Log auto-scroll
   useEffect(() => {
     if (logsBodyRef.current) {
       logsBodyRef.current.scrollTop = logsBodyRef.current.scrollHeight;
@@ -79,7 +77,7 @@ export function MemoryVisualizer() {
   const executeStep = (step: number) => {
     switch (step) {
       case 1:
-        // Enter runEngine()
+        
         setCurrentLine(1);
         setStack([
           { id: 'frame-0', name: 'runEngine()', variable: 'args', value: 'null', refAddress: null }
@@ -88,7 +86,7 @@ export function MemoryVisualizer() {
         break;
       
       case 2:
-        // Call solve(3)
+        
         setCurrentLine(4);
         setStack((prev) => [
           ...prev,
@@ -98,7 +96,7 @@ export function MemoryVisualizer() {
         break;
 
       case 3:
-        // Line: Node node = new Node(3)
+        
         setCurrentLine(6);
         const addr3 = '0x10A3';
         setStack((prev) => 
@@ -112,7 +110,7 @@ export function MemoryVisualizer() {
         break;
 
       case 4:
-        // Call solve(2)
+        
         setCurrentLine(7);
         setStack((prev) => [
           ...prev,
@@ -122,7 +120,7 @@ export function MemoryVisualizer() {
         break;
 
       case 5:
-        // Line: Node node = new Node(2)
+        
         setCurrentLine(6);
         const addr2 = '0x20B2';
         setStack((prev) => 
@@ -136,7 +134,7 @@ export function MemoryVisualizer() {
         break;
 
       case 6:
-        // Call solve(1)
+        
         setCurrentLine(7);
         setStack((prev) => [
           ...prev,
@@ -146,7 +144,7 @@ export function MemoryVisualizer() {
         break;
 
       case 7:
-        // Line: Node node = new Node(1)
+        
         setCurrentLine(6);
         const addr1 = '0x30C1';
         setStack((prev) => 
@@ -160,7 +158,7 @@ export function MemoryVisualizer() {
         break;
 
       case 8:
-        // Call solve(0)
+        
         setCurrentLine(7);
         setStack((prev) => [
           ...prev,
@@ -170,20 +168,20 @@ export function MemoryVisualizer() {
         break;
 
       case 9:
-        // step <= 0 check -> returns!
+        
         setCurrentLine(5);
         addLog("[CPU] Condition step <= 0 met (0 <= 0). Initiating method return...");
         break;
 
       case 10:
-        // Pop solve(0)
+        
         setStack((prev) => prev.slice(0, -1));
         setCurrentLine(7);
         addLog("[STACK] Popped frame: solve(step: 0)");
         break;
 
       case 11:
-        // Pop solve(1) -> local variable node goes out of scope! Heap object becomes unreferenced.
+        
         setStack((prev) => prev.slice(0, -1));
         setHeap((prev) => 
           prev.map((h) => h.address === '0x30C1' ? { ...h, refCount: 0, isStale: true } : h)
@@ -193,7 +191,7 @@ export function MemoryVisualizer() {
         break;
 
       case 12:
-        // Pop solve(2)
+        
         setStack((prev) => prev.slice(0, -1));
         setHeap((prev) => 
           prev.map((h) => h.address === '0x20B2' ? { ...h, refCount: 0, isStale: true } : h)
@@ -203,7 +201,7 @@ export function MemoryVisualizer() {
         break;
 
       case 13:
-        // Pop solve(3)
+        
         setStack((prev) => prev.slice(0, -1));
         setHeap((prev) => 
           prev.map((h) => h.address === '0x10A3' ? { ...h, refCount: 0, isStale: true } : h)
@@ -213,14 +211,14 @@ export function MemoryVisualizer() {
         break;
 
       case 14:
-        // Pop runEngine()
+        
         setStack([]);
         setCurrentLine(0);
         addLog("[STACK] Popped frame: runEngine(). Call stack empty.");
         break;
 
       default:
-        // Reset simulation
+        
         handleReset();
         break;
     }
@@ -232,7 +230,6 @@ export function MemoryVisualizer() {
     setIsGcRunning(true);
     addLog("[ZGC] Garbage Collector initiated. Starting marking phase...");
 
-    // Simulate sweeps
     await new Promise((r) => setTimeout(r, 600));
     addLog("[ZGC] Marking complete. Sweeping unreferenced memory slots...");
     
@@ -269,11 +266,10 @@ export function MemoryVisualizer() {
       </div>
 
       <div className={styles.dashboard}>
-        {/* Left Column: Java Code & Control Panel */}
+        
         <div className={styles.controlPanel}>
           <h4 className={styles.panelTitle}>Java Recursion Engine</h4>
-          
-          {/* Code Viewer */}
+
           <div className={styles.codeBlock}>
             {JAVA_CODE.map((line, idx) => (
               <div 
@@ -314,9 +310,8 @@ export function MemoryVisualizer() {
           </div>
         </div>
 
-        {/* Right Column: Visual Stack and Heap representation */}
         <div className={styles.memoryGrid}>
-          {/* Stack segment */}
+          
           <div className={styles.stackSegment}>
             <div className={styles.segmentHeader}>
               <span>Call Stack (LIFO)</span>
@@ -340,7 +335,6 @@ export function MemoryVisualizer() {
             </div>
           </div>
 
-          {/* Heap segment */}
           <div className={styles.heapSegment}>
             <div className={styles.segmentHeader}>
               <span>Heap Allocation (GC Target)</span>
@@ -371,7 +365,6 @@ export function MemoryVisualizer() {
         </div>
       </div>
 
-      {/* Terminal log panel */}
       <div className={styles.logsFooter}>
         <div className={styles.logsHeader}>
           <div className={styles.dotGroup}>

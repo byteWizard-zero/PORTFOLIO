@@ -3,14 +3,12 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   try {
     const { prompt, model, isLordArtificer } = await request.json();
-    
-    // 1. Validate inputs to prevent SSRF and path traversal
+
     const ALLOWED_MODELS = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-3.1-flash-lite'];
     if (!model || !ALLOWED_MODELS.includes(model)) {
       return NextResponse.json({ error: 'Unauthorized or invalid model specified' }, { status: 400 });
     }
 
-    // 2. Construct system instructions server-side to prevent prompt injection/abuse
     const personaDirective = isLordArtificer
       ? `- Dynamic Persona Override: You are interacting with your architect, Soumya (Asher). You MUST address him as "Lord Artificer" (or "the lord artificer") with the highest respect as the master architect of this system.`
       : `- Dynamic Persona Override: You are interacting with a public visitor. You MUST refer to the user as "Guest Developer" or "Fellow Artificer". Address them politely as a visitor exploring Asher's system. Never address them as Lord Artificer.`;
@@ -57,13 +55,12 @@ pub fn sort() { ... }
     let text = '';
     let success = false;
 
-    // 1. Try Direct Gemini API (Fast, no cold starts)
     if (apiKey) {
       try {
         const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
         
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 7500); // 7.5s timeout to stay below Vercel's 10s limit
+        const timeoutId = setTimeout(() => controller.abort(), 7500); 
 
         const response = await fetch(endpoint, {
           method: 'POST',
@@ -90,7 +87,6 @@ pub fn sort() { ... }
       }
     }
 
-    // 2. Try Proxy Fallback (Safe fallback if direct fails/times out, or API key missing)
     if (!success) {
       try {
         const proxyBase = (process.env.OPENAI_API_BASE || '').replace(/\/$/, '');
@@ -98,7 +94,7 @@ pub fn sort() { ... }
         
         if (proxyBase && proxyKey) {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 1500); // 1.5s timeout to avoid Vercel 504 timeouts if proxy is cold
+          const timeoutId = setTimeout(() => controller.abort(), 1500); 
 
           const proxyResponse = await fetch(`${proxyBase}/chat/completions`, {
             method: 'POST',
@@ -133,7 +129,6 @@ pub fn sort() { ... }
       return NextResponse.json({ text });
     }
 
-    // Clean 503 Service Unavailable so frontend can cleanly trigger offline heuristics
     return NextResponse.json({ error: 'Text generation pipeline exhausted' }, { status: 503 });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Internal server error';

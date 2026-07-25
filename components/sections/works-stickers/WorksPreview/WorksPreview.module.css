@@ -1,17 +1,4 @@
-/* WorksPreview
- *
- * Cursor-following hero-image preview. Ports the case-study Toggle
- * list-mode preview pattern (components/sections/case-study/Toggle/) so
- * row→row hover produces a slide between mounted cards, not a re-mount.
- *
- * Invariants:
- *   • `.preview` is fixed-positioned, with `left` / `top` tweened by GSAP
- *     quickTo on mousemove. Show / hide is owned by `transform: scale()`
- *     — the two never collide.
- *   • All cards mount once inside `.slider`; only `transform: translateY()`
- *     on `.slider` switches between them.
- *   • Accent border + badge follow the active card via `--preview-accent`.
- */
+
 
 .preview {
     position: fixed;
@@ -28,8 +15,7 @@
         0 30px 60px -20px var(--preview-shadow, rgba(27, 32, 40, 0.35));
     pointer-events: none;
     z-index: calc(var(--z-cursor, 9999) - 1);
-    /* Hidden state — collapsed scale around the cursor. GSAP writes only
-     * left/top; this transform property is exclusively ours. */
+    
     transform: translate(-50%, -50%) scale(0);
     transition:
         transform 0.45s cubic-bezier(0.76, 0, 0.24, 1),
@@ -41,8 +27,6 @@
     transform: translate(-50%, -50%) scale(1);
 }
 
-/* Inner slider — translates Y to expose one card. Cards are stacked
- * vertically inside the overflow-hidden window. */
 .slider {
     width: 100%;
     height: 100%;
@@ -98,19 +82,16 @@
     transform: rotate(8deg) scale(1.05);
 }
 
-/* Dark mode — bump shadow alpha so it's visible on #171717. */
 :global(:root[data-theme='dark']) .preview {
     --preview-shadow: rgba(0, 0, 0, 0.6);
 }
 
-/* Coarse pointer — no hover concept. */
 @media (hover: none), (pointer: coarse) {
     .preview {
         display: none;
     }
 }
 
-/* Reduced motion — opacity fade in/out instead of scale, no slide. */
 @media (prefers-reduced-motion: reduce) {
     .preview {
         transform: translate(-50%, -50%) scale(1);

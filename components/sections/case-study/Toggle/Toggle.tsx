@@ -43,7 +43,6 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
 
   useScrollLock(lightboxIndex !== null, { compensateScrollbar: true });
 
-  // Stop/Start Lenis scroll during maximized lightbox state
   useEffect(() => {
     if (lightboxIndex !== null) {
       if (window.lenis) {
@@ -57,17 +56,11 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
     }
   }, [lightboxIndex]);
 
-  // NOTE (F-IN-08): The rAF focus call assumes both mode buttons are always
-  // mounted. Roving-tabindex focus management breaks if either button is
-  // conditionally unmounted — keep both rendered at all times.
   const selectMode = (target: Mode) => {
     setMode(target);
     requestAnimationFrame(() => modeButtonsRef.current[target]?.focus());
   };
 
-  // 2-radio group: prev/next collapse to "the other one"; arrow handlers are
-  // intentionally symmetric. Kept as one case so the WAI-ARIA contract is
-  // explicit and trivially extends if a third mode is added.
   const handleModeKey = (e: KeyboardEvent<HTMLButtonElement>) => {
     switch (e.key) {
       case "ArrowLeft":
@@ -87,16 +80,13 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
         break;
     }
   };
-  // Preview position is driven by gsap.quickTo (spring-like follow) on
-  // every mousemove. Pumping setState here would re-render the list on
-  // every mouse tick. visible + active index stay in state because they
-  // flip on enter/leave only — at most once per row.
+
   const [preview, setPreview] = useState<{ visible: boolean; index: number }>(
     { visible: false, index: 0 }
   );
   const xToRef = useRef<ReturnType<typeof gsap.quickTo> | null>(null);
   const yToRef = useRef<ReturnType<typeof gsap.quickTo> | null>(null);
-  // useSyncExternalStore — correct at render time; no one-frame lag on first hover.
+  
   const reducedMotion = useReducedMotion();
 
   useBlockFadeIn(sectionRef, {
@@ -113,16 +103,6 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
 
   useWordLineReveal(titleRef, { scope: sectionRef });
 
-  // Toggling between gallery and list rewrites a large chunk of the
-  // section's height, which shifts every downstream section (Outcomes,
-  // Colophon, NextCase) up or down the page. Those sections register
-  // their reveal triggers with `once: true` against positions measured
-  // at mount; React state flips don't fire a window `resize`, so
-  // ScrollTrigger never recomputes and pending triggers stay anchored
-  // to stale scroll positions — the user toggles to List, scrolls
-  // down, and the sections appear blank until they cross the *old*
-  // (gallery-height) trigger line. A single refresh after layout
-  // settles re-aligns every trigger to the new document height.
   useEffect(() => {
     let id2 = 0;
     const id1 = requestAnimationFrame(() => {
@@ -134,8 +114,6 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
     };
   }, [mode]);
 
-  // Cleanup quickTo tweens on unmount. Instances are created lazily on first
-  // hover (see ensureQuickTo) so this handles the case where hover occurred.
   useEffect(() => {
     const el = previewRef.current;
     return () => {
@@ -145,8 +123,6 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
     };
   }, []);
 
-  // Create quickTo instances on first hover so they're never used before
-  // the previewRef element is available (avoids a race with useEffect([])).
   const ensureQuickTo = () => {
     if (!xToRef.current && previewRef.current) {
       xToRef.current = gsap.quickTo(previewRef.current, "left", { duration: 0.55, ease: "power3" });
@@ -154,9 +130,6 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
     }
   };
 
-  // `snap` short-circuits the spring by passing quickTo's optional
-  // startValue equal to the target — collapses the tween to zero
-  // duration so the first appearance doesn't swoosh in from origin.
   const movePreview = (clientX: number, clientY: number, snap = false) => {
     ensureQuickTo();
     if (snap || reducedMotion) {
@@ -197,7 +170,6 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
     .to(overlay, { opacity: 0, duration: 0.3, ease: "power2.in" }, 0.05);
   };
 
-  // Close lightbox on Escape key
   useEffect(() => {
     if (lightboxIndex === null) return;
     const handleKeyDown = (e: globalThis.KeyboardEvent) => {
@@ -250,12 +222,6 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
           </h2>
         </div>
 
-        {/*
-          NOTE (F-IN-08): Both buttons must remain mounted unconditionally.
-          selectMode() uses modeButtonsRef to programmatically focus the
-          newly-active radio; conditional rendering would leave one ref null
-          and break roving-tabindex keyboard navigation.
-        */}
         <div
           ref={modesRef}
           className={styles.modes}
@@ -334,14 +300,6 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
         )}
       </div>
 
-      {/*
-        Cursor-following hover preview (list mode only).
-        All 7 cards are mounted once and stacked vertically inside an
-        overflow-hidden window; the inner slider translateY's to expose
-        the active card. This avoids per-hover <img> swaps and gives a
-        slide-between-projects motion when the cursor moves row→row
-        without leaving the list.
-      */}
       <div
         ref={previewRef}
         className={`${styles.preview} ${preview.visible ? styles.previewVisible : ""}`}
@@ -363,7 +321,6 @@ export const Toggle = ({ label, titleLine1, titleAccent, screens }: ToggleConten
         </div>
       </div>
 
-      {/* Graceful Enlarge Lightbox */}
       {lightboxIndex !== null && (
         <div
           ref={lightboxOverlayRef}

@@ -1,15 +1,5 @@
-/* ============================================================
-   CASE STUDY · HERO — desktop layout (animations + responsive
-   handled in later passes)
-   ============================================================ */
 
-/* The hero is a 3-column grid (1fr / auto / 1fr). The middle column is
-   `auto`, sized to its widest item — a hidden .titleSizer that mirrors
-   the wordmark text at the wordmark's font. .top sits in that same
-   middle column, so pills/lede automatically share the wordmark's
-   exact left/right edges for any title length or viewport width, with
-   zero JS measurement. The wordmark itself stays position:absolute at
-   the bottom so the image (in row 2) keeps its original vertical room. */
+
 .hero {
     height: 100vh;
     padding: clamp(80px, 11vh, 132px) var(--spacing-nav-side)
@@ -32,10 +22,6 @@
     z-index: 1;
 }
 
-/* Invisible, zero-height grid item that mirrors the wordmark text and
-   font metrics. Its `width: max-content` is what auto-sizes the shared
-   middle grid column; `height:0; overflow:hidden; visibility:hidden`
-   keeps it out of the visual layout and stops it from inflating row 1. */
 .titleSizer {
     grid-column: 2;
     grid-row: 1;
@@ -53,13 +39,12 @@
     line-height: 0.86;
 }
 
-/* ---------- TOP — pills (left) + lede (right) ---------- */
 .top {
     grid-column: 2;
     grid-row: 1;
     position: relative;
     z-index: 2;
-    /* width is driven by the shared middle column, not by content. */
+    
     width: 100%;
     display: flex;
     align-items: flex-start;
@@ -153,13 +138,12 @@
     color: var(--color-primary-text);
 }
 
-/* ---------- MIDDLE — hero image centred, badge tagged on it ---------- */
 .middle {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 0;
-    /* allow grid track to shrink to available space */
+    
     transform: translateY(0%);
     -webkit-transform: translateY(0%);
     -moz-transform: translateY(0%);
@@ -226,11 +210,6 @@
     }
 }
 
-/* ---------- WORDMARK — full-bleed, anchored to bottom; sits BEHIND
-              the hero image so the image clips the title during the
-              scroll-pinned grow. Horizontal alignment of pills/lede to
-              its visible glyph run is handled by .titleSizer driving
-              the shared middle grid column, not by this rule. */
 .titleText {
     position: absolute;
     left: var(--spacing-nav-side);
@@ -246,21 +225,10 @@
     letter-spacing: -0.04rem;
     font-size: var(--font-size-hero);
     text-align: center;
-    /* Wordmark must never wrap — it's a single token. During a window
-       resize the vw-based font-size snaps to the new value instantly,
-       but ScrollTrigger's pin-spacer (which constrains .hero's
-       effective width while pinned) only rebuilds after a debounced
-       refresh. For ~200ms the container is at the pre-resize width
-       while the glyphs are at the post-resize size; without nowrap,
-       the last letter drops to a second line until the pin-spacer
-       catches up. .hero has overflow:hidden so any brief horizontal
-       overshoot during that window is invisibly clipped instead. */
+    
     white-space: nowrap;
 }
 
-/* Per-letter mask for the on-load portal stagger. Mask clips the inner
-   span while it slides in from outside; the inner carries the visible
-   glyph and is the only element transformed during entrance. */
 .titleLetter {
     display: inline-block;
     overflow: hidden;
@@ -274,9 +242,6 @@
     -webkit-font-smoothing: antialiased;
 }
 
-/* Per-word mask for the on-load lede line cascade. Words on the same
-   wrapped line share an offsetTop and animate together; the cascade
-   between lines is what produces the row-by-row baseline reveal. */
 .ledeWord {
     display: inline-block;
     overflow: hidden;

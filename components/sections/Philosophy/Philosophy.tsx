@@ -9,9 +9,6 @@ import { MetaLabel } from '@/components/ui/MetaLabel';
 import { RevealText } from './RevealText';
 import styles from './Philosophy.module.css';
 
-// Philosophy hold: once the section fills the viewport, pin it for this many
-// viewport-heights of scroll, then release toward the next section. Mirrors
-// Archive's pin idiom (see Archive.tsx `ARCHIVE_PIN_VH`).
 const PHILOSOPHY_PIN_VH = 1.0;
 
 export function Philosophy() {
@@ -24,7 +21,6 @@ export function Philosophy() {
     if (reducedMotion) return;
     if (!wrapperRef.current || !sectionRef.current || !labelRef.current) return;
 
-    // Meta-label entrance animation
     const labelTween = gsap.from(labelRef.current, {
       scrollTrigger: {
         trigger: sectionRef.current,
@@ -36,10 +32,6 @@ export function Philosophy() {
       ease: ANIMATION_CONFIG.ease.outQuart,
     });
 
-    // Pin the section while user reads. Mirrors Archive's pin idiom:
-    // functional `end` against live `window.innerHeight` so the runway
-    // recomputes on resize, explicit `pin: <element>`, and `pinType: 'fixed'`
-    // for resilience against transformed ancestors.
     const pinTrigger = ScrollTrigger.create({
       trigger: sectionRef.current,
       start: 'top top',
@@ -73,7 +65,6 @@ export function Philosophy() {
       },
     });
 
-    // PERF: Explicit cleanup to prevent memory leaks
     return () => {
       pinTrigger.kill();
       if (labelTween.scrollTrigger) labelTween.scrollTrigger.kill();

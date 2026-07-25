@@ -1,11 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { siteMetadata, getCaseStudySlugs, getCaseStudy, getWorksIndex } from '@/data';
 
-// Required for output: 'export' — emits a static sitemap.xml at build time.
 export const dynamic = 'force-static';
 
-// Parse the works index "Last revised" stamp ("2026 · 05" → May 2026).
-// Used as the site/works-level lastModified; returns undefined if unparseable.
 function worksRevisedDate(): Date | undefined {
   const raw = getWorksIndex().topBar.lastRevised;
   const match = raw.match(/(\d{4}).*?(\d{1,2})/);
@@ -14,8 +11,6 @@ function worksRevisedDate(): Date | undefined {
   return new Date(Number(year), Number(month) - 1, 1);
 }
 
-// Derive a case study's lastModified from its ledger "Year" entry
-// (e.g. "2024" → 2024-01-01); returns undefined if no year is present.
 function caseStudyDate(slug: string): Date | undefined {
   const entry = getCaseStudy(slug)?.ledger?.entries.find((e) => e.label === 'Year');
   const year = entry?.primary ? Number(entry.primary) : NaN;

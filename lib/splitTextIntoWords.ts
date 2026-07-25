@@ -1,6 +1,5 @@
-// Whitespace runs stay as plain text nodes so per-word selection works,
-// and the root gets an aria-label of the unsplit phrase with masks
-// aria-hidden so screen readers announce the original sentence.
+
+
 export type SplitWord = { mask: HTMLSpanElement; inner: HTMLSpanElement };
 
 export type SplitResult = {
@@ -19,9 +18,7 @@ export function splitTextIntoWords(
   root: HTMLElement,
   maskClass: string,
   innerClass: string,
-  // Optional CSS selector; text under any matching ancestor is left untouched
-  // so callers can opt elements out of the word reveal (e.g. pills/points that
-  // get their own entrance animation).
+
   exclude?: string
 ): SplitResult {
   const words: SplitWord[] = [];
@@ -94,9 +91,7 @@ export function splitTextIntoWords(
       root.setAttribute(ORIGINAL_LABELLEDBY, originalLabelledBy);
     }
     if (originalLabel == null && originalLabelledBy == null) {
-      // textContent collapses <br> to nothing, fusing words across line
-      // breaks ("respectsthe craft"). Walk the tree and emit a space for
-      // every <br> so the aria-label reads as the visual phrase does.
+
       const buf: string[] = [];
       const collect = (node: Node) => {
         if (node.nodeType === Node.TEXT_NODE) {
@@ -119,12 +114,6 @@ export function splitTextIntoWords(
     }
   }
 
-  // INVARIANT: revert() re-inserts the *same* original Text node instances
-  // captured at split time. This is correct only while the root subtree is not
-  // otherwise mutated between split and revert (true for all current consumers,
-  // which split static content). If a future consumer splits text that React
-  // can re-render with new content while a split is active, re-read the live
-  // textContent here instead of re-inserting the captured nodes.
   const revert = () => {
     replacements.forEach(({ original, replacement }) => {
       const first = replacement[0];

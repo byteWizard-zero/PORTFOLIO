@@ -1,5 +1,4 @@
-/* SkillsBar Component - Diagonal Marquee
-   Reference: styles.css lines 285-337 */
+
 
 .skillsBar {
     position: absolute;
@@ -29,7 +28,6 @@
     border-left: 0;
     border-right: 0;
 
-    /* Performance containment */
     contain: content;
 }
 
@@ -45,10 +43,8 @@
     line-height: normal;
     animation: scroll-skills-seamless 20s linear infinite;
 
-    /* CSS custom property set by JS for exact scroll distance */
     --scroll-width: 0px;
 
-    /* Performance: optimize animation for GPU */
     will-change: transform;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
@@ -81,7 +77,6 @@
     flex-shrink: 0;
 }
 
-/* Seamless scroll using exact pixel width calculated by JS */
 @keyframes scroll-skills-seamless {
     0% {
         transform: translateX(0);
@@ -118,13 +113,13 @@
 
 @media (max-width: 768px) {
     .skillsBar {
-        /* Move slightly higher on mobile to clear safe areas */
+        
         bottom: clamp(10px, 3vh, 32px);
-        width: 200vw; /* Make it even wider to ensure smooth diagonal if needed later */
+        width: 200vw; 
     }
 
     .skillsContent {
-        font-size: 24px; /* Fixed readable size for mobile */
+        font-size: 24px; 
         gap: 40px;
     }
 
@@ -142,7 +137,6 @@
     }
 }
 
-/* PERF: Respect user preference for reduced motion */
 @media (prefers-reduced-motion: reduce) {
     .skillsContent {
         animation: none;

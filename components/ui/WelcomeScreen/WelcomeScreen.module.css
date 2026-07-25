@@ -24,7 +24,7 @@
 
 .greeting {
   position: absolute;
-  /* Centering handled via GSAP set in JS, but we ensure defaults here */
+  
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -35,7 +35,7 @@
   font-weight: 400;
   text-align: center;
   white-space: nowrap;
-  opacity: 0; /* Hidden by default */
+  opacity: 0; 
 }
 
 .initialsContainer {
@@ -57,24 +57,14 @@
 .letterM {
   color: var(--color-primary-text);
   display: inline-block;
-  line-height: 0.85; /* Match HeroText to prevent jitter during handoff */
+  line-height: 0.85; 
 }
 
 .letterA {
   color: var(--color-primary-text);
   display: inline-block;
-  line-height: 0.85; /* Match HeroText to prevent jitter during handoff */
+  line-height: 0.85; 
 }
-
-/* ============================================
-
-   RESPONSIVE MATCHING
-
-   Must match HeroText.module.css overrides
-
-   ============================================ */
-
-
 
 @media (min-width: 769px) and (max-width: 1024px) {
 
@@ -90,25 +80,19 @@
 
 }
 
-
-
 @media (max-width: 768px) {
 
     .greeting,
 
     .initialsContainer {
 
-        font-size: 24vw; /* Matched to HeroText mobile size */
+        font-size: 24vw; 
 
         line-height: 0.8;
 
     }
 
 }
-
-/* ========================================================
-   FILMY SLICE GLITCH & CHROMATIC ABERRATION (GAME OVER STYLE)
-   ======================================================== */
 
 .letterM,
 .letterA {
@@ -135,7 +119,6 @@
   pointer-events: none;
 }
 
-/* Base text jitter and chromatic shadow flicker */
 .glitching .letterM,
 .glitching .letterA {
   animation: glitch-shadow-flicker 0.3s infinite;
@@ -148,7 +131,6 @@
   display: inline-block;
 }
 
-/* Red Channel - Shifted Left Slice */
 .glitching .letterM::before,
 .glitching .letterA::before {
   left: -4px;
@@ -156,7 +138,6 @@
   animation: glitch-slice-1 0.4s infinite linear alternate-reverse;
 }
 
-/* Blue & Pink Channel - Shifted Right Slice */
 .glitching .letterM::after,
 .glitching .letterA::after {
   left: 4px;
@@ -192,7 +173,6 @@
   }
 }
 
-/* Sharp horizontal slice clip animations */
 @keyframes glitch-slice-1 {
   0% {
     clip-path: inset(10% 0 85% 0);

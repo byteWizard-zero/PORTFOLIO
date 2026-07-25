@@ -9,23 +9,18 @@ import { useAccentColor } from "@/lib/AccentColorContext";
 import type { CaseStudyHeroContent } from "@/data";
 import styles from "./Hero.module.css";
 
-// ── Animation tuning constants (file-local; do not export) ──
-// Total scroll distance of the pinned grow phase, in viewport heights.
-// 0.25 intro fade-out + 1.0 grow + 0.1 hold tail = 1.35 TL units ≈ 1.35 vh.
 const HERO_PIN_VH = 1.35;
-// Badge fade trigger ends at this fraction of vh (badge gone halfway through pin).
+
 const HERO_BADGE_FADE_VH = 0.5;
-// Exit phase: card travels from pin-end to this offset in vh (pin-end + 1 vh).
+
 const HERO_EXIT_END_VH = 2.35;
-// Max parallax offset for the image inner on mouse move (pixels, ±).
+
 const HERO_PARALLAX_PX = 6;
-// Per-letter stagger duration for the title portal entrance (seconds).
+
 const HERO_LETTER_STAGGER = 0.08;
-// yPercent used to hide lede word-inners before they reveal.
+
 const HERO_LEDE_HIDE_YPCT = 110;
 
-// Portal-entry directions (matches landing hero — letter slides in from
-// outside its own mask along one of four cardinal axes).
 const PORTAL_DIRECTIONS = [
   { x: 0, y: -110 },
   { x: 0, y: 110 },
@@ -58,17 +53,6 @@ export function Hero({
 
   const { hasEntered } = useTransition();
 
-  // ── ON-LOAD entrance ──
-  // (a) Title — each letter sits inside its own overflow:hidden
-  //     mask; the inner span starts pushed 110% along a random cardinal
-  //     direction and slides home with a staggered cascade. Mirrors the
-  //     landing-hero portal pattern so the case-study reads as a
-  //     continuation of the same motion language.
-  // (b) Lede paragraph — each word is wrapped in its own mask; we group
-  //     masks by their post-layout offsetTop to recover visual lines
-  //     (since wrapping is responsive), then animate inner spans up
-  //     from yPercent:110 → 0 with a per-line stagger so each row of
-  //     text rises from its own baseline.
   useGSAP(
     () => {
       if (!hasEntered) return;
@@ -91,7 +75,7 @@ export function Hero({
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Title — per-letter portal entrance.
+        
         innerLetters.forEach((el) => {
           const dir = randomPortalDirection();
           gsap.set(el, { xPercent: dir.x, yPercent: dir.y });
@@ -106,8 +90,6 @@ export function Hero({
           delay: 0.1,
         });
 
-        // Back link — sits above the pills and shares their reading-order
-        // entrance so the back-to-home affordance is visible from frame one.
         const backEl = backRef.current;
         let backTween: gsap.core.Tween | null = null;
         if (backEl) {
@@ -122,8 +104,6 @@ export function Hero({
           });
         }
 
-        // Pills — top-of-cascade entrance (fires earliest so the eye
-        // moves from pills → title → lede in reading order).
         const pillEls = metaRef.current
           ? metaRef.current.querySelectorAll<HTMLElement>(`.${styles.pill}`)
           : null;
@@ -141,9 +121,6 @@ export function Hero({
           });
         }
 
-        // Badge — late flourish; rests at the CSS-defined 8deg tilt so
-        // the final rotation value is 8 (not 0). Initial rotation:-45
-        // gives the pop room to swing into place.
         const badge = badgeRef.current;
         let badgeTween: gsap.core.Tween | null = null;
         if (badge) {
@@ -155,16 +132,11 @@ export function Hero({
             duration: 0.7,
             ease: "back.out(1.4)",
             delay: 0.6,
-            // Hand transform back to the CSS rotate(8deg) baseline once the
-            // pop completes, so the :hover rule can compose without GSAP's
-            // inline transform shadowing it.
+
             clearProps: "transform",
           });
         }
 
-        // Lede — line-grouped baseline reveal. Group word masks by
-        // their offsetTop (rounded to absorb sub-pixel rounding) so
-        // every word on the same wrapped line shares one tween.
         let ledeTL: gsap.core.Timeline | null = null;
         if (ledeMasks && ledeInners && ledeMasks.length) {
           const lineMap = new Map<number, HTMLElement[]>();
@@ -206,11 +178,6 @@ export function Hero({
     { scope: sectionRef, dependencies: [hasEntered] }
   );
 
-  // ── IDLE PARALLAX ── Subtle viewport-driven mouse follow on the
-  // image inner so the framed photo feels alive at rest. ±6px max
-  // translate is small enough not to fight the master scroll-grow's
-  // scale fromTo, and quickTo lerps between targets so per-frame
-  // updates stay cheap. Touch and reduced-motion users skip it.
   useGSAP(
     () => {
       const inner = innerRef.current;
@@ -258,76 +225,32 @@ export function Hero({
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Re-parent card to <body> AND make it position: fixed from the
-        // start. ScrollTrigger pin leaves a transform on the section to
-        // maintain layout, and any ancestor with a transform becomes the
-        // containing block for fixed descendants — breaking viewport-
-        // relative fixing. Living on body with position:fixed means the
-        // card is always anchored to the actual viewport, and we animate
-        // from there to full-bleed. The card stays in place throughout
-        // the intro phase (no scroll movement) and only moves/grows in P2.
-        //
-        // ── RESIZE-FIX: in-flow placeholder ──
-        // Before re-parenting, we leave a hidden placeholder div at the
-        // card's original DOM position with the SAME .imageCard class
-        // (minus visual content). It preserves the natural layout slot
-        // and lets us re-measure "where the card would sit at the
-        // current viewport" on every ScrollTrigger refresh — which is
-        // what we use to recover from window resizes.
+
         const originalParent = card.parentElement;
-        // Resolve --card-radius to a concrete px value *before* the card
-        // is re-parented. getComputedStyle on a custom property returns
-        // the unresolved clamp() string, which GSAP can't tween or
-        // reverse; borderRadius is the shorthand, which IS resolved to
-        // px — but only after styles have applied against the current
-        // ancestor chain. Read it now while the card is still in its
-        // grid slot, fully styled. (If we read after appendChild(body),
-        // the computed value can come back 0 in a race with the
-        // re-parent, which silently squashes the rounded corners.)
+
         const initialRadiusPx =
           parseFloat(getComputedStyle(card).borderRadius) || 0;
 
         const placeholder = document.createElement("div");
         placeholder.className = card.className;
-        // Placeholder carries the image semantics so screen-reader
-        // reading order stays inside the section. The body-fixed card
-        // below is marked aria-hidden as the decorative visual.
+
         placeholder.setAttribute("role", "img");
         placeholder.setAttribute("aria-label", alt);
-        // The card visual now lives on <body> for ScrollTrigger reasons;
-        // hide it from AT so the alt text isn't announced at the end of
-        // the document, orphaned from the case-study context.
+
         card.setAttribute("aria-hidden", "true");
         card.setAttribute("role", "presentation");
-        // Stamp inline rules so the placeholder mirrors the card's outer
-        // box without rendering shadow / radius / children — invisible,
-        // non-interactive, but layout-active.
+
         placeholder.style.visibility = "hidden";
         placeholder.style.boxShadow = "none";
         placeholder.style.borderRadius = "0";
         placeholder.style.pointerEvents = "none";
-        // .imageCard sets will-change to 5 props; inheriting that on a
-        // measurement-only div pins a permanent compositor layer for
-        // nothing. The placeholder never animates, so opt out explicitly.
+
         placeholder.style.willChange = "auto";
         if (originalParent) {
           originalParent.insertBefore(placeholder, card);
         }
         document.body.appendChild(card);
 
-        // Reads the placeholder's current rect (which always reflects
-        // the live, post-resize layout slot) and re-applies the
-        // fixed-position coordinates to the card.
-        //
-        // Defensive `y: 0`: the exit timeline animates `y` (transform)
-        // independently of `top`. Without an explicit reset here, a
-        // resize triggered while the user has scrolled past the exit
-        // range would leave the previous translateY in place during
-        // the brief window before the exit ScrollTrigger re-renders
-        // its scrub. invalidateOnRefresh on the exit trigger immediately
-        // re-writes the correct `y` for the new viewport, but starting
-        // each placeCard pass from a deterministic transform state
-        // avoids one-frame visual hiccups.
         const placeCard = () => {
           const r = placeholder.getBoundingClientRect();
           if (r.width === 0 || r.height === 0) return;
@@ -345,22 +268,12 @@ export function Hero({
           margin: 0,
           zIndex: 5,
           autoAlpha: 0,
-          // The body-fixed card has no interactive children (the back link
-          // lives in .metaCol, not inside the figure). After the exit
-          // timeline translates the card to top:-vh its lower edge sits
-          // flush with y=0 of the viewport — intercepting clicks on
-          // downstream sections (e.g. Toggle's "List" button at scroll
-          // ≈ 7560px). Drop pointer-events from the start so the figure is
-          // purely decorative w.r.t. hit-testing.
+
           pointerEvents: "none",
           "--card-radius": initialRadiusPx + "px",
         });
         placeCard();
 
-        // ── ON-LOAD card fade-in ── Card box is locked in place by the
-        // gsap.set above, so a pure autoAlpha tween won't perturb the
-        // measurements the master scroll-timeline relies on. Runs
-        // independently of the scrubbed master TL.
         const cardEntranceTween = gsap.to(card, {
           autoAlpha: 1,
           duration: 0.8,
@@ -368,13 +281,6 @@ export function Hero({
           ease: "power3.out",
         });
 
-        // ── PINNED MASTER TIMELINE ── Two pin triggers on the same
-        // element don't accumulate pin distance (they share one
-        // pin-spacer sized for the first), so intro fade and grow are
-        // sequenced in a single timeline under a single pin trigger.
-        // Total normalised duration: 1.35 (0.25 fade-out + 1.0 grow +
-        // 0.1 hold tail at full-bleed). Pin scroll range is mapped to
-        // the same 1.35 × vh so 1 timeline-unit ≈ 1 vh of scroll.
         const masterTL = gsap
           .timeline()
           // Intro fade — plays in the first 0.5 units of the timeline.
@@ -463,20 +369,10 @@ export function Hero({
           scrub: 0.5,
           animation: masterTL,
           anticipatePin: 1,
-          // Force function-based start/end values AND the tween end-values
-          // (e.g. width: () => window.innerWidth) inside masterTL to
-          // re-evaluate on every refresh. Refresh fires automatically on
-          // window resize — exactly what the resize fix needs.
+
           invalidateOnRefresh: true,
         });
 
-        // ── BADGE SCROLL-FADE ── Lives outside the master timeline so
-        // the on-load pop tween (delay 0.6s) can't be clobbered by the
-        // master TL's lazy fromState capture. Explicit fromTo values +
-        // immediateRender:false guarantees the badge is read as
-        // (autoAlpha:1, scale:1) the first time the user scrolls into
-        // this trigger's range — no matter what state the entrance
-        // tween is in at that moment.
         const badgeFadeTL = gsap.fromTo(
           badgeRef.current,
           { autoAlpha: 1, scale: 1, immediateRender: false },
@@ -492,24 +388,6 @@ export function Hero({
           invalidateOnRefresh: true,
         });
 
-        // ── EXIT (unpinned, 1:1 scrub) ── As the page scrolls 1 vh
-        // past the pin, the card translates 1 vh upward, linearly.
-        // The ledger sits in document flow immediately after the
-        // section, so it climbs into the viewport at the same rate —
-        // bottom-of-card and top-of-ledger share one line throughout,
-        // and the card is fully off-screen at the moment the ledger
-        // lands at viewport top.
-        //
-        // Uses `y` (transform) instead of `top`: the master grow tween
-        // owns the `top` property (animates it to 0 as part of the
-        // full-bleed grow, then holds at 0 through its tail). If exit
-        // wrote `top: -vh` too, a ScrollTrigger.refresh() triggered by
-        // a downstream pin (e.g. Pull) re-applies both timelines to
-        // their progress-1 states in registration order — master last,
-        // overwriting exit's translation and stranding the card at
-        // top:0 over downstream sections. Animating `y` keeps the two
-        // timelines on disjoint properties so their final states
-        // compose: card stays at top:0 with transform:translateY(-vh).
         const exitTL = gsap.timeline().to(
           card,
           {
@@ -529,20 +407,6 @@ export function Hero({
           invalidateOnRefresh: true,
         });
 
-        // ── RESIZE RECOVERY ── ScrollTrigger fires `refresh` on window
-        // resize (after the browser has reflowed). At that moment the
-        // placeholder's rect reflects the new layout slot, so re-running
-        // `placeCard()` snaps the body-fixed card back to where it
-        // would naturally sit. No progress guard — the previous
-        // `progress <= 0` guard tripped on microscopic float noise (e.g.
-        // 8e-7 from scrub lag / `anticipatePin: 1`) and silently skipped
-        // recovery on every refresh after the first. The master
-        // ScrollTrigger has `invalidateOnRefresh: true`, so the grow
-        // tween will re-record its FROM values against the freshly
-        // placed card the next time progress moves; mid-scrub, this
-        // matches the new natural slot exactly. `refreshInit` fires
-        // before the browser reflow and reads stale placeholder
-        // coordinates, so it cannot be used here.
         const onRefresh = () => {
           placeCard();
         };
@@ -551,16 +415,12 @@ export function Hero({
         return () => {
           ScrollTrigger.removeEventListener("refresh", onRefresh);
           cardEntranceTween.kill();
-          // st.kill() defaults to false and leaves masterTL, badgeFadeTL,
-          // and exitTL (plus their nested tweens with refs into the card /
-          // meta / title / lede DOM) in memory across mount/unmount cycles.
-          // Pass true so the bound animations get killed alongside their triggers.
+
           ScrollTrigger.getAll().forEach((st) => {
             if (st.trigger === section || st.pin === card) st.kill(true);
           });
           gsap.set(card, { clearProps: "all" });
-          // Drop the AT-hiding attributes we stamped on the card so the
-          // next mount cycle starts from a clean slate.
+
           card.removeAttribute("aria-hidden");
           card.removeAttribute("role");
           if (placeholder.isConnected) {
@@ -569,10 +429,7 @@ export function Hero({
           if (originalParent?.isConnected && card.parentElement !== originalParent) {
             originalParent.appendChild(card);
           } else if (card.parentElement === document.body) {
-            // Original slot is gone (section unmounted — route change,
-            // hot reload, matchMedia revocation). Without this branch the
-            // card stays parented to <body> for the rest of the page
-            // lifetime as an orphan fixed-position figure.
+
             card.remove();
           }
         };
@@ -583,11 +440,9 @@ export function Hero({
 
   return (
     <section ref={sectionRef} className={styles.hero}>
-      {/* Hidden width-only sizer — mirrors the wordmark's per-letter
-          inline-block structure so its rendered width matches the
-          visible title to the pixel. See .titleSizer in CSS. */}
+      
       <span className={styles.titleSizer} aria-hidden="true">
-        {/* key={i}: source is `title` — a static build-time prop, never reordered. */}
+        
         {title.split("").map((letter, i) => (
           <span key={i} className={styles.titleLetter}>
             {letter}
@@ -622,7 +477,7 @@ export function Hero({
           })}
         </div>
         <p ref={ledeRef} className={styles.lede}>
-          {/* key={i}: source is `lede` — a static build-time prop split at spaces, never reordered. */}
+          
           {ledeWords.map((word, i) => (
             <Fragment key={i}>
               <span className={styles.ledeWord}>
@@ -661,7 +516,7 @@ export function Hero({
       </div>
 
       <h1 ref={titleRef} className={styles.titleText} aria-label={title}>
-        {/* key={index}: source is `title` — a static build-time prop, never reordered. */}
+        
         {title.split("").map((letter, index) => (
           <span
             key={index}

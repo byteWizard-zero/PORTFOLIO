@@ -1,8 +1,4 @@
-/* Shared section meta-label: brand ✦ + short uppercase tracked label.
-   The single source of truth for the eyebrow pattern used across the home
-   sections, the case-study sections, and the Workflow section. Section-
-   specific layout (position, margins, transitions) is layered on via the
-   `className` prop, which only adds non-conflicting properties. */
+
 .metaLabel {
   display: inline-flex;
   align-items: center;

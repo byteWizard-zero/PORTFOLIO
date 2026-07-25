@@ -18,7 +18,7 @@ interface LaneProgress {
 
 export function DsaRaceTrack() {
   const [nValue, setNValue] = useState<number>(1000);
-  const [sliderVal, setSliderVal] = useState<number>(2); // 2 is index of 1000
+  const [sliderVal, setSliderVal] = useState<number>(2); 
   const [raceState, setRaceState] = useState<'idle' | 'running' | 'completed' | 'crashed'>('idle');
   const [raceType, setRaceType] = useState<'complexity' | 'sorting'>('complexity');
   const [logs, setLogs] = useState<string[]>([]);
@@ -28,22 +28,18 @@ export function DsaRaceTrack() {
   const startTimeRef = useRef<number>(0);
   const terminalBodyRef = useRef<HTMLDivElement>(null);
 
-  // Apply dynamic lenis-prevent to scrollable terminal container
   useDynamicLenisPrevent(terminalBodyRef);
 
-  // Auto-scroll the terminal logs internally (no page jumping)
   useEffect(() => {
     if (terminalBodyRef.current) {
       terminalBodyRef.current.scrollTop = terminalBodyRef.current.scrollHeight;
     }
   }, [logs]);
 
-  // Keep sliderVal in sync with nValue (e.g. on reset)
   useEffect(() => {
     setSliderVal(N_VALUES.indexOf(nValue));
   }, [nValue]);
 
-  // Cleanup animations on unmount
   useEffect(() => {
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
@@ -58,8 +54,7 @@ export function DsaRaceTrack() {
     if (raceState === 'running') return;
     const val = parseFloat(e.target.value);
     setSliderVal(val);
-    
-    // Update target N value dynamically on crossing thresholds
+
     const nearestIndex = Math.round(val);
     const nearestN = N_VALUES[nearestIndex];
     if (nearestN !== nValue) {
@@ -71,8 +66,7 @@ export function DsaRaceTrack() {
   const handleSliderRelease = () => {
     if (raceState === 'running') return;
     const nearestIndex = Math.round(sliderVal);
-    
-    // Snappy bouncy transition to the nearest discrete step
+
     const obj = { val: sliderVal };
     gsap.to(obj, {
       val: nearestIndex,
@@ -92,7 +86,6 @@ export function DsaRaceTrack() {
     setProgress({ o1: 0, ologn: 0, on: 0, on2: 0 });
     setLogs([]);
 
-    // Instant execution for reduced motion users
     if (reducedMotion) {
       const isCrash = nValue >= 10000;
       setProgress({
@@ -129,12 +122,11 @@ export function DsaRaceTrack() {
       : `[SORTER] Instantiating sorting algorithm race for N = ${nValue.toLocaleString()} arrays...`
     );
     startTimeRef.current = performance.now();
-    
-    // Set up timings based on N (slower durations for smooth pacing)
-    const o1Duration = 1200; // ms
-    const olognDuration = 1800; // ms
-    let onDuration = 2800; // ms
-    let on2Duration = 5000; // ms
+
+    const o1Duration = 1200; 
+    const olognDuration = 1800; 
+    let onDuration = 2800; 
+    let on2Duration = 5000; 
 
     if (nValue === 10) {
       onDuration = 2200;
@@ -173,10 +165,10 @@ export function DsaRaceTrack() {
       let crashTriggered = false;
 
       if (nValue < 10000) {
-        // Normal completion path for small N
+        
         pOn2 = Math.min(100, (elapsed / on2Duration) * 100);
       } else if (nValue === 10000) {
-        // Stalls at 45% and crashes (around 4.2s out of 6.0s duration)
+        
         if (elapsed < 4200) {
           pOn2 = (elapsed / 4200) * 45;
         } else {
@@ -187,7 +179,7 @@ export function DsaRaceTrack() {
           }
         }
       } else {
-        // N = 100,000: Stalls at 12% and crashes quickly (around 2.0s)
+        
         if (elapsed < 2000) {
           pOn2 = (elapsed / 2000) * 12;
         } else {
@@ -199,7 +191,6 @@ export function DsaRaceTrack() {
         }
       }
 
-      // Update progress bars
       setProgress({
         o1: pO1,
         ologn: pOlogn,
@@ -207,7 +198,6 @@ export function DsaRaceTrack() {
         on2: pOn2,
       });
 
-      // Sequential Logging Updates
       if (raceType === 'complexity') {
         if (pO1 >= 100 && !loggedRef.o1) {
           loggedRef.o1 = true;
@@ -230,7 +220,6 @@ export function DsaRaceTrack() {
           addLog(`[SUCCESS] O(N) linear sweep finished in ${Math.round(onDuration)}ms.`);
         }
 
-        // O(N2) Stalling Logs
         if (nValue >= 10000 && elapsed > 1500 && !loggedRef.on2Warn) {
           loggedRef.on2Warn = true;
           addLog(`[WARNING] O(N²) quadratic sort: Cache line thrashing detected. CPU usage 100%.`);
@@ -245,7 +234,6 @@ export function DsaRaceTrack() {
           return;
         }
 
-        // Check for normal completion
         if (pO1 >= 100 && pOlogn >= 100 && pOn >= 100 && pOn2 >= 100) {
           addLog(`[SUCCESS] O(N²) quadratic sort completed in ${Math.round(on2Duration)}ms.`);
           addLog(`[SYSTEM] Loop race finished. CPU temperature nominal.`);
@@ -254,7 +242,7 @@ export function DsaRaceTrack() {
           return;
         }
       } else {
-        // Sorting logs
+        
         if (pO1 >= 100 && !loggedRef.o1) {
           loggedRef.o1 = true;
           addLog(`[RUNNING] Allocating auxiliary array variables and reference blocks...`);
@@ -275,7 +263,6 @@ export function DsaRaceTrack() {
           addLog(`[SUCCESS] Merge Sort finished in ${Math.round(onDuration)}ms. Aux space: O(N) (${nValue.toLocaleString()} allocations).`);
         }
 
-        // Bubble Sort stalling warning
         if (nValue >= 10000 && elapsed > 1500 && !loggedRef.on2Warn) {
           loggedRef.on2Warn = true;
           addLog(`[WARNING] Bubble Sort: Loop swaps running quadratically. Cache thrashing detected.`);
@@ -313,7 +300,6 @@ export function DsaRaceTrack() {
     setRaceState('idle');
   };
 
-
   const getSpacePercentage = () => {
     if (raceState === 'idle') return 0;
     
@@ -327,12 +313,12 @@ export function DsaRaceTrack() {
       const currentProgress = Math.max(progress.o1, progress.ologn, progress.on, progress.on2);
       if (currentProgress === 0) return 0;
       
-      const nIndex = N_VALUES.indexOf(nValue); // 0 to 4
+      const nIndex = N_VALUES.indexOf(nValue); 
       const ratio = currentProgress / 100;
       
-      const mergeSpace = (20 + nIndex * 20) * ratio; // Merge is linear
-      const quickSpace = (10 + nIndex * 5) * ratio;  // Quick is log
-      const bubbleSpace = 5 * ratio;                 // Bubble is constant
+      const mergeSpace = (20 + nIndex * 20) * ratio; 
+      const quickSpace = (10 + nIndex * 5) * ratio;  
+      const bubbleSpace = 5 * ratio;                 
       
       return Math.max(bubbleSpace, quickSpace, mergeSpace);
     }
@@ -347,7 +333,6 @@ export function DsaRaceTrack() {
         </p>
       </div>
 
-      {/* Race Mode Selector Tabs */}
       <div className={styles.typeSelector}>
         <button
           type="button"
@@ -368,7 +353,7 @@ export function DsaRaceTrack() {
       </div>
 
       <div className={styles.arenaLayout}>
-        {/* Left Column: Tracks and Controls */}
+        
         <div className={styles.mainControls}>
           <div className={styles.controlRow}>
             <div className={styles.sliderLabelGroup}>
@@ -398,10 +383,10 @@ export function DsaRaceTrack() {
           </div>
 
           <div className={styles.tracksGroup}>
-            {/* Dynamic lanes depending on raceType */}
+            
             {raceType === 'complexity' ? (
               <>
-                {/* O(1) Lane */}
+                
                 <div className={styles.lane} data-complexity="o1">
                   <div className={styles.laneHeader}>
                     <span className={styles.complexityBadge} data-complexity="o1">O(1)</span>
@@ -416,7 +401,6 @@ export function DsaRaceTrack() {
                   </div>
                 </div>
 
-                {/* O(log N) Lane */}
                 <div className={styles.lane} data-complexity="ologn">
                   <div className={styles.laneHeader}>
                     <span className={styles.complexityBadge} data-complexity="ologn">O(log N)</span>
@@ -431,7 +415,6 @@ export function DsaRaceTrack() {
                   </div>
                 </div>
 
-                {/* O(N) Lane */}
                 <div className={styles.lane} data-complexity="on">
                   <div className={styles.laneHeader}>
                     <span className={styles.complexityBadge} data-complexity="on">O(N)</span>
@@ -446,7 +429,6 @@ export function DsaRaceTrack() {
                   </div>
                 </div>
 
-                {/* O(N^2) Lane */}
                 <div 
                   className={`${styles.lane} ${raceState === 'crashed' && nValue >= 10000 ? styles.stalledLane : ''}`} 
                   data-complexity="on2"
@@ -470,7 +452,7 @@ export function DsaRaceTrack() {
               </>
             ) : (
               <>
-                {/* Bubble Sort Lane (O(N^2) Time) */}
+                
                 <div 
                   className={`${styles.lane} ${raceState === 'crashed' && nValue >= 10000 ? styles.stalledLane : ''}`} 
                   data-complexity="on2"
@@ -492,7 +474,6 @@ export function DsaRaceTrack() {
                   </div>
                 </div>
 
-                {/* Quick Sort Lane (O(N log N) Time) */}
                 <div className={styles.lane} data-complexity="ologn">
                   <div className={styles.laneHeader}>
                     <span className={styles.complexityBadge} data-complexity="ologn">Quick</span>
@@ -507,7 +488,6 @@ export function DsaRaceTrack() {
                   </div>
                 </div>
 
-                {/* Merge Sort Lane (O(N log N) Time) */}
                 <div className={styles.lane} data-complexity="on">
                   <div className={styles.laneHeader}>
                     <span className={styles.complexityBadge} data-complexity="on">Merge</span>
@@ -525,7 +505,6 @@ export function DsaRaceTrack() {
             )}
           </div>
 
-          {/* Auxiliary Space Complexity Meter */}
           <div className={styles.spaceComplexityGroup}>
             <div className={styles.spaceComplexityHeader}>
               <span>Auxiliary Space Allocations</span>
@@ -568,7 +547,6 @@ export function DsaRaceTrack() {
           </div>
         </div>
 
-        {/* Right Column: Logging Terminal */}
         <div className={styles.terminalContainer}>
           <div className={styles.terminalHeader}>
             <div className={styles.dotGroup}>

@@ -6,7 +6,6 @@
   overflow: hidden;
 }
 
-/* Effects inherit pointer-events: none unless they explicitly opt in. */
 .stage * {
   pointer-events: none;
 }

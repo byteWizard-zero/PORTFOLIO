@@ -7,20 +7,16 @@ import styles from './WorksStickerList.module.css';
 
 export interface WorksStickerListProps {
   projects: WorksIndexProject[];
-  /** Set of slugs with a matching case study. Gates link rendering. */
+  
   caseStudySlugs: ReadonlySet<string>;
-  /** Bubbled to the page for cursor + preview coordination. Bubbles the
-   *  full project (or null) so the page can resolve the preview image. */
+  
   onStickerHoverChange: (hovered: boolean, project: WorksIndexProject | null) => void;
-  /** Persisted site accent — threaded to each sticker's TransitionLink payload
-   *  so the transition keeps the global accent rather than the project's color. */
+  
   currentAccent: string;
 }
 
-/** Decal glyphs cycle visual rhythm — first ten match the v5 prototype. */
 const DECAL_SEQ = ['01', '★', '▲', '✦', '✱', '◐', '■', '⟢', '◇', '✚'];
 
-/** Grace period (ms) before bubbling a "no sticker hovered" signal up. */
 const LEAVE_DEFER_MS = 60;
 
 export function WorksStickerList({

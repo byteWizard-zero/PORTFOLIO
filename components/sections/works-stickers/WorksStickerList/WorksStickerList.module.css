@@ -1,8 +1,4 @@
-/* WorksStickerList
- *
- * Vertical stack of stickers. Each sticker carries its own tilt + horizontal
- * offset, so the container is just a flex column with vertical rhythm.
- */
+
 
 .stack {
     position: relative;

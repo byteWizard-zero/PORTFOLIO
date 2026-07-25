@@ -34,7 +34,6 @@
         overflow: hidden;
     }
 
-    /* Ambient background glows */
     .ambientGlowTeal {
         position: absolute;
         width: 300px;
@@ -57,7 +56,6 @@
         filter: blur(40px);
     }
 
-    /* CRT scanlines effect */
     .scanlines {
         position: absolute;
         inset: 0;
@@ -75,7 +73,6 @@
         opacity: 0.15;
     }
 
-    /* Floating telemetry status readouts */
     .cornerStatsTopLeft {
         position: absolute;
         top: 20px;
@@ -103,7 +100,6 @@
         font-weight: 700;
     }
 
-    /* Premium Console Card */
     .consoleCard {
         background: rgba(17, 18, 20, 0.45);
         border: 1px solid rgba(255, 255, 255, 0.06);
@@ -176,7 +172,6 @@
         margin: 0 0 16px 0;
     }
 
-    /* Stylized guide arrow line */
     .arrowGuideline {
         display: flex;
         flex-direction: column;
@@ -202,7 +197,6 @@
         animation: floatArrow 1.5s infinite ease-in-out;
     }
 
-    /* Action button matching portfolio glassmorphism */
     .actionButton {
         display: inline-flex;
         align-items: center;
@@ -229,7 +223,6 @@
         box-shadow: 0 2px 5px rgba(98, 182, 203, 0.1);
     }
 
-    /* CAPTCHA Card styling (glassmorphic) */
     .captchaCard {
         background: rgba(17, 18, 20, 0.5);
         border: 1px solid rgba(255, 255, 255, 0.08);
@@ -294,7 +287,6 @@
         box-sizing: border-box;
     }
 
-    /* Checkbox list and trigger */
     .checkboxWrapper {
         display: flex;
         align-items: center;
@@ -331,7 +323,6 @@
         letter-spacing: 0.01em;
     }
 
-    /* Telemetry logs block */
     .telemetryLogs {
         font-family: 'Courier New', Courier, monospace;
         font-size: 11px;
@@ -389,7 +380,6 @@
         color: #ffffff;
     }
 
-    /* CAPTCHA Proceed Button Link */
     .successWrapper {
         margin-top: 16px;
         animation: fadeIn 0.4s ease-out forwards;
@@ -423,7 +413,6 @@
         box-shadow: 0 2px 5px rgba(147, 185, 158, 0.1);
     }
 
-    /* Hide the custom cursor elements on mobile viewports */
     :global([class*="CustomCursor_cursorWrapper"]),
     :global([class*="CustomCursor_trailContainer"]),
     :global(.customCursor),

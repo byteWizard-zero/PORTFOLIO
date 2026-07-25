@@ -8,9 +8,6 @@ export const metadata: Metadata = {
   alternates: { canonical: '/about' },
 };
 
-/* Dedicated About page — composed like a case study (editorial reading
-   rhythm with the Ledger woven in as a vitals strip and a colophon). Navbar,
-   transitions and providers come from the root layout. */
 export default function AboutRoute() {
   return <AboutPageView />;
 }

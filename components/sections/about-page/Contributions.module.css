@@ -1,16 +1,10 @@
-/* ABOUT PAGE · Contributions — GitHub heatmap + accent snake. */
+
 
 .section {
   padding: clamp(140px, 22vh, 280px) var(--spacing-nav-side);
 
-  /* The snake is the primary text colour, so it reads as ink crawling across
-     the grid. */
   --snake: var(--color-primary-text);
 
-  /* Accent contribution scale, mixed over the page background so it tracks
-     light/dark automatically. We reference the CSS variable the accent provider
-     keeps in sync on the DOM (NOT a React-rendered inline style) so server and
-     client markup match — no hydration mismatch. */
   --cell-0: var(--color-grid-line);
   --cell-1: color-mix(in srgb, var(--color-accent-purple) 72%, var(--color-background));
   --cell-2: color-mix(in srgb, var(--color-accent-purple) 88%, var(--color-background));
@@ -37,7 +31,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ── grid ── */
 .gridWrap {
   width: 100%;
   transition: padding 0.3s ease;
@@ -47,7 +40,7 @@
   display: block;
   width: 100%;
   height: auto;
-  overflow: visible; /* let the bite-pulse scale spill past the viewBox edge */
+  overflow: visible; 
 }
 
 @media (max-width: 880px) {
@@ -71,28 +64,23 @@
 .cell[data-level="3"] { fill: var(--cell-3); }
 .cell[data-level="4"] { fill: var(--cell-4); }
 
-/* Consumed: drains back to empty (the transition above animates the colour). */
 .cell[data-eaten="true"] { fill: var(--cell-0); }
 
-/* The instant of the bite — a hard accent flash with no transition; removing
-   the class a beat later lets the cell transition down to the eaten colour. */
 .biting {
   fill: var(--snake) !important;
   transition: none !important;
 }
 
-/* ── snake ── */
 .seg {
   fill: var(--snake);
   transform-box: fill-box;
   transform-origin: center;
 }
-/* Head reads a touch brighter with a soft accent halo. */
+
 .seg:first-child {
   filter: drop-shadow(0 0 4px color-mix(in srgb, var(--snake) 70%, transparent));
 }
 
-/* ── footer: legend + controls ── */
 .footer {
   display: flex;
   align-items: center;
@@ -125,7 +113,6 @@
 
 .controls { display: inline-flex; align-items: center; gap: 10px; }
 
-/* The GitHub link — solid accent pill. */
 .cta {
   font-family: var(--font-navbar);
   font-size: clamp(12px, 1.1vw, 15px);

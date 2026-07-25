@@ -70,7 +70,6 @@
   width: 100%;
 }
 
-/* Responsive adjustments */
 @media (max-width: 1024px) {
   .heroSection {
     padding: 80px 6% 40px 6%;

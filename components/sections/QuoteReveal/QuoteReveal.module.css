@@ -34,7 +34,6 @@
   letter-spacing: -0.01em;
 }
 
-/* Background gradient details to add visual interest */
 .glow {
   position: absolute;
   top: 50%;
@@ -47,7 +46,6 @@
   z-index: 1;
 }
 
-/* Mobile responsive padding */
 @media (max-width: 768px) {
   .section {
     padding: 100px 6%;

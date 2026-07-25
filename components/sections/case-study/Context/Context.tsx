@@ -50,8 +50,7 @@ export const Context = ({ label, facts, body }: ContextContent) => {
       </aside>
 
       <div ref={colRef} className={styles.col}>
-        {/* Index keys are acceptable here: body paragraphs are static
-            build-time content from case-studies.json and never reorder. */}
+        
         {body.map((paragraph, i) => (
           <p key={i} className={i === 0 ? styles.lede : undefined}>
             {renderInline(paragraph)}

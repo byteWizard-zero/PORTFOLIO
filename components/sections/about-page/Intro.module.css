@@ -1,4 +1,4 @@
-/* ABOUT PAGE · Intro — editorial reading column + marginalia. */
+
 
 .intro {
   padding: clamp(64px, 10vh, 120px) var(--spacing-nav-side);
@@ -199,12 +199,10 @@
   display: block;
 }
 
-/* Base image jitter and chromatic shadows */
 .glitchActive .profileImage {
   animation: glitch-shadow-flicker 0.3s infinite;
 }
 
-/* Red/Magenta Channel - Shifted Left Slice */
 .glitchActive::before {
   left: -5px;
   animation: glitch-slice-1 0.4s infinite linear alternate-reverse;
@@ -214,7 +212,6 @@
   opacity: 0.45;
 }
 
-/* Cyan Channel - Shifted Right Slice */
 .glitchActive::after {
   left: 5px;
   animation: glitch-slice-2 0.4s infinite linear alternate-reverse;
@@ -252,7 +249,6 @@
   }
 }
 
-/* Sharp horizontal slice clip animations */
 @keyframes glitch-slice-1 {
   0% {
     clip-path: inset(10% 0 85% 0);

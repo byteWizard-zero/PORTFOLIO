@@ -1,9 +1,4 @@
-/* WorksSticker
- *
- * Tilted pill containing: number badge · title marquee · meta · corner decal.
- * Idle wobble is CSS-only (no GSAP tween needed). Hover straightens, kills the
- * wobble, and floods the sticker with its accent. Theme-aware via tokens.
- */
+
 
 .sticker {
     position: relative;
@@ -37,15 +32,6 @@
     to   { transform: rotate(calc(var(--tilt, 0deg) + var(--wobble-amp, 0.6deg))); }
 }
 
-/* Hover state — kill the wobble (so the tilt freezes at base), keep the
- * sticker's natural tilt, lift + scale slightly, flood with accent.
- *
- * `animation: none` is required (not animation-play-state: paused) so the
- * static `transform` rule wins; otherwise the keyframe's last computed value
- * would override the static transform. The static transform preserves
- * `rotate(var(--tilt))` so the sticker stays angled in place rather than
- * snapping upright.
- */
 .sticker.isHover {
     animation: none;
     transform: rotate(var(--tilt, 0deg)) translateY(-4px) scale(1.01);
@@ -56,8 +42,6 @@
         6px 8px 0 0 var(--color-primary-text),
         0 30px 60px -20px var(--sticker-shadow, rgba(27, 32, 40, 0.35));
 }
-
-/* NUMBER BADGE -------------------------------------------------------- */
 
 .num {
     grid-area: num;
@@ -81,14 +65,10 @@
     color: var(--sticker-accent, var(--color-accent-purple));
 }
 
-/* MARQUEE SLOT -------------------------------------------------------- */
-
 .marquee {
     grid-area: title;
     min-width: 0;
 }
-
-/* META ---------------------------------------------------------------- */
 
 .meta {
     grid-area: meta;
@@ -122,8 +102,6 @@
     color: #fff;
 }
 
-/* CORNER DECAL -------------------------------------------------------- */
-
 .decal {
     position: absolute;
     top: 50%;
@@ -151,10 +129,6 @@
     color: var(--sticker-accent, var(--color-accent-purple));
 }
 
-/* DARK MODE ---------------------------------------------------------- */
-/* Soft drop-shadow uses a darker rgba in light mode; in dark mode, swap
- * the alpha source so we don't get an invisible shadow against #171717. */
-
 :global(:root[data-theme='dark']) .sticker.isHover {
     --sticker-shadow: rgba(0, 0, 0, 0.6);
 }
@@ -163,16 +137,12 @@
     color: rgba(255, 255, 255, 0.5);
 }
 
-/* REDUCED MOTION ----------------------------------------------------- */
-
 @media (prefers-reduced-motion: reduce) {
     .sticker {
         animation: none;
         transform: rotate(var(--tilt, 0deg));
     }
 }
-
-/* MOBILE / NARROW ---------------------------------------------------- */
 
 @media (max-width: 720px) {
     .sticker {
@@ -199,8 +169,6 @@
         height: 36px;
     }
 }
-
-/* COARSE POINTER ----------------------------------------------------- */
 
 @media (hover: none), (pointer: coarse) {
     .sticker {

@@ -30,9 +30,8 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
 }) => {
   const containerRef = useRef<HTMLHeadingElement>(null);
 
-  // Handle letter portal animation on hover
   const handleLetterHover = useCallback((e: React.MouseEvent<HTMLSpanElement>) => {
-    // Check for reduced motion preference
+    
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const portalLetter = e.currentTarget.querySelector('.portal-letter') as HTMLElement;
     if (portalLetter) {
@@ -71,9 +70,9 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       const isGlitchLine = lineText.startsWith('//');
       
       if (isGlitchLine) {
-        // Split entire glitch line into individual characters for typewriter stagger
+        
         const chars = lineText.split('').map((char, charIdx) => {
-          // Identify highlight letters in the glitched word ("DΔMAGE") to preserve hover animations
+          
           const isHighlightLetter = ['d', 'Δ', 'a', 'm', 'g', 'e'].includes(char.toLowerCase());
           
           if (isHighlightLetter) {
@@ -101,12 +100,11 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
         );
       }
 
-      // Split normal line into words
       const words = lineText.split(/(\s+)/).map((word, wordIdx) => {
         if (word.match(/^\s+$/)) return word;
 
         const clean = word.toLowerCase();
-        // Check if the word is forgotten or matches developer, bug, system
+        
         if (
           clean.includes('forgotten') ||
           clean.includes('developer') ||
@@ -149,7 +147,6 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
 
     const scroller = scrollContainerRef && scrollContainerRef.current ? scrollContainerRef.current : window;
 
-    // 1. Rotate reveal container scrub
     gsap.fromTo(
       el,
       { transformOrigin: '0% 50%', rotate: baseRotation },
@@ -166,7 +163,6 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       }
     );
 
-    // 2. Normal words fade-in scrub
     const wordElements = el.querySelectorAll<HTMLElement>('.word');
 
     gsap.fromTo(
@@ -186,7 +182,6 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       }
     );
 
-    // 3. Normal words blur-out scrub
     if (enableBlur) {
       gsap.fromTo(
         wordElements,
@@ -206,7 +201,6 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       );
     }
 
-    // 4. Glitch typewriter effect (one-shot, time-based)
     const typewriterChars = el.querySelectorAll<HTMLElement>('.typewriter-char');
     const cursor = el.querySelector<HTMLElement>('.terminal-cursor');
     const glitchLine = el.querySelector<HTMLElement>('.glitch-line');

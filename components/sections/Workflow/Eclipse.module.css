@@ -1,11 +1,4 @@
-/* ============================================================
-   WORKFLOW · ECLIPSE renderer
-   A dark body slides off a light disc; the growing crescent of accent
-   light sweeps across the active step's name. High contrast, deep
-   vignette, near-no chrome. Ends on a corona bloom. Geometry is driven
-   imperatively by useEclipseDriver. Accent palette (--wf-*) comes from
-   styles/variables.css.
-   ============================================================ */
+
 
 .eclipse {
   position: relative;
@@ -22,7 +15,6 @@
   background: transparent;
 }
 
-/* ---- header (meta-label top-left, step readout top-right) ---- */
 .head {
   position: absolute;
   inset: clamp(84px, 11vh, 116px) clamp(28px, 5vw, 80px) auto;
@@ -31,7 +23,7 @@
   align-items: baseline;
   z-index: 6;
 }
-/* Same accent uppercase treatment the per-step kicker used to carry. */
+
 .readout {
   font-family: var(--font-navbar);
   font-size: 12px;
@@ -46,7 +38,6 @@
   color: var(--wf-live-accent);
 }
 
-/* ---- scene ---- */
 .schematic {
   position: absolute;
   inset: 0;
@@ -78,9 +69,6 @@
   stroke-width: 1;
 }
 
-/* ---- crescent-swept names (SVG text, viewBox units) ---- */
-/* Opacity + y are owned by GSAP (per-letter rise on activation); only the
-   accent fill transitions here. */
 .nameBase {
   font-family: var(--font-primary);
   font-weight: 700;
@@ -99,11 +87,6 @@
   transition: fill 0.5s var(--ease-out-expo);
 }
 
-/* ---- detail column (bottom-right) ----
-   Rotating step detail, anchored to the bottom-right so longer copy grows
-   upward and never clips. The meta-label stays in the top-left header.
-   The scene sits behind on the page's light ground, so the copy reads at full
-   contrast. */
 .detailWrap {
   position: absolute;
   left: auto;
@@ -120,8 +103,7 @@
   right: 0;
   bottom: 0;
   opacity: 0;
-  /* Motion comes from the per-word line reveal (same as the case-study
-     content); the container only fades to gate the kicker between steps. */
+  
   transition: opacity 0.45s var(--ease-out-expo);
   pointer-events: none;
   display: flex;
@@ -134,8 +116,7 @@
 .detailTitle {
   margin: 0 0 clamp(12px, 1.4vw, 20px);
   font-family: var(--font-primary);
-  /* Larger, bold display treatment mirroring the Services section words
-     (font-weight 600, tight tracking + leading). */
+  
   font-size: clamp(36px, 5vw, 64px);
   font-weight: 600;
   line-height: 0.96;
@@ -144,8 +125,7 @@
   text-wrap: balance;
   color: var(--color-primary-text);
 }
-/* The trailing full stop carries the orbiting sphere's accent (the same
-   live teal that lights the crescent + corona), not the ink of the words. */
+
 .detailTitleStop {
   color: var(--wf-live-accent);
 }
@@ -162,7 +142,6 @@
   color: var(--accent);
 }
 
-/* ---- reduced-motion / static fallback ---- */
 .isStatic .viewport {
   height: auto;
   padding: 12vh 0 8vh;
@@ -195,7 +174,6 @@
   align-items: flex-start;
 }
 
-/* ---- responsive: keep the detail column readable as it narrows ---- */
 @media (max-width: 1024px) {
   .detailWrap {
     width: min(52ch, 60vw);

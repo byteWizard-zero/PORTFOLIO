@@ -1,15 +1,4 @@
-/* WorksRow
- *
- * One row of the Works Index — number gutter, marquee, meta column.
- *
- * Owns hover state for the row's own surface (background flood, meta colour).
- * Marquee state (paused / inverted) is OWNED BY WorksRowMarquee via props —
- * never reach into another module's class names from here.
- *
- * Dim-other-rows: when `data-dim="true"` is set by the parent container,
- * the row drops opacity. Cleaner than parent-side `[class*='WorksRow_row']`
- * substring matching against generated CSS-module names.
- */
+
 
 .row {
     position: relative;
@@ -32,7 +21,6 @@
     outline-offset: -4px;
 }
 
-/* Parent-driven dimming when another row is hovered. */
 .row[data-dim='true'] {
     opacity: 0.45;
 }
@@ -81,8 +69,6 @@
 .row:hover .arrow {
     width: 110px;
 }
-
-/* ---------------- Hover state — flood-fill the row ----------------- */
 
 .row.isHover {
     background: var(--row-accent, var(--color-primary-text));

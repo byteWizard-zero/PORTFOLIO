@@ -5,7 +5,6 @@ import { playClick, playSweep } from '@/lib/audio';
 import { useDynamicLenisPrevent } from '@/lib/useDynamicLenisPrevent';
 import styles from './IotVisualizer.module.css';
 
-// Hardware Pin specifications and descriptive registry
 const PIN_DETAILS: Record<string, { label: string; desc: string; type: 'power' | 'analog' | 'gpio' | 'gnd' }> = {
   '3V3': { label: '3.3V Power Out', desc: 'Regulated 3.3V hardware power rail output. Supplies sensors and peripherals.', type: 'power' },
   'EN': { label: 'EN (Reset Input)', desc: 'Hardware reset pin (Active LOW). Pulling this pin to ground reboots the Tensilica processors.', type: 'power' },
@@ -27,7 +26,6 @@ const PIN_DETAILS: Record<string, { label: string; desc: string; type: 'power' |
   'D18': { label: 'GPIO18 / SPI_SCK', desc: 'General-purpose GPIO. Configured as hardware SPI Serial Clock reference line.', type: 'gpio' },
   'D5':  { label: 'GPIO5 / SPI_SS', desc: 'General-purpose GPIO. Configured as SPI Slave Select / Chip Select hardware line.', type: 'gpio' },
 
-  // Special board elements
   'EN_BTN': { label: 'EN (Reset) Button', desc: 'Tactile push-button pulling the EN pin to GND to instantly restart the ESP32 CPU.', type: 'power' },
   'BOOT_BTN': { label: 'BOOT (GPIO0) Button', desc: 'Tactile button pulling GPIO0 LOW. Hold this button and tap EN to enter serial bootloader flash mode.', type: 'gpio' },
   'TEMP_ADC': { label: 'TEMP_ADC Sensor', desc: 'Edge thermal transistor circuit. Measures Ambient/CPU thermal ranges and feeds ADC1_CH0.', type: 'analog' },
@@ -37,10 +35,10 @@ const PIN_DETAILS: Record<string, { label: string; desc: string; type: 'power' |
 };
 
 export function IotVisualizer() {
-  const [temperature, setTemperature] = useState(28); // Celsius
-  const [voltage, setVoltage] = useState(3.3); // Volts
+  const [temperature, setTemperature] = useState(28); 
+  const [voltage, setVoltage] = useState(3.3); 
   const [ledActive, setLedActive] = useState(false);
-  const [signalStrength, setSignalStrength] = useState(-52); // dBm
+  const [signalStrength, setSignalStrength] = useState(-52); 
   const [cpuTemp, setCpuTemp] = useState(37.4);
   const [resetting, setResetting] = useState(false);
   
@@ -49,8 +47,7 @@ export function IotVisualizer() {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  // Initial boot logs are set directly in useState to avoid a cascading
-  // re-render from synchronous setState inside useEffect.
+
   const [logs, setLogs] = useState<string[]>([
     `[SYSTEM] Booting IoT Telemetry Subsystem...`,
     `[ESP32] Core 0 initialized. Clock speed: 240MHz.`,
@@ -68,14 +65,12 @@ export function IotVisualizer() {
     setLogs((prev) => [...prev, `[${timestamp}] ${msg}`].slice(-30));
   };
 
-  // Log auto-scroll
   useEffect(() => {
     if (logsBodyRef.current) {
       logsBodyRef.current.scrollTop = logsBodyRef.current.scrollHeight;
     }
   }, [logs]);
 
-  // Simulate WIFI signal variation and CPU temperature changes
   useEffect(() => {
     if (resetting) return;
     const interval = setInterval(() => {
@@ -95,7 +90,6 @@ export function IotVisualizer() {
     return () => clearInterval(interval);
   }, [temperature, ledActive, resetting]);
 
-  // ESP32 Hardware Reset Emulation
   const triggerReset = () => {
     if (resetting) return;
     playSweep();
@@ -135,14 +129,12 @@ export function IotVisualizer() {
     }, 1250);
   };
 
-  // BOOT button toggle
   const triggerBoot = () => {
     playClick();
     addLog(`[ESP32] Boot button pressed (GPIO_00: LOW).`);
     addLog(`[ESP32] Tip: Hold BOOT and tap EN to start serial flash mode.`);
   };
 
-  // Header Pin click toggling
   const handlePinClick = (pinName: string) => {
     if (resetting) return;
     playClick();
@@ -173,7 +165,6 @@ export function IotVisualizer() {
     }
   };
 
-  // Canvas Oscilloscope Animation Loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -196,10 +187,9 @@ export function IotVisualizer() {
 
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
       const gridColor = isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.04)';
-      const waveColor = '#62B6CB'; // Cyan/Teal accent
+      const waveColor = '#62B6CB'; 
       const centerLineColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)';
 
-      // 1. Draw Grid
       ctx.strokeStyle = gridColor;
       ctx.lineWidth = 1;
       
@@ -217,7 +207,6 @@ export function IotVisualizer() {
         ctx.stroke();
       }
 
-      // 2. Draw Center Axis
       ctx.strokeStyle = centerLineColor;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
@@ -225,12 +214,10 @@ export function IotVisualizer() {
       ctx.lineTo(width, height / 2);
       ctx.stroke();
 
-      // 3. Draw Telemetry Wave (Sine + Noise)
       ctx.strokeStyle = waveColor;
       ctx.lineWidth = 2.5;
       ctx.beginPath();
 
-      // Flatline during hardware reset
       const amp = resetting ? 0 : (temperature * 1.4) + 12;
       const freq = resetting ? 0 : (voltage * 0.028) + 0.012;
       const midY = height / 2;
@@ -239,7 +226,6 @@ export function IotVisualizer() {
         const angle = x * freq + offset;
         let y = Math.sin(angle) * amp;
 
-        // Jitter simulation
         if (!resetting) {
           const noise = (Math.sin(x * 0.08 + offset * 4.5) * 1.8) + ((Math.random() - 0.5) * 1.2);
           y += noise;
@@ -300,13 +286,13 @@ export function IotVisualizer() {
       </div>
 
       <div className={styles.dashboard}>
-        {/* Left Column: ESP32 Hardware Schematic */}
+        
         <div className={styles.schematicPanel}>
           <h4 className={styles.panelTitle}>ESP32 Device Node (Pinout Map)</h4>
           <div className={styles.schematicWrapper}>
             <svg className={styles.espSvg} viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                {/* Silver metal gradient for ESP32 casing */}
+                
                 <linearGradient id="silverMetal" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#f3f4f6" />
                   <stop offset="35%" stopColor="#e5e7eb" />
@@ -315,7 +301,6 @@ export function IotVisualizer() {
                   <stop offset="100%" stopColor="#f3f4f6" />
                 </linearGradient>
 
-                {/* USB connector metal gradient */}
                 <linearGradient id="usbMetal" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="#4b5563" />
                   <stop offset="50%" stopColor="#9ca3af" />
@@ -323,27 +308,21 @@ export function IotVisualizer() {
                 </linearGradient>
               </defs>
 
-              {/* Circuit board substrate */}
               <rect x="30" y="20" width="360" height="280" rx="8" className={styles.boardBg} />
-              
-              {/* Golden PCB edge border (adds realism) */}
+
               <rect x="34" y="24" width="352" height="272" rx="6" fill="none" stroke="#D4AF37" strokeWidth="1" opacity="0.6" />
-              
-              {/* Copper tracing lines routing from ESP32 to pins, buttons, sensor */}
+
               <path d="M 90 100 L 150 100" fill="none" className={`${styles.wireLine} ${ledActive ? styles.wireActive : ''}`} />
               <path d="M 330 215 L 270 215" fill="none" className={`${styles.wireLine} ${resetting ? '' : styles.wireSensorActive}`} />
-              
-              {/* Tactile button traces */}
+
               <path d="M 110 245 L 110 215" fill="none" className={styles.wireLine} />
               <path d="M 310 245 L 310 215" fill="none" className={styles.wireLine} />
-              
-              {/* Antenna block at the top */}
+
               <rect x="160" y="24" width="100" height="35" fill="#0d0e12" rx="2" stroke="#222" />
-              {/* Gold zigzag microstrip antenna */}
+              
               <path d="M 170 30 L 250 30 L 250 34 L 170 34 L 170 38 L 250 38 L 250 42 L 170 42 L 170 46 L 250 46 M 210 46 L 210 59" 
                     fill="none" stroke="#D4AF37" strokeWidth="1.5" />
-              
-              {/* ESP32 core module shield */}
+
               <g className={styles.interactiveChip} 
                  onMouseEnter={() => setHoveredPin('ESP32_CHIP')} 
                  onMouseLeave={() => setHoveredPin(null)}>
@@ -352,8 +331,7 @@ export function IotVisualizer() {
                 <text x="210" y="135" textAnchor="middle" className={styles.chipTitle}>ESP32-WROOM-32</text>
                 <text x="210" y="150" textAnchor="middle" className={styles.chipSubtitle}>FCC ID: 2AC7Z-ESP32WROOM32</text>
                 <text x="210" y="165" textAnchor="middle" className={styles.chipDetails}>K408D56</text>
-                
-                {/* Solder castellations (Left and Right edges of module) */}
+
                 {Array.from({ length: 8 }).map((_, i) => (
                   <g key={`cast-l-${i}`}>
                     <rect x="145" y={80 + i * 14} width="6" height="5" fill="#D4AF37" rx="0.5" />
@@ -367,8 +345,7 @@ export function IotVisualizer() {
                   </g>
                 ))}
               </g>
-              
-              {/* On-board Blue Status LED (GPIO_02) */}
+
               <g className={styles.interactiveComponent}
                  onMouseEnter={() => setHoveredPin('D2_LED')}
                  onMouseLeave={() => setHoveredPin(null)}
@@ -377,8 +354,7 @@ export function IotVisualizer() {
                 <circle cx="285" cy="226" r="3" className={`${styles.boardLed} ${ledActive ? styles.boardLedActive : ''}`} />
                 <text x="285" y="240" textAnchor="middle" className={styles.schematicTinyLabel}>GPIO2</text>
               </g>
-              
-              {/* On-board Red Power LED */}
+
               <g className={styles.interactiveComponent}
                  onMouseEnter={() => setHoveredPin('PWR_LED')}
                  onMouseLeave={() => setHoveredPin(null)}>
@@ -386,12 +362,10 @@ export function IotVisualizer() {
                 <circle cx="135" cy="226" r="3" className={`${styles.powerLed} ${!resetting ? styles.powerLedActive : ''}`} />
                 <text x="135" y="240" textAnchor="middle" className={styles.schematicTinyLabel}>PWR</text>
               </g>
-              
-              {/* USB-C Connector Port */}
+
               <rect x="185" y="275" width="50" height="20" rx="3" fill="url(#usbMetal)" stroke="#333" strokeWidth="1" />
               <rect x="192" y="278" width="36" height="14" rx="2" fill="#111" />
-              
-              {/* EN (Reset) Tactile Push Button */}
+
               <g className={styles.tactileBtn} 
                  onClick={triggerReset}
                  onMouseEnter={() => setHoveredPin('EN_BTN')}
@@ -402,8 +376,7 @@ export function IotVisualizer() {
                 <rect x="117" y="254" width="4" height="4" fill="#9ca3af" />
                 <text x="106" y="280" textAnchor="middle" className={styles.schematicTinyLabel}>EN</text>
               </g>
-              
-              {/* BOOT (GPIO0) Tactile Push Button */}
+
               <g className={styles.tactileBtn}
                  onClick={triggerBoot}
                  onMouseEnter={() => setHoveredPin('BOOT_BTN')}
@@ -414,8 +387,7 @@ export function IotVisualizer() {
                 <rect x="325" y="254" width="4" height="4" fill="#9ca3af" />
                 <text x="314" y="280" textAnchor="middle" className={styles.schematicTinyLabel}>BOOT</text>
               </g>
-              
-              {/* Left Header Socket & Pins */}
+
               <rect x="58" y="60" width="10" height="170" rx="2" fill="#111" stroke="#333" />
               {Array.from({ length: 9 }).map((_, i) => {
                 const pinName = ['3V3', 'EN', 'D36', 'D39', 'D34', 'D35', 'D32', 'D33', 'D25'][i];
@@ -426,15 +398,14 @@ export function IotVisualizer() {
                      onMouseLeave={() => setHoveredPin(null)}
                      onClick={() => handlePinClick(pinName)}>
                     <rect x="60" y={65 + i * 18} width="6" height="6" rx="0.5" fill="#D4AF37" stroke="#9E7815" strokeWidth="0.5" />
-                    {/* Active pin glow indicator */}
+                    
                     {pinsState[pinName] && <circle cx="63" cy={68 + i * 18} r="4" className={styles.pinGlowActive} />}
-                    {/* Tiny text label */}
+                    
                     <text x="50" y={71 + i * 18} textAnchor="end" className={styles.pinText}>{pinName}</text>
                   </g>
                 );
               })}
-              
-              {/* Right Header Socket & Pins */}
+
               <rect x="352" y="60" width="10" height="170" rx="2" fill="#111" stroke="#333" />
               {Array.from({ length: 9 }).map((_, i) => {
                 const pinName = ['GND', 'D23', 'D22', 'TX0', 'RX0', 'D21', 'D19', 'D18', 'D5'][i];
@@ -445,15 +416,14 @@ export function IotVisualizer() {
                      onMouseLeave={() => setHoveredPin(null)}
                      onClick={() => handlePinClick(pinName)}>
                     <rect x="354" y={65 + i * 18} width="6" height="6" rx="0.5" fill="#D4AF37" stroke="#9E7815" strokeWidth="0.5" />
-                    {/* Active pin glow indicator */}
+                    
                     {pinsState[pinName] && <circle cx="357" cy={68 + i * 18} r="4" className={styles.pinGlowActive} />}
-                    {/* Tiny text label */}
+                    
                     <text x="368" y={71 + i * 18} textAnchor="start" className={styles.pinText}>{pinName}</text>
                   </g>
                 );
               })}
-              
-              {/* TEMP_ADC sensor chip */}
+
               <g className={styles.interactiveSensor}
                  onClick={() => {
                    playClick();
@@ -463,7 +433,7 @@ export function IotVisualizer() {
                  onMouseLeave={() => setHoveredPin(null)}>
                 <rect x="330" y="200" width="16" height="16" rx="2" fill="#222" stroke="#444" strokeWidth="0.5" />
                 <rect x="332" y="202" width="12" height="12" fill="#333" />
-                {/* Chip pins */}
+                
                 <rect x="327" y="203" width="3" height="2" fill="#9ca3af" />
                 <rect x="327" y="207" width="3" height="2" fill="#9ca3af" />
                 <rect x="327" y="211" width="3" height="2" fill="#9ca3af" />
@@ -516,9 +486,8 @@ export function IotVisualizer() {
           </div>
         </div>
 
-        {/* Right Column: Physical Controls & Oscilloscope */}
         <div className={styles.telemetryPanel}>
-          {/* Controls */}
+          
           <div className={styles.controlsGroup}>
             <h4 className={styles.panelTitle}>Input Sensor Parameters</h4>
             
@@ -556,7 +525,6 @@ export function IotVisualizer() {
             </div>
           </div>
 
-          {/* Oscilloscope canvas */}
           <div className={styles.scopeWrapper}>
             <div className={styles.scopeHeader}>
               <span>ADC_1 TELEMETRY WAVEFORM</span>
@@ -587,7 +555,6 @@ export function IotVisualizer() {
         </div>
       </div>
 
-      {/* Terminal log panel */}
       <div className={styles.logsFooter}>
         <div className={styles.logsHeader}>
           <div className={styles.dotGroup}>

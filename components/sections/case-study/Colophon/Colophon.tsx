@@ -11,15 +11,6 @@ import styles from "./Colophon.module.css";
 
 const cs = animationConfig.caseStudy;
 
-// Position-encoded action styling preserves the original 3-button visual
-// (idx 0 = pillSolid, idx 1 = pill, idx 2 = pillGhost) without adding a
-// variant field to ColophonAction. Data only carries label + optional href.
-//
-// The mapping is intentionally stable: the case-studies.json actions array
-// always contains exactly three entries in the order [primary, secondary,
-// ghost]. If that order ever changes, or a fourth variant is needed, add an
-// explicit `variant?: 'solid' | 'default' | 'ghost'` field to ColophonAction
-// in data/types.ts and replace this function with a direct lookup.
 const actionClassFor = (index: number): string => {
   if (index === 0) return `${styles.pill} ${styles.pillSolid}`;
   if (index === 2) return `${styles.pill} ${styles.pillGhost}`;
@@ -93,8 +84,7 @@ export const Colophon = ({ leftLabel, titleLine1, titleAccent, credits, rightLab
             {rightLabel}
           </MetaLabel>
           <div ref={bioRef}>
-            {/* Index keys are acceptable here: bio paragraphs are static
-                build-time content from case-studies.json and never reorder. */}
+            
             {bio.map((paragraph, i) => (
               <p key={i}>{renderInline(paragraph)}</p>
             ))}

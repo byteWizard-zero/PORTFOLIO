@@ -4,7 +4,6 @@
     z-index: var(--z-above);
 }
 
-/* Base meta-label positioning */
 .metaLabel {
     position: absolute;
     top: clamp(80px, 9vw, 110px);
@@ -22,7 +21,7 @@
 }
 
 .projectSection {
-    height: 250vh; /* Long scroll for drama */
+    height: 250vh; 
     position: relative;
     width: 100%;
 }
@@ -57,7 +56,6 @@ a.projectSticky {
     cursor: pointer;
 }
 
-/* THE SPLIT TEXT */
 .titleWrapper {
     position: absolute;
     inset: 0;
@@ -116,7 +114,6 @@ a.projectSticky {
     font-family: var(--font-primary);
 }
 
-/* THE IMAGE */
 .imageCard {
     position: relative;
     width: min(80vw, 76vh * 3 / 2);
@@ -136,7 +133,6 @@ a.projectSticky {
     transform: scale(1.15);
 }
 
-/* FUNKY BADGE */
 .funkyBadge {
     position: absolute;
     top: -3%;
@@ -159,7 +155,6 @@ a.projectSticky {
     font-family: var(--font-navbar);
 }
 
-/* INFO */
 .projectMeta {
     position: absolute;
     bottom: 50px;

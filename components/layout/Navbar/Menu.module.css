@@ -1,4 +1,4 @@
-/* Menu Component - Full-screen overlay navigation */
+
 
 .menu {
     position: fixed;
@@ -13,19 +13,17 @@
     pointer-events: auto;
 }
 
-/* Overlay with clipPath animation */
 .overlay {
     position: absolute;
     inset: 0;
     background-color: var(--color-accent-purple);
     clip-path: inset(0% 0% 100% 0%);
-    /* Performance: contain and GPU acceleration */
+    
     contain: strict;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
 }
 
-/* Menu content wrapper - two column layout */
 .menuContent {
     position: absolute;
     inset: 0;
@@ -36,7 +34,6 @@
     padding-bottom: calc(var(--spacing-nav-side) + 20px);
 }
 
-/* Navigation container - left side */
 .nav {
     display: flex;
     align-items: center;
@@ -61,7 +58,6 @@
     width: fit-content;
 }
 
-/* Mask container for reveal animation */
 .linkMask {
     overflow: hidden;
     padding: 0.8vh 0;
@@ -76,7 +72,6 @@
     cursor: pointer;
 }
 
-/* Link number (01, 02, etc.) */
 .linkNumber {
     font-family: var(--font-primary);
     font-size: clamp(12px, 1.2vw, 16px);
@@ -89,13 +84,11 @@
     color: var(--color-text-muted-strong);
 }
 
-/* Inner wrapper for the text - this is what animates */
 .linkInner {
     display: block;
     position: relative;
 }
 
-/* Base layer - dark navy text (becomes the "ghost" peeking from top) */
 .linkText {
     display: block;
     font-family: var(--font-primary);
@@ -107,7 +100,6 @@
     color: var(--color-primary-text);
 }
 
-/* Fill layer - white text that reveals from bottom on hover */
 .linkFill {
     position: absolute;
     inset: 0;
@@ -119,18 +111,16 @@
     letter-spacing: -0.02em;
     line-height: 1.0;
     color: var(--color-background);
-    /* Start fully clipped (hidden) - inset from bottom 100% */
+    
     clip-path: inset(100% 0 0 0);
     transition: clip-path 0.4s var(--ease-out-expo);
 }
 
-/* Hover: white layer fills up from bottom, revealing ~60% */
 .linkItem:hover .linkFill {
-    /* Reveal from bottom: top 40% clipped, bottom 60% visible */
+    
     clip-path: inset(40% -2% 0 0);
 }
 
-/* Link description - positioned absolutely to prevent layout shift */
 .linkDesc {
     position: absolute;
     left: calc(clamp(12px, 2vw, 24px) + clamp(24px, 3vw, 40px));
@@ -154,13 +144,11 @@
     transform: translateY(0);
 }
 
-/* Focus styles */
 .link:focus-visible {
     outline: 2px solid var(--color-accent-purple);
     outline-offset: 8px;
 }
 
-/* ===== Social Section - Right Side ===== */
 .socialSection {
     display: flex;
     flex-direction: column;
@@ -192,9 +180,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    /* Match the menu nav links' base text (.linkText uses --color-primary-text)
-       so the "Social Presence" / "Location" labels read as the same family of
-       text against the purple overlay. */
+    
     color: var(--color-primary-text);
     display: flex;
     flex-direction: column;
@@ -238,13 +224,11 @@
     overflow: hidden;
 }
 
-/* Base text layer - white, visible by default */
 .socialTextBase {
     display: flex;
     color: var(--color-background);
 }
 
-/* Clone text layer - dynamic, positioned below, reveals on hover */
 .socialTextClone {
     position: absolute;
     top: 0;
@@ -253,18 +237,15 @@
     color: var(--color-primary-text);
 }
 
-/* Individual character for stagger animation */
 .socialChar {
     display: inline-block;
     transition: transform 0.4s var(--ease-out-expo);
 }
 
-/* Clone characters start below */
 .socialTextClone .socialChar {
     transform: translateY(100%);
 }
 
-/* On hover: base text moves up, clone text moves into place */
 .socialLink:hover .socialTextBase .socialChar {
     transform: translateY(-100%);
 }
@@ -273,7 +254,6 @@
     transform: translateY(0);
 }
 
-/* Focus states */
 .socialLink:focus-visible {
     outline: 2px solid var(--color-primary-text);
     outline-offset: 8px;
@@ -299,7 +279,6 @@
     text-align: right;
 }
 
-/* Back button */
 .backButton {
     display: flex;
     flex-direction: column;
@@ -369,7 +348,6 @@
     transform: translateY(100%);
 }
 
-/* Hover effect */
 .backButton:hover .backTextBase .backChar {
     transform: translateY(-100%);
 }
@@ -382,7 +360,6 @@
     color: var(--color-background);
 }
 
-/* Responsive adjustments */
 @media (max-width: 1024px) {
     .linkDesc {
         display: none;
@@ -404,7 +381,7 @@
 }
 
 @media (max-width: 768px) {
-    /* Stack layout on mobile */
+    
     .menuContent {
         flex-direction: column;
         justify-content: flex-start;
@@ -429,7 +406,6 @@
         gap: 0;
     }
 
-    /* Social section stacks below nav links */
     .socialSection {
         align-items: flex-start;
         text-align: left;
@@ -577,15 +553,6 @@
     animation: heartAnimation 5s infinite ease-in-out;
 }
 
-/* 5s Animation Cycle:
-   0% - 40%: Normal smile
-   40% - 44%: Fast double blink
-   44% - 56%: Normal smile
-   56% - 76%: Wink + blush + floating heart
-   76% - 80%: Return to normal smile
-   80% - 100%: Normal smile
-*/
-
 @keyframes eyeLeftOpenAnimation {
     0%, 38%, 46%, 54%, 78%, 100% {
         opacity: 1;
@@ -661,7 +628,6 @@
     }
 }
 
-/* PERF: hint compositor only while menu is open */
 .menu.isOpen .overlay,
 .menu.isOpen .linkInner { will-change: clip-path; }
 .menu.isOpen .linkNumber,

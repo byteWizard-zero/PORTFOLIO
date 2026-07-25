@@ -1,14 +1,5 @@
 import { gsap } from '@/lib/gsap';
 
-// ============================================
-// PORTAL ANIMATION UTILITIES
-// ============================================
-//
-// Shared by HeroText (hero name letters) and RevealText (Philosophy
-// highlight letters). The "portal loop" slides a letter out in a random
-// direction, teleports it to the opposite side, then snaps it back in —
-// giving the impression it traveled through a portal.
-
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
 export const DIRECTIONS: Direction[] = ['up', 'down', 'left', 'right'];
@@ -46,17 +37,8 @@ export const getOppositeDirection = (direction: Direction): Direction => {
   }
 };
 
-// Distance (in %) a letter travels to fully exit the viewport box.
 const PORTAL_DIST = 110;
 
-/**
- * Triggers the infinite portal loop animation on a letter element:
- * 1. Slide out in a random direction (power2.in — accelerating).
- * 2. Instantly teleport to the opposite side.
- * 3. Slide back in (power2.out — decelerating snap).
- *
- * No-ops while the element is already tweening to prevent overlap.
- */
 export const triggerPortalLoop = (letterElement: HTMLElement) => {
   if (gsap.isTweening(letterElement)) return;
 

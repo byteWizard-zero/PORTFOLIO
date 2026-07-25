@@ -1,10 +1,5 @@
 "use client";
 
-/* ABOUT PAGE · Intro
-   The first reading moment, mirroring the case-study Context section: a
-   sticky marginalia column of facts beside a single editorial reading
-   column of profile narrative. From content.about.bio. */
-
 import { useId, useRef, useState } from "react";
 import Image from "next/image";
 import { useBlockFadeIn } from "@/lib/useBlockFadeIn";
