@@ -67,9 +67,52 @@ interface DevourParticle {
   size: number;
   color: string;
   alpha: number;
+  initialAlpha: number;
   life: number;
   maxLife: number;
-  char?: string;
+}
+
+// Pixel-perfect character bitmap sampler for 1:1 grain disintegration
+function sampleCharacterBitmap(
+  char: string,
+  fontFamily: string,
+  fontSize: number,
+  fontWeight: string
+): { x: number; y: number; opacity: number }[] {
+  if (typeof document === 'undefined') return [];
+
+  const canvas = document.createElement('canvas');
+  const size = Math.ceil(fontSize * 1.5);
+  canvas.width = size;
+  canvas.height = size;
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return [];
+
+  ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+  ctx.fillStyle = '#1b2028';
+  ctx.textBaseline = 'top';
+  ctx.fillText(char, 0, 0);
+
+  const imgData = ctx.getImageData(0, 0, size, size);
+  const data = imgData.data;
+  const pixels: { x: number; y: number; opacity: number }[] = [];
+
+  for (let py = 0; py < size; py += 1) {
+    for (let px = 0; px < size; px += 1) {
+      const idx = (py * size + px) * 4;
+      const alpha = data[idx + 3];
+      if (alpha > 25) {
+        pixels.push({
+          x: px,
+          y: py,
+          opacity: alpha / 255,
+        });
+      }
+    }
+  }
+
+  return pixels;
 }
 
 export function Contact() {
@@ -87,9 +130,6 @@ export function Contact() {
   const [channel, setChannel] = useState<string | null>(c.row3.defaultSelected);
   const [emailError, setEmailError] = useState(false);
   const [mailtoLengthError, setMailtoLengthError] = useState(false);
-
-  const [isDevouring, setIsDevouring] = useState(false);
-  const [isDevoured, setIsDevoured] = useState(false);
 
   const particlesRef = useRef<DevourParticle[]>([]);
   const animFrameRef = useRef<number | null>(null);
@@ -125,7 +165,7 @@ export function Contact() {
     return () => window.removeEventListener('resize', syncCanvasSize);
   }, []);
 
-  // Animation Loop for Canvas Devouring Particles
+  // Animation Loop for 1:1 Grain Noise Disintegration
   const startAnimationLoop = () => {
     if (isAnimatingRef.current) return;
     isAnimatingRef.current = true;
@@ -142,7 +182,8 @@ export function Contact() {
         return;
       }
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const dpr = window.devicePixelRatio || 1;
+      ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
 
       const activeParticles: DevourParticle[] = [];
       const particles = particlesRef.current;
@@ -151,11 +192,16 @@ export function Contact() {
         const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
-        p.vx *= 0.95; // drag
-        p.vy *= 0.95;
-        p.vy -= 0.08; // upward float
+
+        // Sand/grain rightward drift physics matching the reference image
+        p.vx *= 0.94;
+        p.vy *= 0.94;
+        p.vx += 0.08; // rightward wind drift
+        p.vy += (Math.random() - 0.5) * 0.08;
+
         p.life -= 1;
-        p.alpha = Math.max(0, p.life / p.maxLife);
+        const lifeRatio = p.life / p.maxLife;
+        p.alpha = Math.max(0, lifeRatio * p.initialAlpha);
 
         if (p.life > 0 && p.alpha > 0) {
           activeParticles.push(p);
@@ -163,14 +209,9 @@ export function Contact() {
           ctx.globalAlpha = p.alpha;
           ctx.fillStyle = p.color;
 
-          if (p.char) {
-            ctx.font = 'bold 16px var(--font-primary), sans-serif';
-            ctx.fillText(p.char, p.x, p.y);
-          } else {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, Math.max(0.5, p.size * (p.life / p.maxLife)), 0, Math.PI * 2);
-            ctx.fill();
-          }
+          // Render exact 1x1 noise grain pixel
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+
           ctx.restore();
         }
       }
@@ -187,27 +228,54 @@ export function Contact() {
     animFrameRef.current = requestAnimationFrame(render);
   };
 
-  // Spawn Backspace Devouring Particles
-  const spawnBackspaceParticles = (x: number, y: number, char: string) => {
-    if (reducedMotion) return;
-    const count = 18;
-    const colors = ['#62B6CB', '#FFB800', '#FF990A', '#1B2028', '#93B99E', '#FFFFFF'];
-    const newParticles: DevourParticle[] = [];
+  // Spawn Pixel-Perfect Grain Disintegration on Backspace
+  const handleInputBackspace = (char: string, inputEl: HTMLInputElement) => {
+    if (reducedMotion || !panelRef.current || !canvasRef.current) return;
 
-    for (let i = 0; i < count; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 4 + 1.5;
+    const panelRect = panelRef.current.getBoundingClientRect();
+    const inputRect = inputEl.getBoundingClientRect();
+
+    const style = window.getComputedStyle(inputEl);
+    const fontSize = parseFloat(style.fontSize) || 32;
+    const fontFamily = style.fontFamily || 'PP Neue Montreal, sans-serif';
+    const fontWeight = style.fontWeight || '400';
+    const inkColor = style.color || '#1b2028';
+
+    const ctx = canvasRef.current.getContext('2d');
+    let textWidthBefore = 0;
+    let charWidth = 0;
+    if (ctx) {
+      ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+      textWidthBefore = ctx.measureText(inputEl.value).width;
+      charWidth = ctx.measureText(char).width;
+    } else {
+      textWidthBefore = inputEl.value.length * (fontSize * 0.6);
+      charWidth = fontSize * 0.6;
+    }
+
+    const charLeft = (inputRect.left - panelRect.left) + Math.max(0, textWidthBefore - charWidth);
+    const charTop = (inputRect.top - panelRect.top) + (inputRect.height - fontSize) / 2 - 2;
+
+    // Extract exact pixel bitmap of erased character
+    const sampledPixels = sampleCharacterBitmap(char, fontFamily, fontSize, fontWeight);
+
+    const newParticles: DevourParticle[] = [];
+    for (let i = 0; i < sampledPixels.length; i++) {
+      const sp = sampledPixels[i];
+      const vx = Math.random() * 2.2 + 0.5;
+      const vy = (Math.random() - 0.5) * 1.2;
+
       newParticles.push({
-        x: x + (Math.random() - 0.5) * 14,
-        y: y + (Math.random() - 0.5) * 14,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 1.5,
-        size: Math.random() * 4 + 2,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: 1,
-        life: Math.floor(Math.random() * 30 + 35),
-        maxLife: 65,
-        char: Math.random() > 0.65 ? char : undefined,
+        x: charLeft + sp.x,
+        y: charTop + sp.y,
+        vx,
+        vy,
+        size: Math.random() > 0.6 ? 1.2 : 1.0,
+        color: inkColor,
+        alpha: sp.opacity,
+        initialAlpha: sp.opacity,
+        life: Math.floor(Math.random() * 25 + 25),
+        maxLife: 50,
       });
     }
 
@@ -215,7 +283,7 @@ export function Contact() {
     startAnimationLoop();
   };
 
-  // Spawn Master Form Submission Devouring Swarm
+  // Spawn Master Form Submission Grain Disintegration
   const spawnFormDevourParticles = () => {
     if (!panelRef.current || !formRef.current) return;
     const panelRect = panelRef.current.getBoundingClientRect();
@@ -226,39 +294,32 @@ export function Contact() {
     const width = formRect.width;
     const height = formRect.height;
 
-    const count = 260;
-    const colors = ['#62B6CB', '#FFB800', '#DA3036', '#FF990A', '#1B2028', '#FFFFFF'];
+    const count = 900;
+    const colors = ['#1B2028', '#2C323B', '#454C57', '#000000'];
     const newParticles: DevourParticle[] = [];
 
     for (let i = 0; i < count; i++) {
       const px = startX + Math.random() * width;
       const py = startY + Math.random() * height;
-      const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 7 + 2.5;
+      const vx = Math.random() * 3.5 + 0.8;
+      const vy = (Math.random() - 0.5) * 1.8;
 
       newParticles.push({
         x: px,
         y: py,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 2.8,
-        size: Math.random() * 6 + 3,
+        vx,
+        vy,
+        size: Math.random() > 0.6 ? 1.2 : 1.0,
         color: colors[Math.floor(Math.random() * colors.length)],
         alpha: 1,
-        life: Math.floor(Math.random() * 50 + 45),
-        maxLife: 95,
+        initialAlpha: 1,
+        life: Math.floor(Math.random() * 35 + 30),
+        maxLife: 65,
       });
     }
 
     particlesRef.current.push(...newParticles);
     startAnimationLoop();
-  };
-
-  const handleInputBackspace = (char: string, mirrorRect: DOMRect) => {
-    if (!panelRef.current) return;
-    const panelRect = panelRef.current.getBoundingClientRect();
-    const posX = mirrorRect.right - panelRect.left - 6;
-    const posY = mirrorRect.top - panelRect.top + mirrorRect.height / 2;
-    spawnBackspaceParticles(posX, posY, char);
   };
 
   useGSAP(() => {
@@ -487,7 +548,7 @@ export function Contact() {
               />
             </div>
 
-            <button type="submit" className={styles.submit} disabled={isDevouring}>
+            <button type="submit" className={styles.submit}>
               <span className={styles.submitTextWrap}>
                 <span className={styles.submitTextBase}>
                   {SUBMIT_CHARS.map((char, i) => (
@@ -554,7 +615,7 @@ interface RevealInputProps {
   type?: string;
   grow?: boolean;
   error?: boolean;
-  onBackspace?: (char: string, rect: DOMRect) => void;
+  onBackspace?: (char: string, inputEl: HTMLInputElement) => void;
 }
 
 const INPUT_WIDTH_BUFFER_MIN = 12;
@@ -604,9 +665,7 @@ function RevealInput({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Backspace' && value.length > 0 && onBackspace) {
       const deletedChar = value[value.length - 1];
-      const targetEl = mirrorRef.current || e.currentTarget;
-      const rect = targetEl.getBoundingClientRect();
-      onBackspace(deletedChar, rect);
+      onBackspace(deletedChar, e.currentTarget);
     }
   };
 
@@ -620,7 +679,7 @@ function RevealInput({
       <input
         className={styles.input}
         type={type}
-        name={`field_${name}`}
+        name={name}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
@@ -628,9 +687,6 @@ function RevealInput({
         aria-label={ariaLabel}
         aria-invalid={error || undefined}
         autoComplete="off"
-        data-1p-ignore="true"
-        data-lpignore="true"
-        data-form-type="other"
         style={!grow && width ? { width: `${width}px` } : undefined}
       />
       {/* Animated underline — width drives 0% → 100% during scroll reveal. */}
