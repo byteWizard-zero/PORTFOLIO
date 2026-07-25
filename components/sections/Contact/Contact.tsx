@@ -193,10 +193,10 @@ export function Contact() {
         p.x += p.vx;
         p.y += p.vy;
 
-        // Omnidirectional organic expansion & deceleration drag
+        // Upward, downward, and rightward expansion physics (NO LEFT DRIFT)
         p.vx *= 0.92;
         p.vy *= 0.92;
-        p.vx += (Math.random() - 0.5) * 0.12;
+        p.vx = Math.max(0, p.vx + Math.random() * 0.05);
         p.vy += (Math.random() - 0.5) * 0.12;
 
         p.life -= 1;
@@ -228,7 +228,7 @@ export function Contact() {
     animFrameRef.current = requestAnimationFrame(render);
   };
 
-  // Spawn Pixel-Perfect Omnidirectional Grain Disintegration on Backspace
+  // Spawn Pixel-Perfect Grain Disintegration (UP, DOWN, RIGHT only — no leftward drift)
   const handleInputBackspace = (char: string, inputEl: HTMLInputElement) => {
     if (reducedMotion || !panelRef.current || !canvasRef.current) return;
 
@@ -262,10 +262,10 @@ export function Contact() {
     const newParticles: DevourParticle[] = [];
     for (let i = 0; i < sampledPixels.length; i++) {
       const sp = sampledPixels[i];
-      // Omnidirectional 360-degree explosion velocity (up, down, left, right)
-      const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 2.5 + 0.4;
-      const vx = Math.cos(angle) * speed;
+      // Angle strictly restricted to right-facing semi-circle [-90deg, +90deg] (UP, DOWN, RIGHT)
+      const angle = (Math.random() - 0.5) * Math.PI;
+      const speed = Math.random() * 2.2 + 0.5;
+      const vx = Math.max(0.1, Math.cos(angle) * speed);
       const vy = Math.sin(angle) * speed;
 
       newParticles.push({
