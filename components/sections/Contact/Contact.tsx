@@ -59,10 +59,24 @@ const SPLITS = {
 
 const SUBMIT_CHARS = Array.from(c.submit);
 
+interface DevourParticle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  color: string;
+  alpha: number;
+  life: number;
+  maxLife: number;
+  char?: string;
+}
+
 export function Contact() {
   const sectionRef = useRef<HTMLElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const reducedMotion = useReducedMotion();
 
   const [name, setName] = useState('');
@@ -74,9 +88,178 @@ export function Contact() {
   const [emailError, setEmailError] = useState(false);
   const [mailtoLengthError, setMailtoLengthError] = useState(false);
 
+  const [isDevouring, setIsDevouring] = useState(false);
+  const [isDevoured, setIsDevoured] = useState(false);
+
+  const particlesRef = useRef<DevourParticle[]>([]);
+  const animFrameRef = useRef<number | null>(null);
+  const isAnimatingRef = useRef(false);
+
   // Maximum mailto: URL length before most OS / mail-client combinations
   // silently fail (empirically ~2 000 chars; 1 800 gives comfortable headroom).
   const MAILTO_MAX_LENGTH = 1800;
+
+  // Sync canvas size with device pixel ratio
+  useEffect(() => {
+    const syncCanvasSize = () => {
+      if (!canvasRef.current || !panelRef.current) return;
+      const panel = panelRef.current;
+      const canvas = canvasRef.current;
+      const rect = panel.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = `${rect.width}px`;
+      canvas.style.height = `${rect.height}px`;
+
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.resetTransform();
+        ctx.scale(dpr, dpr);
+      }
+    };
+
+    syncCanvasSize();
+    window.addEventListener('resize', syncCanvasSize);
+    return () => window.removeEventListener('resize', syncCanvasSize);
+  }, []);
+
+  // Animation Loop for Canvas Devouring Particles
+  const startAnimationLoop = () => {
+    if (isAnimatingRef.current) return;
+    isAnimatingRef.current = true;
+
+    const render = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) {
+        isAnimatingRef.current = false;
+        return;
+      }
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        isAnimatingRef.current = false;
+        return;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const activeParticles: DevourParticle[] = [];
+      const particles = particlesRef.current;
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.95; // drag
+        p.vy *= 0.95;
+        p.vy -= 0.08; // upward float
+        p.life -= 1;
+        p.alpha = Math.max(0, p.life / p.maxLife);
+
+        if (p.life > 0 && p.alpha > 0) {
+          activeParticles.push(p);
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+
+          if (p.char) {
+            ctx.font = 'bold 16px var(--font-primary), sans-serif';
+            ctx.fillText(p.char, p.x, p.y);
+          } else {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, Math.max(0.5, p.size * (p.life / p.maxLife)), 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        }
+      }
+
+      particlesRef.current = activeParticles;
+
+      if (activeParticles.length > 0) {
+        animFrameRef.current = requestAnimationFrame(render);
+      } else {
+        isAnimatingRef.current = false;
+      }
+    };
+
+    animFrameRef.current = requestAnimationFrame(render);
+  };
+
+  // Spawn Backspace Devouring Particles
+  const spawnBackspaceParticles = (x: number, y: number, char: string) => {
+    if (reducedMotion) return;
+    const count = 18;
+    const colors = ['#62B6CB', '#FFB800', '#FF990A', '#1B2028', '#93B99E', '#FFFFFF'];
+    const newParticles: DevourParticle[] = [];
+
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 4 + 1.5;
+      newParticles.push({
+        x: x + (Math.random() - 0.5) * 14,
+        y: y + (Math.random() - 0.5) * 14,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 1.5,
+        size: Math.random() * 4 + 2,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: 1,
+        life: Math.floor(Math.random() * 30 + 35),
+        maxLife: 65,
+        char: Math.random() > 0.65 ? char : undefined,
+      });
+    }
+
+    particlesRef.current.push(...newParticles);
+    startAnimationLoop();
+  };
+
+  // Spawn Master Form Submission Devouring Swarm
+  const spawnFormDevourParticles = () => {
+    if (!panelRef.current || !formRef.current) return;
+    const panelRect = panelRef.current.getBoundingClientRect();
+    const formRect = formRef.current.getBoundingClientRect();
+
+    const startX = formRect.left - panelRect.left;
+    const startY = formRect.top - panelRect.top;
+    const width = formRect.width;
+    const height = formRect.height;
+
+    const count = 260;
+    const colors = ['#62B6CB', '#FFB800', '#DA3036', '#FF990A', '#1B2028', '#FFFFFF'];
+    const newParticles: DevourParticle[] = [];
+
+    for (let i = 0; i < count; i++) {
+      const px = startX + Math.random() * width;
+      const py = startY + Math.random() * height;
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 7 + 2.5;
+
+      newParticles.push({
+        x: px,
+        y: py,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 2.8,
+        size: Math.random() * 6 + 3,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: 1,
+        life: Math.floor(Math.random() * 50 + 45),
+        maxLife: 95,
+      });
+    }
+
+    particlesRef.current.push(...newParticles);
+    startAnimationLoop();
+  };
+
+  const handleInputBackspace = (char: string, mirrorRect: DOMRect) => {
+    if (!panelRef.current) return;
+    const panelRect = panelRef.current.getBoundingClientRect();
+    const posX = mirrorRect.right - panelRect.left - 6;
+    const posY = mirrorRect.top - panelRect.top + mirrorRect.height / 2;
+    spawnBackspaceParticles(posX, posY, char);
+  };
 
   useGSAP(() => {
     if (!sectionRef.current || !panelRef.current || !formRef.current) return;
@@ -89,17 +272,12 @@ export function Contact() {
     const inputBorders = form.querySelectorAll<HTMLElement>(`.${styles.inputBorder}`);
     const submit = form.querySelector<HTMLElement>(`.${styles.submit}`);
 
-    // SSR ships visible content; JS hides immediately on mount before the
-    // first animation frame, then animates in. This avoids a flash of
-    // invisible content for non-reduced-motion users between hydration and
-    // the first GSAP tick.
     gsap.set(chars, { opacity: 0 });
     gsap.set(revealItems, { opacity: 0, y: 14 });
     gsap.set(inputBorders, { width: 0 });
     if (submit) gsap.set(submit, { opacity: 0, y: 20 });
 
     if (reducedMotion) {
-      // No scroll animation — just reveal everything.
       gsap.set(chars, { opacity: 1 });
       gsap.set(revealItems, { opacity: 1, y: 0 });
       gsap.set(inputBorders, { width: '100%' });
@@ -107,19 +285,9 @@ export function Contact() {
       return;
     }
 
-    // Scrub-driven master timeline. Trigger and pin target are the same
-    // element (the panel) so the trigger origin and pin spacer agree on
-    // every ScrollTrigger.refresh() — otherwise font-load or Lenis resize
-    // can drift the pin start.
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: panel,
-        // Last section. The scrubbed reveal is spread across this whole pin
-        // distance, and pinSpacing adds it to the document, so an over-long pin
-        // means the page keeps scrolling on a fully-revealed panel before it
-        // ends. 150% (≈1.5 screens) reveals all four rows + submit at a brisk,
-        // legible pace and lets the page bottom out right as the form completes.
-        // Tunable — raise for a slower reveal, lower for a tighter ending.
         end: '+=150%',
         pin: panel,
         pinSpacing: true,
@@ -178,20 +346,12 @@ export function Contact() {
     if (submit) {
       tl.to(submit, { opacity: 1, y: 0, duration: TIMING.SUBMIT_DURATION }, rows.length);
     }
-
-    // No explicit cleanup — useGSAP's scope handles timeline.kill() (which
-    // internally kills attached ScrollTriggers) and reverts pin layout on
-    // unmount/Fast Refresh.
   }, { scope: sectionRef, dependencies: [reducedMotion] });
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
     const trimmedEmail = email.trim();
-
-    // Use the browser's native email validator (type="email" input validity)
-    // rather than a hand-rolled regex — it handles edge cases that simple
-    // /^\S+@\S+\.\S+$/ patterns miss (missing TLD, IP literals, etc.).
     const inputEl = formRef.current?.querySelector<HTMLInputElement>('input[name="email"]');
     const emailOk = inputEl ? inputEl.validity.valid && trimmedEmail.length > 0 : trimmedEmail.includes('@');
     if (!emailOk) {
@@ -204,12 +364,9 @@ export function Contact() {
     const trimmedName = name.trim();
     const trimmedCountry = country.trim();
     const trimmedMessage = message.trim();
-
-    // Use the same fallback in both subject and body so they're consistent.
     const resolvedTopic = topic ?? 'New message';
 
     const subject = encodeURIComponent(`${resolvedTopic} — ${trimmedName || 'A friend'}`);
-    // CRLF is required by RFC 6068; Outlook collapses LF-only into one paragraph.
     const body = encodeURIComponent(
       [
         `Hi ${c.row1.recipient},`,
@@ -224,14 +381,23 @@ export function Contact() {
 
     const href = `mailto:${c.fallback.email}?subject=${subject}&body=${body}`;
 
-    // Guard against OS / mail-client URL length limits. A URL that silently
-    // exceeds the limit produces no error and no email — surface it instead.
     if (href.length > MAILTO_MAX_LENGTH) {
       setMailtoLengthError(true);
       return;
     }
 
+    // 1. Trigger particle devouring swarm
+    spawnFormDevourParticles();
+
+    // 2. Execute mail client directly
     window.location.href = href;
+
+    // 3. Reset form inputs so text devours cleanly into particles
+    setName('');
+    setCountry('');
+    setEmail('');
+    setMessage('');
+    setTopic(null);
   }
 
   return (
@@ -244,140 +410,139 @@ export function Contact() {
       <h2 id="contact-heading" className={styles.srOnly}>Contact</h2>
 
       <div ref={panelRef} className={styles.panel}>
+        {/* Particle Canvas Overlay */}
+        <canvas ref={canvasRef} className={styles.devourCanvas} aria-hidden="true" />
+
         <form ref={formRef} className={styles.form} onSubmit={handleSubmit} noValidate>
-          {/* Row 1 — greeting + name + country */}
-          <div className={styles.row}>
-            <span className={styles.text}>{SPLITS.row1Lead}</span>
-            <RevealInput
-              value={name}
-              onChange={setName}
-              placeholder={c.row1.nameLabel}
-              name="name"
-            />
-            <span className={styles.text}>{SPLITS.row1Between}</span>
-            <RevealInput
-              value={country}
-              onChange={setCountry}
-              placeholder={c.row1.countryLabel}
-              name="country"
-            />
-          </div>
-
-          {/* Row 2 — topic chips */}
-          <div className={styles.row}>
-            <span className={styles.text}>{SPLITS.row2Lead}</span>
-            <div className={styles.chipGroup} role="group" aria-label="Topic">
-              {c.row2.options.map((opt) => (
-                <Chip
-                  key={opt}
-                  label={opt}
-                  selected={topic === opt}
-                  onSelect={() => setTopic(topic === opt ? null : opt)}
-                />
-              ))}
+            {/* Row 1 — greeting + name + country */}
+            <div className={styles.row}>
+              <span className={styles.text}>{SPLITS.row1Lead}</span>
+              <RevealInput
+                value={name}
+                onChange={setName}
+                placeholder={c.row1.nameLabel}
+                name="name"
+                onBackspace={handleInputBackspace}
+              />
+              <span className={styles.text}>{SPLITS.row1Between}</span>
+              <RevealInput
+                value={country}
+                onChange={setCountry}
+                placeholder={c.row1.countryLabel}
+                name="country"
+                onBackspace={handleInputBackspace}
+              />
             </div>
-          </div>
 
-          {/* Row 3 — email + channel chips */}
-          <div className={styles.row}>
-            <span className={styles.text}>{SPLITS.row3Lead}</span>
-            <RevealInput
-              value={email}
-              onChange={(v) => { setEmail(v); if (emailError) setEmailError(false); }}
-              placeholder={channel === 'WhatsApp' ? c.row3.phoneLabel : c.row3.emailLabel}
-              name="email"
-              type={channel === 'WhatsApp' ? 'tel' : 'email'}
-              error={emailError}
-              grow
-            />
-            <div className={styles.chipGroup} role="group" aria-label="Channel">
-              {c.row3.options.map((opt) => (
-                <Chip
-                  key={opt}
-                  label={opt}
-                  selected={channel === opt}
-                  onSelect={() => setChannel(channel === opt ? null : opt)}
-                />
-              ))}
+            {/* Row 2 — topic chips */}
+            <div className={styles.row}>
+              <span className={styles.text}>{SPLITS.row2Lead}</span>
+              <div className={styles.chipGroup} role="group" aria-label="Topic">
+                {c.row2.options.map((opt) => (
+                  <Chip
+                    key={opt}
+                    label={opt}
+                    selected={topic === opt}
+                    onSelect={() => setTopic(topic === opt ? null : opt)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Row 4 — message */}
-          <div className={styles.row}>
-            <span className={styles.text}>{SPLITS.row4Lead}</span>
-            <RevealInput
-              value={message}
-              onChange={setMessage}
-              placeholder={c.row4.label}
-              name="message"
-              grow
-            />
-          </div>
-
-          {/* NOTE (F-IN-01): key={i} on SUBMIT_CHARS is intentional — the array
-              is built once from the static c.submit string and never mutates. */}
-          <button type="submit" className={styles.submit}>
-            <span className={styles.submitTextWrap}>
-              <span className={styles.submitTextBase}>
-                {SUBMIT_CHARS.map((char, i) => (
-                  <span
-                    key={i}
-                    className={styles.submitChar}
-                    style={{ transitionDelay: `${i * 0.025}s` }}
-                  >
-                    {char === ' ' ? ' ' : char}
-                  </span>
+            {/* Row 3 — email + channel chips */}
+            <div className={styles.row}>
+              <span className={styles.text}>{SPLITS.row3Lead}</span>
+              <RevealInput
+                value={email}
+                onChange={(v) => { setEmail(v); if (emailError) setEmailError(false); }}
+                placeholder={channel === 'WhatsApp' ? c.row3.phoneLabel : c.row3.emailLabel}
+                name="email"
+                type={channel === 'WhatsApp' ? 'tel' : 'email'}
+                error={emailError}
+                onBackspace={handleInputBackspace}
+                grow
+              />
+              <div className={styles.chipGroup} role="group" aria-label="Channel">
+                {c.row3.options.map((opt) => (
+                  <Chip
+                    key={opt}
+                    label={opt}
+                    selected={channel === opt}
+                    onSelect={() => setChannel(channel === opt ? null : opt)}
+                  />
                 ))}
-              </span>
-              <span className={styles.submitTextClone} aria-hidden="true">
-                {SUBMIT_CHARS.map((char, i) => (
-                  <span
-                    key={i}
-                    className={styles.submitChar}
-                    style={{ transitionDelay: `${i * 0.025}s` }}
-                  >
-                    {char === ' ' ? ' ' : char}
-                  </span>
-                ))}
-              </span>
-            </span>
-            <span className={styles.submitArrow} aria-hidden="true">
-              {/* Diagonal ↗ with two perpendicular caps — geometry matches
-                  the inspiration's arrow, color uses our accent token. */}
-              <svg viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M1.25 17.75L17.75 1.25M17.75 1.25L17.75 17.75M17.75 1.25L1.25 1.25"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                />
-              </svg>
-            </span>
-          </button>
+              </div>
+            </div>
 
-          {/* Length-cap error: surfaced when the assembled mailto: URL would
-              silently exceed OS / mail-client limits (~1 800 chars). Ask the
-              user to shorten their message before retrying. */}
-          {mailtoLengthError && (
-            <p className={styles.fallback} role="alert" aria-live="polite">
-              Your message is too long for the email link. Please shorten it and try again, or email directly:{' '}
+            {/* Row 4 — message */}
+            <div className={styles.row}>
+              <span className={styles.text}>{SPLITS.row4Lead}</span>
+              <RevealInput
+                value={message}
+                onChange={setMessage}
+                placeholder={c.row4.label}
+                name="message"
+                onBackspace={handleInputBackspace}
+                grow
+              />
+            </div>
+
+            <button type="submit" className={styles.submit} disabled={isDevouring}>
+              <span className={styles.submitTextWrap}>
+                <span className={styles.submitTextBase}>
+                  {SUBMIT_CHARS.map((char, i) => (
+                    <span
+                      key={i}
+                      className={styles.submitChar}
+                      style={{ transitionDelay: `${i * 0.025}s` }}
+                    >
+                      {char === ' ' ? ' ' : char}
+                    </span>
+                  ))}
+                </span>
+                <span className={styles.submitTextClone} aria-hidden="true">
+                  {SUBMIT_CHARS.map((char, i) => (
+                    <span
+                      key={i}
+                      className={styles.submitChar}
+                      style={{ transitionDelay: `${i * 0.025}s` }}
+                    >
+                      {char === ' ' ? ' ' : char}
+                    </span>
+                  ))}
+                </span>
+              </span>
+              <span className={styles.submitArrow} aria-hidden="true">
+                <svg viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M1.25 17.75L17.75 1.25M17.75 1.25L17.75 17.75M17.75 1.25L1.25 1.25"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  />
+                </svg>
+              </span>
+            </button>
+
+            {mailtoLengthError && (
+              <p className={styles.fallback} role="alert" aria-live="polite">
+                Your message is too long for the email link. Please shorten it and try again, or email directly:{' '}
+                <a className={styles.fallbackLink} href={`mailto:${c.fallback.email}`}>
+                  {c.fallback.email}
+                </a>
+              </p>
+            )}
+
+            <p className={styles.fallback}>
+              {c.fallback.label}{' '}
               <a className={styles.fallbackLink} href={`mailto:${c.fallback.email}`}>
                 {c.fallback.email}
               </a>
             </p>
-          )}
-
-          {/* Fallback for users without a configured mail handler. */}
-          <p className={styles.fallback}>
-            {c.fallback.label}{' '}
-            <a className={styles.fallbackLink} href={`mailto:${c.fallback.email}`}>
-              {c.fallback.email}
-            </a>
-          </p>
-        </form>
-      </div>
-    </section>
-  );
-}
+          </form>
+        </div>
+      </section>
+    );
+  }
 
 interface RevealInputProps {
   value: string;
@@ -389,6 +554,7 @@ interface RevealInputProps {
   type?: string;
   grow?: boolean;
   error?: boolean;
+  onBackspace?: (char: string, rect: DOMRect) => void;
 }
 
 const INPUT_WIDTH_BUFFER_MIN = 12;
@@ -403,6 +569,7 @@ function RevealInput({
   type = 'text',
   grow = false,
   error = false,
+  onBackspace,
 }: RevealInputProps) {
   const mirrorRef = useRef<HTMLSpanElement>(null);
   const [width, setWidth] = useState(0);
@@ -434,6 +601,15 @@ function RevealInput({
     }
   }, [value, placeholder, grow]);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && value.length > 0 && onBackspace) {
+      const deletedChar = value[value.length - 1];
+      const targetEl = mirrorRef.current || e.currentTarget;
+      const rect = targetEl.getBoundingClientRect();
+      onBackspace(deletedChar, rect);
+    }
+  };
+
   return (
     <span
       className={`${styles.inputWrap} ${styles.revealItem} ${grow ? styles.inputWrapGrow : ''} ${error ? styles.inputWrapError : ''}`}
@@ -444,13 +620,17 @@ function RevealInput({
       <input
         className={styles.input}
         type={type}
-        name={name}
+        name={`field_${name}`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={handleKeyDown}
         placeholder={placeholder}
         aria-label={ariaLabel}
         aria-invalid={error || undefined}
         autoComplete="off"
+        data-1p-ignore="true"
+        data-lpignore="true"
+        data-form-type="other"
         style={!grow && width ? { width: `${width}px` } : undefined}
       />
       {/* Animated underline — width drives 0% → 100% during scroll reveal. */}

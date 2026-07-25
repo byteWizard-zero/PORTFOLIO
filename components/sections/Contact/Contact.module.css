@@ -55,6 +55,134 @@
     );
 }
 
+/* ============================================
+   Canvas particle overlay for Devouring details
+   ============================================ */
+.devourCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+}
+
+/* ============================================
+   Success / Devoured Confirmation View
+   ============================================ */
+.successCard {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 680px;
+    padding: clamp(32px, 5vw, 64px) clamp(24px, 4vw, 48px);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid color-mix(in oklab, var(--color-primary-text) 15%, transparent);
+    border-radius: 28px;
+    box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.08);
+}
+
+.successBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-family: var(--font-navbar);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #ffffff;
+    background: var(--color-primary-text);
+    margin-bottom: 24px;
+}
+
+.successBadgeIcon {
+    color: var(--color-accent-purple);
+}
+
+.successTitle {
+    font-family: var(--font-primary);
+    font-size: clamp(32px, 4.5vw, 60px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--color-primary-text);
+    margin-bottom: 16px;
+}
+
+.successText {
+    font-family: var(--font-primary);
+    font-size: clamp(16px, 1.8vw, 22px);
+    line-height: 1.5;
+    color: color-mix(in oklab, var(--color-primary-text) 75%, transparent);
+    margin-bottom: 36px;
+    max-width: 520px;
+}
+
+.successActions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.successBtnPrimary {
+    appearance: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: var(--font-primary);
+    font-size: clamp(16px, 1.5vw, 20px);
+    font-weight: 500;
+    color: #ffffff;
+    background: var(--color-primary-text);
+    border: none;
+    border-radius: 999px;
+    padding: 14px 32px;
+    transition: transform var(--duration-fast) var(--ease-out-quart),
+                background-color var(--duration-normal) var(--ease-out-quart);
+    text-decoration: none;
+}
+
+.successBtnPrimary:hover,
+.successBtnPrimary:focus-visible {
+    transform: translateY(-2px);
+    background: color-mix(in oklab, var(--color-primary-text) 85%, var(--color-accent-purple));
+}
+
+.successBtnSecondary {
+    appearance: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-primary);
+    font-size: clamp(16px, 1.5vw, 20px);
+    font-weight: 400;
+    color: var(--color-primary-text);
+    background: transparent;
+    border: 1.5px solid color-mix(in oklab, var(--color-primary-text) 35%, transparent);
+    border-radius: 999px;
+    padding: 14px 28px;
+    transition: border-color var(--duration-normal) var(--ease-out-quart),
+                transform var(--duration-fast) var(--ease-out-quart);
+}
+
+.successBtnSecondary:hover,
+.successBtnSecondary:focus-visible {
+    border-color: var(--color-primary-text);
+    transform: translateY(-2px);
+}
+
 .srOnly {
     position: absolute;
     width: 1px;
