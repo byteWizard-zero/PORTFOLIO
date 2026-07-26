@@ -41,10 +41,11 @@ const SPLITS = {
 };
 
 const SUBMIT_CHARS = Array.from(c.submit);
-
 interface DevourParticle {
   x: number;
   y: number;
+  originX: number;
+  originY: number;
   vx: number;
   vy: number;
   size: number;
@@ -53,18 +54,25 @@ interface DevourParticle {
   initialAlpha: number;
   life: number;
   maxLife: number;
+  delay: number;
+  jitter: number;
 }
+
+const GRAIN_PALETTE = ['#1b2028', '#1b2028', '#282e38', '#3d4450', '#5c6470', '#858d99'];
 
 function sampleCharacterBitmap(
   char: string,
   fontFamily: string,
   fontSize: number,
-  fontWeight: string
-): { x: number; y: number; opacity: number }[] {
-  if (typeof document === 'undefined') return [];
+  fontWeight: string,
+  baseX: number,
+  baseY: number,
+  staggerIndex: number = 0
+): DevourParticle[] {
+  if (typeof document === 'undefined' || !char || char === ' ') return [];
 
   const canvas = document.createElement('canvas');
-  const size = Math.ceil(fontSize * 1.5);
+  const size = Math.ceil(fontSize * 1.6);
   canvas.width = size;
   canvas.height = size;
 
@@ -78,23 +86,96 @@ function sampleCharacterBitmap(
 
   const imgData = ctx.getImageData(0, 0, size, size);
   const data = imgData.data;
-  const pixels: { x: number; y: number; opacity: number }[] = [];
+  const particles: DevourParticle[] = [];
 
-  for (let py = 0; py < size; py += 1) {
-    for (let px = 0; px < size; px += 1) {
+  const step = fontSize > 44 ? 2 : 1;
+
+  for (let py = 0; py < size; py += step) {
+    for (let px = 0; px < size; px += step) {
       const idx = (py * size + px) * 4;
       const alpha = data[idx + 3];
-      if (alpha > 25) {
-        pixels.push({
-          x: px,
-          y: py,
-          opacity: alpha / 255,
+
+      if (alpha > 20) {
+        const opacity = alpha / 255;
+        const ptX = baseX + px;
+        const ptY = baseY + py;
+
+        const angle = (Math.random() - 0.35) * (Math.PI * 0.45);
+        const speed = Math.random() * 2.6 + 0.6;
+        const vx = Math.cos(angle) * speed + 0.6;
+        const vy = Math.sin(angle) * (speed * 0.4);
+
+        const intraCharDelay = Math.floor((px / size) * 12);
+        const interCharDelay = staggerIndex * 14;
+        const delay = intraCharDelay + interCharDelay;
+
+        const color = GRAIN_PALETTE[Math.floor(Math.random() * GRAIN_PALETTE.length)];
+        const grainSize = Math.random() > 0.6 ? 1.3 : Math.random() > 0.3 ? 1.0 : 0.8;
+
+        particles.push({
+          x: ptX,
+          y: ptY,
+          originX: ptX,
+          originY: ptY,
+          vx,
+          vy,
+          size: grainSize,
+          color,
+          alpha: opacity,
+          initialAlpha: opacity,
+          life: Math.floor(Math.random() * 35 + 35),
+          maxLife: 70,
+          delay,
+          jitter: 0.85,
         });
       }
     }
   }
 
-  return pixels;
+  return particles;
+}
+
+function sampleTextBitmap(
+  text: string,
+  fontFamily: string,
+  fontSize: number,
+  fontWeight: string,
+  startX: number,
+  startY: number
+): DevourParticle[] {
+  if (typeof document === 'undefined' || !text) return [];
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return [];
+
+  ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+  let currentX = startX;
+  const result: DevourParticle[] = [];
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (char === ' ') {
+      currentX += fontSize * 0.35;
+      continue;
+    }
+
+    const charParticles = sampleCharacterBitmap(
+      char,
+      fontFamily,
+      fontSize,
+      fontWeight,
+      currentX,
+      startY,
+      i
+    );
+    result.push(...charParticles);
+
+    const charWidth = ctx.measureText(char).width;
+    currentX += charWidth;
+  }
+
+  return result;
 }
 
 export function Contact() {
@@ -168,12 +249,26 @@ export function Contact() {
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
+
+        if (p.delay > 0) {
+          p.delay -= 1;
+          ctx.save();
+          ctx.globalAlpha = p.initialAlpha;
+          ctx.fillStyle = p.color;
+          const jitterX = (Math.random() - 0.5) * p.jitter;
+          const jitterY = (Math.random() - 0.5) * p.jitter;
+          ctx.fillRect(p.originX + jitterX, p.originY + jitterY, p.size, p.size);
+          ctx.restore();
+          activeParticles.push(p);
+          continue;
+        }
+
         p.x += p.vx;
         p.y += p.vy;
 
-        p.vx *= 0.92;
-        p.vy *= 0.92;
-        p.vx = Math.max(0, p.vx + Math.random() * 0.05);
+        p.vx *= 0.94;
+        p.vy *= 0.94;
+        p.vx += Math.random() * 0.07 + 0.02;
         p.vy += (Math.random() - 0.5) * 0.12;
 
         p.life -= 1;
@@ -185,9 +280,7 @@ export function Contact() {
           ctx.save();
           ctx.globalAlpha = p.alpha;
           ctx.fillStyle = p.color;
-
           ctx.fillRect(p.x, p.y, p.size, p.size);
-
           ctx.restore();
         }
       }
@@ -214,7 +307,6 @@ export function Contact() {
     const fontSize = parseFloat(style.fontSize) || 32;
     const fontFamily = style.fontFamily || 'PP Neue Montreal, sans-serif';
     const fontWeight = style.fontWeight || '400';
-    const inkColor = style.color || '#1b2028';
 
     const ctx = canvasRef.current.getContext('2d');
     let textWidthBefore = 0;
@@ -231,30 +323,8 @@ export function Contact() {
     const charLeft = (inputRect.left - panelRect.left) + Math.max(0, textWidthBefore - charWidth);
     const charTop = (inputRect.top - panelRect.top) + (inputRect.height - fontSize) / 2 - 2;
 
-    const sampledPixels = sampleCharacterBitmap(char, fontFamily, fontSize, fontWeight);
-
-    const newParticles: DevourParticle[] = [];
-    for (let i = 0; i < sampledPixels.length; i++) {
-      const sp = sampledPixels[i];
-      
-      const angle = (Math.random() - 0.5) * Math.PI;
-      const speed = Math.random() * 2.2 + 0.5;
-      const vx = Math.max(0.1, Math.cos(angle) * speed);
-      const vy = Math.sin(angle) * speed;
-
-      newParticles.push({
-        x: charLeft + sp.x,
-        y: charTop + sp.y,
-        vx,
-        vy,
-        size: Math.random() > 0.6 ? 1.2 : 1.0,
-        color: inkColor,
-        alpha: sp.opacity,
-        initialAlpha: sp.opacity,
-        life: Math.floor(Math.random() * 25 + 25),
-        maxLife: 50,
-      });
-    }
+    const newParticles = sampleCharacterBitmap(char, fontFamily, fontSize, fontWeight, charLeft, charTop, 0);
+    newParticles.forEach(p => { p.delay = Math.floor(Math.random() * 4); });
 
     particlesRef.current.push(...newParticles);
     startAnimationLoop();
@@ -263,36 +333,26 @@ export function Contact() {
   const spawnFormDevourParticles = () => {
     if (!panelRef.current || !formRef.current) return;
     const panelRect = panelRef.current.getBoundingClientRect();
-    const formRect = formRef.current.getBoundingClientRect();
+    const textNodes = formRef.current.querySelectorAll<HTMLElement>(`.${styles.text}, .${styles.input}`);
 
-    const startX = formRect.left - panelRect.left;
-    const startY = formRect.top - panelRect.top;
-    const width = formRect.width;
-    const height = formRect.height;
-
-    const count = 900;
-    const colors = ['#1B2028', '#2C323B', '#454C57', '#000000'];
     const newParticles: DevourParticle[] = [];
+    textNodes.forEach((node, idx) => {
+      const rect = node.getBoundingClientRect();
+      const startX = rect.left - panelRect.left;
+      const startY = rect.top - panelRect.top;
+      const text = node instanceof HTMLInputElement ? node.value || node.placeholder : node.innerText;
 
-    for (let i = 0; i < count; i++) {
-      const px = startX + Math.random() * width;
-      const py = startY + Math.random() * height;
-      const vx = Math.random() * 3.5 + 0.8;
-      const vy = (Math.random() - 0.5) * 1.8;
-
-      newParticles.push({
-        x: px,
-        y: py,
-        vx,
-        vy,
-        size: Math.random() > 0.6 ? 1.2 : 1.0,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: 1,
-        initialAlpha: 1,
-        life: Math.floor(Math.random() * 35 + 30),
-        maxLife: 65,
-      });
-    }
+      if (text && text.trim()) {
+        const style = window.getComputedStyle(node);
+        const fontSize = parseFloat(style.fontSize) || 32;
+        const fontFamily = style.fontFamily || 'PP Neue Montreal, sans-serif';
+        const fontWeight = style.fontWeight || '400';
+        
+        const pts = sampleTextBitmap(text.substring(0, 30), fontFamily, fontSize, fontWeight, startX, startY);
+        pts.forEach(p => { p.delay += idx * 8; });
+        newParticles.push(...pts);
+      }
+    });
 
     particlesRef.current.push(...newParticles);
     startAnimationLoop();
