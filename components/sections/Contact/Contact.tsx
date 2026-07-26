@@ -100,13 +100,13 @@ function sampleCharacterBitmap(
         const ptX = baseX + px;
         const ptY = baseY + py;
 
-        const angle = (Math.random() - 0.35) * (Math.PI * 0.45);
-        const speed = Math.random() * 2.6 + 0.6;
-        const vx = Math.cos(angle) * speed + 0.6;
-        const vy = Math.sin(angle) * (speed * 0.4);
+        const angle = (Math.random() - 0.5) * Math.PI;
+        const speed = Math.random() * 0.8 + 0.3;
+        const vx = Math.cos(angle) * speed + 0.25;
+        const vy = Math.sin(angle) * speed;
 
-        const intraCharDelay = Math.floor((px / size) * 12);
-        const interCharDelay = staggerIndex * 14;
+        const intraCharDelay = Math.floor((px / size) * 18);
+        const interCharDelay = staggerIndex * 20;
         const delay = intraCharDelay + interCharDelay;
 
         const color = GRAIN_PALETTE[Math.floor(Math.random() * GRAIN_PALETTE.length)];
@@ -123,8 +123,8 @@ function sampleCharacterBitmap(
           color,
           alpha: opacity,
           initialAlpha: opacity,
-          life: Math.floor(Math.random() * 35 + 35),
-          maxLife: 70,
+          life: Math.floor(Math.random() * 50 + 55),
+          maxLife: 105,
           delay,
           jitter: 0.85,
         });
@@ -266,10 +266,10 @@ export function Contact() {
         p.x += p.vx;
         p.y += p.vy;
 
-        p.vx *= 0.94;
-        p.vy *= 0.94;
-        p.vx += Math.random() * 0.07 + 0.02;
-        p.vy += (Math.random() - 0.5) * 0.12;
+        p.vx *= 0.92;
+        p.vy *= 0.92;
+        p.vx += (Math.random() - 0.4) * 0.03 + 0.01;
+        p.vy += (Math.random() - 0.5) * 0.06;
 
         p.life -= 1;
         const lifeRatio = p.life / p.maxLife;
