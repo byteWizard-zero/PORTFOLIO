@@ -81,7 +81,7 @@ export const resolveDefaultEffect = (): TransitionEffectName => {
   if (isKnownEffect(transitionsConfig.defaultEffect)) {
     return transitionsConfig.defaultEffect;
   }
-  return TRANSITION_EFFECT_NAMES[0] ?? ('iris-bloom' as TransitionEffectName);
+  return TRANSITION_EFFECT_NAMES[0] ?? ('color-curtain-stack' as TransitionEffectName);
 };
 
 const normalizePath = (href: string): string => {
@@ -141,7 +141,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
         }
 
         router.push(href);
-        return TRANSITION_EFFECT_NAMES[0] ?? ('iris-bloom' as TransitionEffectName);
+        return TRANSITION_EFFECT_NAMES[0] ?? ('color-curtain-stack' as TransitionEffectName);
       })();
 
       if (payload.accent) {

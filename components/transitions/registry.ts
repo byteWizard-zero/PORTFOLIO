@@ -1,9 +1,7 @@
 import type { TransitionEffect } from './types';
-import { IrisBloom } from './effects/IrisBloom';
 import { ColorCurtainStack } from './effects/ColorCurtainStack';
 
 export const TRANSITION_EFFECTS = {
-  'iris-bloom': IrisBloom,
   'color-curtain-stack': ColorCurtainStack,
 } as const satisfies Record<string, TransitionEffect>;
 

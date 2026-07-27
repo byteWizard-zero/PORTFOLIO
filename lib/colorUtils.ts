@@ -1,5 +1,3 @@
-
-
 export function hexToRgb(hex: string): { r: number; g: number; b: number } {
 
   let cleanHex = hex.trim().replace(/^#/, '');
@@ -19,9 +17,4 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } {
     g: parseInt(cleanHex.substring(2, 4), 16),
     b: parseInt(cleanHex.substring(4, 6), 16),
   };
-}
-
-export function hexToRgba(hex: string, alpha: number): string {
-  const { r, g, b } = hexToRgb(hex);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
