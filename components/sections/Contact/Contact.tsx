@@ -297,8 +297,12 @@ export function Contact() {
     animFrameRef.current = requestAnimationFrame(render);
   };
 
-  const handleInputBackspace = (char: string, inputEl: HTMLInputElement) => {
-    if (reducedMotion || !panelRef.current || !canvasRef.current) return;
+  const handleInputDeleteText = (
+    deletedText: string,
+    inputEl: HTMLInputElement,
+    startIndex: number
+  ) => {
+    if (reducedMotion || !panelRef.current || !canvasRef.current || !deletedText) return;
 
     const panelRect = panelRef.current.getBoundingClientRect();
     const inputRect = inputEl.getBoundingClientRect();
@@ -309,22 +313,29 @@ export function Contact() {
     const fontWeight = style.fontWeight || '400';
 
     const ctx = canvasRef.current.getContext('2d');
-    let textWidthBefore = 0;
-    let charWidth = 0;
+    let prefixWidth = 0;
     if (ctx) {
       ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
-      textWidthBefore = ctx.measureText(inputEl.value).width;
-      charWidth = ctx.measureText(char).width;
+      const prefixText = inputEl.value.slice(0, startIndex);
+      prefixWidth = ctx.measureText(prefixText).width;
     } else {
-      textWidthBefore = inputEl.value.length * (fontSize * 0.6);
-      charWidth = fontSize * 0.6;
+      prefixWidth = startIndex * (fontSize * 0.6);
     }
 
-    const charLeft = (inputRect.left - panelRect.left) + Math.max(0, textWidthBefore - charWidth);
-    const charTop = (inputRect.top - panelRect.top) + (inputRect.height - fontSize) / 2 - 2;
+    const startX = (inputRect.left - panelRect.left) + prefixWidth;
+    const startY = (inputRect.top - panelRect.top) + (inputRect.height - fontSize) / 2 - 2;
 
-    const newParticles = sampleCharacterBitmap(char, fontFamily, fontSize, fontWeight, charLeft, charTop, 0);
-    newParticles.forEach(p => { p.delay = Math.floor(Math.random() * 4); });
+    const newParticles = sampleTextBitmap(
+      deletedText,
+      fontFamily,
+      fontSize,
+      fontWeight,
+      startX,
+      startY
+    );
+    newParticles.forEach((p) => {
+      p.delay = Math.floor(Math.random() * 4);
+    });
 
     particlesRef.current.push(...newParticles);
     startAnimationLoop();
@@ -505,7 +516,7 @@ export function Contact() {
 
       <div ref={panelRef} className={styles.panel}>
         
-        <canvas ref={canvasRef} className={styles.devourCanvas} aria-hidden="true" />
+<canvas ref={canvasRef} className={styles.devourCanvas} aria-hidden="true" />
 
         <form ref={formRef} className={styles.form} onSubmit={handleSubmit} noValidate>
             
@@ -516,7 +527,7 @@ export function Contact() {
                 onChange={setName}
                 placeholder={c.row1.nameLabel}
                 name="name"
-                onBackspace={handleInputBackspace}
+                onDeleteText={handleInputDeleteText}
               />
               <span className={styles.text}>{SPLITS.row1Between}</span>
               <RevealInput
@@ -524,7 +535,7 @@ export function Contact() {
                 onChange={setCountry}
                 placeholder={c.row1.countryLabel}
                 name="country"
-                onBackspace={handleInputBackspace}
+                onDeleteText={handleInputDeleteText}
               />
             </div>
 
@@ -551,7 +562,7 @@ export function Contact() {
                 name="email"
                 type={channel === 'WhatsApp' ? 'tel' : 'email'}
                 error={emailError}
-                onBackspace={handleInputBackspace}
+                onDeleteText={handleInputDeleteText}
                 grow
               />
               <div className={styles.chipGroup} role="group" aria-label="Channel">
@@ -573,7 +584,7 @@ export function Contact() {
                 onChange={setMessage}
                 placeholder={c.row4.label}
                 name="message"
-                onBackspace={handleInputBackspace}
+                onDeleteText={handleInputDeleteText}
                 grow
               />
             </div>
@@ -645,7 +656,7 @@ interface RevealInputProps {
   type?: string;
   grow?: boolean;
   error?: boolean;
-  onBackspace?: (char: string, inputEl: HTMLInputElement) => void;
+  onDeleteText?: (deletedText: string, inputEl: HTMLInputElement, startIndex: number) => void;
 }
 
 const INPUT_WIDTH_BUFFER_MIN = 12;
@@ -660,7 +671,7 @@ function RevealInput({
   type = 'text',
   grow = false,
   error = false,
-  onBackspace,
+  onDeleteText,
 }: RevealInputProps) {
   const mirrorRef = useRef<HTMLSpanElement>(null);
   const [width, setWidth] = useState(0);
@@ -692,9 +703,55 @@ function RevealInput({
   }, [value, placeholder, grow]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && value.length > 0 && onBackspace) {
-      const deletedChar = value[value.length - 1];
-      onBackspace(deletedChar, e.currentTarget);
+    if (!onDeleteText || value.length === 0) return;
+
+    const inputEl = e.currentTarget;
+    const selStart = inputEl.selectionStart ?? value.length;
+    const selEnd = inputEl.selectionEnd ?? value.length;
+
+    let deletedText = '';
+    let startIndex = -1;
+
+    if (e.key === 'Backspace') {
+      if (selStart !== selEnd) {
+        startIndex = Math.min(selStart, selEnd);
+        deletedText = value.slice(startIndex, Math.max(selStart, selEnd));
+      } else if (selStart > 0) {
+        if (e.ctrlKey || e.altKey) {
+          const textBefore = value.slice(0, selStart);
+          const match = textBefore.match(/(\s+|\w+|[^\w\s]+)$/);
+          deletedText = match ? match[0] : textBefore;
+          startIndex = selStart - deletedText.length;
+        } else if (e.metaKey) {
+          deletedText = value.slice(0, selStart);
+          startIndex = 0;
+        } else {
+          startIndex = selStart - 1;
+          deletedText = value.slice(startIndex, selStart);
+        }
+      }
+    } else if (e.key === 'Delete') {
+      if (selStart !== selEnd) {
+        startIndex = Math.min(selStart, selEnd);
+        deletedText = value.slice(startIndex, Math.max(selStart, selEnd));
+      } else if (selStart < value.length) {
+        if (e.ctrlKey || e.altKey) {
+          const textAfter = value.slice(selStart);
+          const match = textAfter.match(/^(\s+|\w+|[^\w\s]+)/);
+          deletedText = match ? match[0] : textAfter;
+          startIndex = selStart;
+        } else if (e.metaKey) {
+          deletedText = value.slice(selStart);
+          startIndex = selStart;
+        } else {
+          startIndex = selStart;
+          deletedText = value.slice(selStart, selStart + 1);
+        }
+      }
+    }
+
+    if (deletedText && startIndex >= 0) {
+      onDeleteText(deletedText, inputEl, startIndex);
     }
   };
 
