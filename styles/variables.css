@@ -1,7 +1,4 @@
-
-
 :root {
-    
     --color-background: #FFFFFF;
     --color-primary-text: #1b2028;
     --color-accent-purple: #62B6CB;
@@ -19,12 +16,10 @@
     --wf-green: #93b99e;
     --wf-gold: var(--color-accent-gold);
 
-    --highlight-strong: linear-gradient(
-        transparent 78%,
-        var(--color-accent-purple) 78%,
-        var(--color-accent-purple) 96%,
-        transparent 96%
-    );
+    --highlight-strong: linear-gradient(transparent 78%,
+            var(--color-accent-purple) 78%,
+            var(--color-accent-purple) 96%,
+            transparent 96%);
 
     --font-primary: 'PP Neue Montreal', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --font-navbar: 'Doppio One', sans-serif;
@@ -56,6 +51,11 @@
     --duration-slow: 0.8s;
     --duration-slower: 1.2s;
 
+    --frame-margin: clamp(4px, 0.85vw, 8px);
+    --frame-radius: clamp(20px, 1.8vw, 30px);
+    --color-screen-bezel: #0d0e12;
+    --color-screen-border: transparent;
+
     --z-base: 1;
     --z-above: 10;
     --z-nav: 100;
@@ -72,4 +72,6 @@
     --color-text-muted: rgba(255, 255, 255, 0.5);
     --color-text-muted-strong: rgba(255, 255, 255, 0.8);
     --paper: #1F1C17;
+    --color-screen-bezel: #08090c;
+    --color-screen-border: transparent;
 }

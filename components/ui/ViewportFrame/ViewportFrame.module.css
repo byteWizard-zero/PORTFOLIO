@@ -1,0 +1,20 @@
+.frameContainer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9980;
+    overflow: hidden;
+}
+
+.frameInner {
+    position: absolute;
+    inset: var(--frame-margin, clamp(4px, 0.85vw, 8px));
+    border-radius: var(--frame-radius, clamp(28px, 2.5vw, 38px));
+    box-shadow: 
+        0 0 0 200vmax var(--color-screen-bezel, #0d0e12),
+        0 0 16px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    transition: 
+        box-shadow var(--duration-slow) var(--ease-out-quart),
+        border-color var(--duration-slow) var(--ease-out-quart);
+}
