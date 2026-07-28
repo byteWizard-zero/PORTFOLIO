@@ -61,16 +61,21 @@
     text-decoration: none;
 }
 
-a.projectSticky {
+.cardLink {
+    display: block;
+    position: relative;
+    z-index: 15;
+    color: inherit;
+    text-decoration: none;
     cursor: pointer;
 }
 
-[data-split-gated="true"] a.projectSticky {
+[data-split-gated="true"] .cardLink {
     pointer-events: none;
     cursor: default;
 }
 
-[data-split-gated="true"] a.projectSticky[data-open="true"] {
+[data-split-gated="true"] [data-open="true"] .cardLink {
     pointer-events: auto;
     cursor: pointer;
 }

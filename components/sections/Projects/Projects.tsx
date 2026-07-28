@@ -191,64 +191,42 @@ export const Projects = () => {
        {featuredProjects.map((project, index) => {
            const isFirst = index === 0;
            const isLast = index === featuredProjects.length - 1;
-           const cardInner = (
-               <>
-                   {isFirst && (
-                     <MetaLabel className={styles.metaLabel} aria-hidden="true">
-                       {projects.label}
-                     </MetaLabel>
-                   )}
+           const hasCaseStudy = caseStudySlugs.has(project.id);
 
-                   <div className={styles.cardFrame}>
-                       <div className={styles.imageCard}>
-                            <div className={styles.projectImgWrapper}>
-                                 <Image
-                                    src={project.image}
-                                    alt={project.title}
-                                    fill
-                                    style={{ objectFit: 'cover', objectPosition: 'top' }}
-                                    sizes="(max-width: 768px) 100vw, 80vw"
-                                    unoptimized
-                                 />
-                            </div>
-                       </div>
-
-                       <div
-                        className={styles.funkyBadge}
-                        style={{
-                            backgroundColor: project.badgeColor,
-                            color: project.badgeTextColor,
-                            boxShadow: `5px 5px 0px ${project.badgeShadowColor || 'black'}`,
-                            transform: 'scale(0)'
-                        }}
-                       >
-                           <span>
-                               {project.badge.split(/<br\s*\/?>/i).map((line, i, arr) => (
-                                   <Fragment key={i}>
-                                       {line}
-                                       {i < arr.length - 1 && <br />}
-                                   </Fragment>
-                               ))}
-                           </span>
-                       </div>
-                   </div>
-
-                   <div className={styles.titleWrapper}>
-                        <div className={styles.textTop}>
-                            <div className={styles.textBacking}></div>
-                            <div className={styles.textContent}>{project.title}</div>
-                        </div>
-                        <div className={styles.textBottom}>
-                            <div className={styles.textBacking}></div>
-                            <div className={styles.textContent}>{project.title}</div>
+           const cardFrameContent = (
+               <div className={styles.cardFrame}>
+                   <div className={styles.imageCard}>
+                        <div className={styles.projectImgWrapper}>
+                             <Image
+                                src={project.image}
+                                alt={project.title}
+                                fill
+                                style={{ objectFit: 'cover', objectPosition: 'top' }}
+                                sizes="(max-width: 768px) 100vw, 80vw"
+                                unoptimized
+                             />
                         </div>
                    </div>
 
-                   <div className={styles.projectMeta}>
-                       <div className={styles.pill}>{caseStudies[project.id]?.hero?.pills?.[1] ?? project.year}</div>
-                       <div className={styles.pill}>{project.category}</div>
+                   <div
+                    className={styles.funkyBadge}
+                    style={{
+                        backgroundColor: project.badgeColor,
+                        color: project.badgeTextColor,
+                        boxShadow: `5px 5px 0px ${project.badgeShadowColor || 'black'}`,
+                        transform: 'scale(0)'
+                    }}
+                   >
+                       <span>
+                           {project.badge.split(/<br\s*\/?>/i).map((line, i, arr) => (
+                               <Fragment key={i}>
+                                   {line}
+                                   {i < arr.length - 1 && <br />}
+                               </Fragment>
+                           ))}
+                       </span>
                    </div>
-               </>
+               </div>
            );
 
            return (
@@ -258,26 +236,48 @@ export const Projects = () => {
                  data-last={isLast ? 'true' : undefined}
                  data-first={isFirst ? 'true' : undefined}
                >
-                   {caseStudySlugs.has(project.id) ? (
-                       <TransitionLink
-                         href={`/work/${project.id}`}
-                         className={styles.projectSticky}
-                         aria-label={`Open ${project.title} case study`}
-                         payload={{
-                           accent: project.themeColor,
-                           title: project.title,
-                           slug: project.id,
-                           year: project.year,
-                           category: project.category,
-                         }}
-                       >
-                           {cardInner}
-                       </TransitionLink>
-                   ) : (
-                       <div className={styles.projectSticky}>
-                           {cardInner}
+                   <div className={styles.projectSticky}>
+                       {isFirst && (
+                         <MetaLabel className={styles.metaLabel} aria-hidden="true">
+                           {projects.label}
+                         </MetaLabel>
+                       )}
+
+                       {hasCaseStudy ? (
+                           <TransitionLink
+                             href={`/work/${project.id}`}
+                             className={styles.cardLink}
+                             aria-label={`Open ${project.title} case study`}
+                             payload={{
+                               accent: project.themeColor,
+                               title: project.title,
+                               slug: project.id,
+                               year: project.year,
+                               category: project.category,
+                             }}
+                           >
+                               {cardFrameContent}
+                           </TransitionLink>
+                       ) : (
+                           cardFrameContent
+                       )}
+
+                       <div className={styles.titleWrapper}>
+                            <div className={styles.textTop}>
+                                <div className={styles.textBacking}></div>
+                                <div className={styles.textContent}>{project.title}</div>
+                            </div>
+                            <div className={styles.textBottom}>
+                                <div className={styles.textBacking}></div>
+                                <div className={styles.textContent}>{project.title}</div>
+                            </div>
                        </div>
-                   )}
+
+                       <div className={styles.projectMeta}>
+                           <div className={styles.pill}>{caseStudies[project.id]?.hero?.pills?.[1] ?? project.year}</div>
+                           <div className={styles.pill}>{project.category}</div>
+                       </div>
+                   </div>
                </div>
            );
        })}

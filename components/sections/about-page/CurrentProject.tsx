@@ -108,12 +108,8 @@ export function AboutPageCurrentProject() {
 
   if (!project) return null;
 
-  const cardInner = (
-    <>
-      <MetaLabel className={styles.metaLabel} aria-hidden="true">
-        Current Project
-      </MetaLabel>
-
+  const cardFrameContent = (
+    <div className={styles.cardFrame}>
       <div className={styles.imageCard}>
         <div className={styles.projectImgWrapper}>
           <Image
@@ -144,50 +140,55 @@ export function AboutPageCurrentProject() {
           ))}
         </span>
       </div>
-
-      <div className={styles.titleWrapper}>
-        <div className={styles.textTop}>
-          <div className={styles.textBacking}></div>
-          <div className={styles.textContent}>{project.title}</div>
-        </div>
-        <div className={styles.textBottom}>
-          <div className={styles.textBacking}></div>
-          <div className={styles.textContent}>{project.title}</div>
-        </div>
-      </div>
-
-      <div className={styles.projectMeta}>
-        <div className={styles.pill}>
-          {caseStudies[project.id]?.hero?.pills?.[1] ?? project.year}
-        </div>
-        <div className={styles.pill}>{project.category}</div>
-      </div>
-    </>
+    </div>
   );
 
   return (
     <div ref={containerRef} className={styles.section}>
       <div className={styles.projectSection}>
-        {hasCaseStudy ? (
-          <TransitionLink
-            href={`/work/${project.id}`}
-            className={styles.projectSticky}
-            aria-label={`Open ${project.title} case study`}
-            payload={{
-              accent: project.themeColor,
-              title: project.title,
-              slug: project.id,
-              year: project.year,
-              category: project.category,
-            }}
-          >
-            {cardInner}
-          </TransitionLink>
-        ) : (
-          <div className={styles.projectSticky}>{cardInner}</div>
-        )}
+        <div className={styles.projectSticky}>
+          <MetaLabel className={styles.metaLabel} aria-hidden="true">
+            Current Project
+          </MetaLabel>
+
+          {hasCaseStudy ? (
+            <TransitionLink
+              href={`/work/${project.id}`}
+              className={styles.cardLink}
+              aria-label={`Open ${project.title} case study`}
+              payload={{
+                accent: project.themeColor,
+                title: project.title,
+                slug: project.id,
+                year: project.year,
+                category: project.category,
+              }}
+            >
+              {cardFrameContent}
+            </TransitionLink>
+          ) : (
+            cardFrameContent
+          )}
+
+          <div className={styles.titleWrapper}>
+            <div className={styles.textTop}>
+              <div className={styles.textBacking}></div>
+              <div className={styles.textContent}>{project.title}</div>
+            </div>
+            <div className={styles.textBottom}>
+              <div className={styles.textBacking}></div>
+              <div className={styles.textContent}>{project.title}</div>
+            </div>
+          </div>
+
+          <div className={styles.projectMeta}>
+            <div className={styles.pill}>
+              {caseStudies[project.id]?.hero?.pills?.[1] ?? project.year}
+            </div>
+            <div className={styles.pill}>{project.category}</div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
-
