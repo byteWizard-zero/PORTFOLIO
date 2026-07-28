@@ -26,8 +26,8 @@ body {
 }
 
 html {
-    
-    scrollbar-gutter: stable;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 body {
@@ -104,43 +104,26 @@ img {
 }
 
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    display: none;
+    width: 0;
+    height: 0;
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent;
+    display: none;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--color-grid-line);
-    border-radius: 4px;
-    transition: background 0.2s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--color-accent-purple);
-}
-
-::-webkit-scrollbar-thumb:active {
-    background: var(--color-primary-text);
+    display: none;
 }
 
 ::-webkit-scrollbar-corner {
-    background: transparent;
+    display: none;
 }
 
 * {
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-grid-line) transparent;
-}
-
-html {
-    scrollbar-color: var(--color-grid-line) transparent;
-}
-
-html:hover {
-    scrollbar-color: var(--color-accent-purple) transparent;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 #philosophy ~ section {
