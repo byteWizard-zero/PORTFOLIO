@@ -19,20 +19,3 @@
         border-color var(--duration-slow) var(--ease-out-quart);
     will-change: opacity, transform;
 }
-
-.scrollProgress {
-    position: absolute;
-    top: var(--frame-margin, clamp(4px, 0.85vw, 8px));
-    left: var(--frame-margin, clamp(4px, 0.85vw, 8px));
-    right: var(--frame-margin, clamp(4px, 0.85vw, 8px));
-    height: 2.5px;
-    border-top-left-radius: var(--frame-radius, clamp(28px, 2.5vw, 38px));
-    border-top-right-radius: var(--frame-radius, clamp(28px, 2.5vw, 38px));
-    background: linear-gradient(90deg, var(--color-accent-purple), var(--color-accent-gold, #FFB800));
-    box-shadow: 0 0 10px var(--color-accent-purple), 0 0 4px var(--color-accent-gold, #FFB800);
-    transform-origin: left center;
-    transform: scaleX(0);
-    pointer-events: none;
-    z-index: 9981;
-    will-change: transform, opacity;
-}
