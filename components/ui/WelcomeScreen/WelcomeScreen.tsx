@@ -22,6 +22,14 @@ export const WelcomeScreen = () => {
   useScrollLock(welcomeActive, { compensateScrollbar: true });
 
   useGSAP(() => {
+    const notifyComplete = () => {
+      const _g = document.getElementById('welcome-gate');
+      if (_g) { _g.style.opacity = '0'; setTimeout(() => _g.remove(), 350); }
+      window.__welcomeHandoff = true;
+      window.__welcomeComplete = true;
+      window.dispatchEvent(new CustomEvent('welcome-handoff'));
+      window.dispatchEvent(new CustomEvent('welcome-complete'));
+    };
 
     if (features.welcomeScreen.skipOnReturn && !window.__freshLoad) {
       
@@ -31,12 +39,7 @@ export const WelcomeScreen = () => {
         containerRef.current.style.display = 'none';
       }
       const handoffTimer = setTimeout(() => {
-        const _g = document.getElementById('welcome-gate');
-        if (_g) { _g.style.opacity = '0'; setTimeout(() => _g.remove(), 350); }
-        window.__welcomeHandoff = true;
-        window.dispatchEvent(new CustomEvent('welcome-handoff'));
-        window.__welcomeComplete = true;
-        window.dispatchEvent(new CustomEvent('welcome-complete'));
+        notifyComplete();
       }, 0);
       return () => clearTimeout(handoffTimer);
     }
@@ -58,12 +61,7 @@ export const WelcomeScreen = () => {
       }
       
       const handoffTimer = setTimeout(() => {
-        const _g = document.getElementById('welcome-gate');
-        if (_g) { _g.style.opacity = '0'; setTimeout(() => _g.remove(), 350); }
-        window.__welcomeHandoff = true;
-        window.dispatchEvent(new CustomEvent('welcome-handoff'));
-        window.__welcomeComplete = true;
-        window.dispatchEvent(new CustomEvent('welcome-complete'));
+        notifyComplete();
       }, 0);
       return () => clearTimeout(handoffTimer);
     }
@@ -81,12 +79,7 @@ export const WelcomeScreen = () => {
         containerRef.current.setAttribute('aria-hidden', 'true');
         containerRef.current.style.display = 'none';
       }
-      const _g = document.getElementById('welcome-gate');
-      if (_g) { _g.style.opacity = '0'; setTimeout(() => _g.remove(), 350); }
-      window.__welcomeHandoff = true;
-      window.dispatchEvent(new CustomEvent('welcome-handoff'));
-      window.__welcomeComplete = true;
-      window.dispatchEvent(new CustomEvent('welcome-complete'));
+      notifyComplete();
     };
 
     const tl = gsap.timeline({
@@ -96,8 +89,7 @@ export const WelcomeScreen = () => {
         if (containerRef.current) {
           containerRef.current.style.display = 'none';
         }
-        window.__welcomeComplete = true;
-        window.dispatchEvent(new CustomEvent('welcome-complete'));
+        notifyComplete();
       }
     });
 
@@ -193,10 +185,7 @@ export const WelcomeScreen = () => {
             });
           }
           
-          const _g = document.getElementById('welcome-gate');
-          if (_g) { _g.style.opacity = '0'; setTimeout(() => _g.remove(), 350); }
-          window.__welcomeHandoff = true;
-          window.dispatchEvent(new CustomEvent('welcome-handoff'));
+          notifyComplete();
           return;
         }
 
@@ -205,9 +194,7 @@ export const WelcomeScreen = () => {
             console.warn('[WelcomeScreen] Letter refs not available');
           }
           document.body.style.visibility = '';
-          const _g = document.getElementById('welcome-gate'); if (_g) _g.remove();
-          window.__welcomeHandoff = true;
-          window.dispatchEvent(new CustomEvent('welcome-handoff'));
+          notifyComplete();
           return;
         }
 
@@ -260,10 +247,7 @@ export const WelcomeScreen = () => {
         });
 
         handoffCall = gsap.delayedCall(flightDuration - handoffDuration, () => {
-          const _g = document.getElementById('welcome-gate');
-          if (_g) { _g.style.opacity = '0'; setTimeout(() => _g.remove(), 350); }
-          window.__welcomeHandoff = true;
-          window.dispatchEvent(new CustomEvent('welcome-handoff'));
+          notifyComplete();
         });
       }, [], "flightStart");
 

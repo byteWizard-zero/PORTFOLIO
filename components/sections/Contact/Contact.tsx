@@ -60,6 +60,21 @@ interface DevourParticle {
 
 const GRAIN_PALETTE = ['#1b2028', '#1b2028', '#282e38', '#3d4450', '#5c6470', '#858d99'];
 
+function getCleanCanvasFont(styleFontFamily: string, fontSize: number, fontWeight: string): string {
+  let cleanedFamily = styleFontFamily
+    .replace(/var\([^)]+\)/g, '')
+    .replace(/\/\*.*?\*\//g, '')
+    .trim();
+
+  cleanedFamily = cleanedFamily.replace(/,\s*,/g, ',').replace(/^,|,$/g, '').trim();
+
+  if (!cleanedFamily || cleanedFamily.includes('var(')) {
+    cleanedFamily = "'PP Neue Montreal', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+  }
+
+  return `${fontWeight} ${fontSize}px ${cleanedFamily}`;
+}
+
 function sampleCharacterBitmap(
   char: string,
   fontFamily: string,
@@ -69,20 +84,24 @@ function sampleCharacterBitmap(
   baseY: number,
   staggerIndex: number = 0
 ): DevourParticle[] {
-  if (typeof document === 'undefined' || !char || char === ' ') return [];
+  if (typeof document === 'undefined' || !char || char === ' ' || char === '\u00a0' || char === '\t') return [];
 
   const canvas = document.createElement('canvas');
-  const size = Math.ceil(fontSize * 1.6);
+  const size = Math.ceil(fontSize * 2.2);
   canvas.width = size;
   canvas.height = size;
 
   const ctx = canvas.getContext('2d');
   if (!ctx) return [];
 
-  ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+  ctx.font = getCleanCanvasFont(fontFamily, fontSize, fontWeight);
   ctx.fillStyle = '#1b2028';
-  ctx.textBaseline = 'top';
-  ctx.fillText(char, 0, 0);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  const centerX = size / 2;
+  const centerY = size / 2;
+  ctx.fillText(char, centerX, centerY);
 
   const imgData = ctx.getImageData(0, 0, size, size);
   const data = imgData.data;
@@ -97,8 +116,8 @@ function sampleCharacterBitmap(
 
       if (alpha > 20) {
         const opacity = alpha / 255;
-        const ptX = baseX + px;
-        const ptY = baseY + py;
+        const ptX = baseX + (px - centerX);
+        const ptY = baseY + (py - centerY);
 
         const angle = (Math.random() - 0.5) * Math.PI;
         const speed = Math.random() * 0.8 + 0.3;
@@ -149,13 +168,13 @@ function sampleTextBitmap(
   const ctx = canvas.getContext('2d');
   if (!ctx) return [];
 
-  ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+  ctx.font = getCleanCanvasFont(fontFamily, fontSize, fontWeight);
   let currentX = startX;
   const result: DevourParticle[] = [];
 
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
-    if (char === ' ') {
+    if (char === ' ' || char === '\u00a0' || char === '\t') {
       currentX += fontSize * 0.35;
       continue;
     }
@@ -165,8 +184,8 @@ function sampleTextBitmap(
       fontFamily,
       fontSize,
       fontWeight,
-      currentX,
-      startY,
+      currentX + (fontSize * 0.35),
+      startY + (fontSize * 0.5),
       i
     );
     result.push(...charParticles);
@@ -315,14 +334,14 @@ export function Contact() {
     const ctx = canvasRef.current.getContext('2d');
     let prefixWidth = 0;
     if (ctx) {
-      ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+      ctx.font = getCleanCanvasFont(fontFamily, fontSize, fontWeight);
       const prefixText = inputEl.value.slice(0, startIndex);
       prefixWidth = ctx.measureText(prefixText).width;
     } else {
       prefixWidth = startIndex * (fontSize * 0.6);
     }
 
-    const startX = (inputRect.left - panelRect.left) + prefixWidth;
+    const startX = (inputRect.left - panelRect.left) + 4 + prefixWidth;
     const startY = (inputRect.top - panelRect.top) + (inputRect.height - fontSize) / 2 - 2;
 
     const newParticles = sampleTextBitmap(

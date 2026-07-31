@@ -291,12 +291,16 @@ export function HeroText() {
       );
     };
 
-    if (window.__welcomeHandoff) {
+    if (window.__welcomeHandoff || window.__welcomeComplete) {
       startAnimation();
     } else {
       window.addEventListener('welcome-handoff', startAnimation, { once: true });
+      window.addEventListener('welcome-complete', startAnimation, { once: true });
     }
-    return () => window.removeEventListener('welcome-handoff', startAnimation);
+    return () => {
+      window.removeEventListener('welcome-handoff', startAnimation);
+      window.removeEventListener('welcome-complete', startAnimation);
+    };
   }, { scope: sectionRef, dependencies: [reducedMotion] });
 
   return (

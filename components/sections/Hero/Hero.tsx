@@ -30,20 +30,24 @@ export function Hero() {
   useEffect(() => {
     if (welcomeDone) return;
 
-    if (window.__welcomeComplete) {
+    if (window.__welcomeHandoff || window.__welcomeComplete) {
       queueMicrotask(() => setWelcomeDone(true));
       return;
     }
 
     const onComplete = () => setWelcomeDone(true);
+    window.addEventListener('welcome-handoff', onComplete, { once: true });
     window.addEventListener('welcome-complete', onComplete, { once: true });
 
     const wrapper = document.querySelector('[data-welcome-wrapper]');
-    if (wrapper && (wrapper as HTMLElement).style.display === 'none') {
+    if (!wrapper || (wrapper as HTMLElement).style.display === 'none') {
       queueMicrotask(() => setWelcomeDone(true));
     }
 
-    return () => window.removeEventListener('welcome-complete', onComplete);
+    return () => {
+      window.removeEventListener('welcome-handoff', onComplete);
+      window.removeEventListener('welcome-complete', onComplete);
+    };
   }, [welcomeDone]);
 
   useGSAP(() => {

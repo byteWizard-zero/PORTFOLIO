@@ -14,7 +14,12 @@ export function ViewportFrame() {
     const frame = frameRef.current;
     if (!frame) return;
 
+    let revealed = false;
+
     const revealFrame = (immediate = false) => {
+      if (revealed) return;
+      revealed = true;
+
       if (immediate || reducedMotion) {
         gsap.set(frame, { opacity: 1, scale: 1 });
         return;
@@ -28,23 +33,36 @@ export function ViewportFrame() {
       });
     };
 
-    const welcomeScreenExists = !!document.querySelector('[data-welcome-wrapper]');
-    const isHandedOff = typeof window !== 'undefined' && window.__welcomeHandoff;
+    const welcomeWrapper = document.querySelector('[data-welcome-wrapper]') as HTMLElement | null;
+    const isWelcomeWrapperVisible = welcomeWrapper &&
+      welcomeWrapper.style.display !== 'none' &&
+      welcomeWrapper.getAttribute('aria-hidden') !== 'true';
 
-    if (!welcomeScreenExists || isHandedOff || reducedMotion) {
+    const isFinished = typeof window !== 'undefined' &&
+      (window.__welcomeHandoff || window.__welcomeComplete);
+
+    if (!isWelcomeWrapperVisible || isFinished || reducedMotion) {
       revealFrame(true);
-    } else {
-      gsap.set(frame, { opacity: 0, scale: 1.01 });
-
-      const onHandoff = () => revealFrame(false);
-      window.addEventListener('welcome-handoff', onHandoff, { once: true });
-      window.addEventListener('welcome-complete', onHandoff, { once: true });
-
-      return () => {
-        window.removeEventListener('welcome-handoff', onHandoff);
-        window.removeEventListener('welcome-complete', onHandoff);
-      };
+      return;
     }
+
+    // Set initial hidden state while welcome animation plays
+    gsap.set(frame, { opacity: 0, scale: 1.01 });
+
+    const onHandoff = () => revealFrame(false);
+    window.addEventListener('welcome-handoff', onHandoff, { once: true });
+    window.addEventListener('welcome-complete', onHandoff, { once: true });
+
+    // Safety fallback timeout: guarantee frame is visible even if animation fails or event is missed
+    const fallbackTimer = setTimeout(() => {
+      revealFrame(false);
+    }, 3500);
+
+    return () => {
+      clearTimeout(fallbackTimer);
+      window.removeEventListener('welcome-handoff', onHandoff);
+      window.removeEventListener('welcome-complete', onHandoff);
+    };
   }, { scope: frameRef, dependencies: [reducedMotion] });
 
   return (
@@ -53,3 +71,4 @@ export function ViewportFrame() {
     </div>
   );
 }
+
