@@ -128,8 +128,8 @@ export const Projects = () => {
                 rotation: 0, // Straighten out
                 opacity: 1,
                 force3D: true,
-                ease: "back.out(1.2)" 
-            }, "start+=0.05");
+                ease: "power2.out"
+            }, "start+=0.18");
 
             tl.to(imgWrapper, {
                 scale: 1.0,
@@ -142,14 +142,14 @@ export const Projects = () => {
                 rotation: 360,
                 force3D: true,
                 ease: "elastic.out(1, 0.5)"
-            }, "start+=0.3");
+            }, "start+=0.35");
 
             tl.to(meta, {
                 opacity: 1,
                 y: 0,
                 force3D: true,
                 duration: 0.2
-            }, "start+=0.4");
+            }, "start+=0.45");
 
             if (handoff && stickyContainer) {
                 gsap.to(stickyContainer, {
