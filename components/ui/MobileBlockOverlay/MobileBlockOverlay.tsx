@@ -13,67 +13,60 @@ export function MobileBlockOverlay() {
   };
 
   return (
-    <div className={styles.mobileBlockOverlay} aria-hidden="false">
-      {/* Subtle Background Layer */}
-      <div className={styles.bgGrid} />
-
-      {/* Top Telemetry Header */}
-      <header className={styles.hudHeader}>
-        <div className={styles.statusIndicator}>
-          <span className={styles.statusDot} />
-          <span className={styles.statusLabel}>SYSTEM // COMPATIBILITY LOCK</span>
-        </div>
-        <div className={styles.viewportBadge}>
-          <span>VIEWPORT &lt; 1024PX</span>
-        </div>
+    <div className={styles.overlay} aria-hidden="false">
+      {/* Top Status Bar */}
+      <header className={styles.header}>
+        <span className={styles.statusBadge}>
+          <span className={styles.dot} />
+          DESKTOP VIEWPORT REQUIRED
+        </span>
+        <span className={styles.metaInfo}>1024px+</span>
       </header>
 
       {/* Main Content Area */}
-      <main className={styles.mainContent}>
+      <main className={styles.content}>
         <div className={styles.quoteCard}>
-          <div className={styles.quoteHeader}>
-            <span className={styles.quoteTag}>MESSAGE FROM ARCHITECT</span>
-          </div>
-          <p className={styles.warningMessage}>
+          <p className={styles.quoteText}>
             &quot;the lord Artificer is fu*ked up making the site responsive for mobile, please open the site on a desktop -thank you&quot;
           </p>
         </div>
 
-        <div className={styles.actionContainer}>
-          <span className={styles.actionSubtext}>ALTERNATIVE DESKTOP ROUTE</span>
+        <div className={styles.actionGroup}>
+          <p className={styles.subtext}>
+            No desktop setup? Consider this alternative:
+          </p>
+
           <button
             onClick={handleRedirect}
-            className={styles.primaryButton}
+            className={styles.button}
             type="button"
-            aria-label="Redirect to budget friendly laptops search"
           >
-            <span className={styles.buttonLabel}>CLICK HERE</span>
+            <span>CLICK HERE</span>
             <svg
-              className={styles.buttonArrow}
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
+              className={styles.arrow}
+              width="14"
+              height="14"
+              viewBox="0 0 16 16"
               fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <line x1="7" y1="17" x2="17" y2="7" />
-              <polyline points="7 7 17 7 17 17" />
+              <path
+                d="M4.66699 11.3333L11.3337 4.66663M11.3337 4.66663H4.66699M11.3337 4.66663V11.3333"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         </div>
       </main>
 
-      {/* Bottom Metadata Footer */}
-      <footer className={styles.hudFooter}>
-        <span>ZENITH SOUMYA</span>
-        <span className={styles.footerSeparator}>·</span>
-        <span>STUDIO ARCHITECTURE</span>
-        <span className={styles.footerSeparator}>·</span>
-        <span>2026</span>
+      {/* Footer Meta */}
+      <footer className={styles.footer}>
+        <span>Z.S STUDIO</span>
+        <span>·</span>
+        <span>CURATED EXPERIENCE</span>
       </footer>
     </div>
   );
