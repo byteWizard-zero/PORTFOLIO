@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useRef, useMemo, useCallback, ReactNode, RefObject } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { triggerPortalLoop } from '@/lib/portalAnimation';
@@ -227,7 +229,9 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
     }
 
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      ScrollTrigger.getAll()
+        .filter(t => t.trigger === el || (t.vars as Record<string, unknown>).trigger === el)
+        .forEach(trigger => trigger.kill());
     };
   }, [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength]);
 

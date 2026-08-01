@@ -1,3 +1,5 @@
+'use client';
+
 import { useGSAP } from "@gsap/react";
 import { type RefObject } from "react";
 import { gsap } from "@/lib/gsap";
