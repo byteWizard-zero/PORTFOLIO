@@ -4,6 +4,7 @@ import "./globals.css";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { BackToTop } from "@/components/ui/BackToTop";
+import { MobileBlockOverlay } from "@/components/ui/MobileBlockOverlay/MobileBlockOverlay";
 import { AccentColorProvider } from "@/lib/AccentColorContext";
 import { LenisProvider } from "@/lib/LenisProvider";
 import { ViewportFrame } from "@/components/ui/ViewportFrame";
@@ -121,6 +122,7 @@ export default function RootLayout({
               <BackToTop />
               <ThemeToggle />
               <ViewportFrame />
+              <MobileBlockOverlay />
               <PageReadyNotifier>
                 {children}
               </PageReadyNotifier>
