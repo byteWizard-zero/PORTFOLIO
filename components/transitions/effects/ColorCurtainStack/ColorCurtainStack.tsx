@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { gsap, ANIMATION_CONFIG } from '@/lib/gsap';
 import { content, transitionsConfig, getAccentColors } from '@/data';
 import { useReducedMotion } from '@/lib/useReducedMotion';
@@ -54,10 +54,10 @@ function hashString(str: string): number {
   return h >>> 0;
 }
 
-function resolvePanelColor(): string {
+function resolvePanelColor(ssrSafe = false): string {
   const palette = getAccentColors();
   if (palette.length === 0) return INK;
-  if (typeof window === 'undefined') return palette[0];
+  if (ssrSafe || typeof window === 'undefined') return palette[0];
   const current = getComputedStyle(document.documentElement)
     .getPropertyValue('--color-accent-purple')
     .trim()
@@ -93,9 +93,9 @@ function sampleSkills(seed: number): [string, string, string] {
   return [pool[0], pool[1], pool[2]];
 }
 
-function buildCurtains(payload: TransitionEffectProps['payload']): CurtainConfig[] {
+function buildCurtains(payload: TransitionEffectProps['payload'], ssrSafe = false): CurtainConfig[] {
   const hasTitle = !!payload.title?.trim();
-  const panelColor = resolvePanelColor();
+  const panelColor = resolvePanelColor(ssrSafe);
 
   if (!hasTitle) {
 
@@ -189,7 +189,10 @@ export function ColorCurtainStack({
 }: TransitionEffectProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
-  const curtains = useMemo(() => buildCurtains(payload), [payload]);
+  const [curtains, setCurtains] = useState(() => buildCurtains(payload, true));
+  useEffect(() => {
+    setCurtains(buildCurtains(payload, false));
+  }, [payload]);
 
   const onCompleteRef = useRef(onComplete);
   useEffect(() => {
@@ -198,7 +201,7 @@ export function ColorCurtainStack({
 
   const reduceMotionSnapshotRef = useRef<boolean | null>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
 

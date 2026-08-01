@@ -149,7 +149,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
         const incoming = payload.accent.toLowerCase();
 
         const canonical = palette.find((c) => c.toLowerCase() === incoming);
-        if (canonical) {
+        if (canonical && typeof document !== 'undefined') {
           document.documentElement.style.setProperty(CSS_VAR, canonical);
         }
       }
@@ -174,10 +174,9 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const stateRef = useRef(state);
-  useEffect(() => {
-    stateRef.current = state;
-  }, [state]);
+  const stateRef = useRef<State>(state);
+  // eslint-disable-next-line react-hooks/immutability
+  stateRef.current = state;
 
   const onPhaseComplete = useCallback(
     (phase: TransitionPhase) => {
@@ -233,15 +232,11 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
     if (typeof window === 'undefined') return;
     if (!pathname || !pathname.startsWith('/work/')) return;
 
-    const caseStudyUrl = window.location.href;
-
     const onPopState = () => {
 
       if (window.location.pathname.startsWith('/work/')) return;
 
       if (stateRef.current.kind !== 'idle') return;
-
-      window.history.pushState(null, '', caseStudyUrl);
 
       const live = getComputedStyle(document.documentElement)
         .getPropertyValue(CSS_VAR)
