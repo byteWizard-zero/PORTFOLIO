@@ -72,7 +72,7 @@ export function MobileBlockOverlay() {
             className={styles.actionButton}
             type="button"
           >
-            <span className={styles.buttonText}>ACQUIRE DESKTOP HARDWARE</span>
+            <span className={styles.buttonText}>CLICK HERE</span>
             <svg
               className={styles.buttonIcon}
               viewBox="0 0 24 24"
