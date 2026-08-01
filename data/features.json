@@ -1,6 +1,6 @@
 {
   "customCursor": {
-    "enabled": false,
+    "enabled": true,
     "hideOnTouch": true,
     "trail": {
       "count": 4,

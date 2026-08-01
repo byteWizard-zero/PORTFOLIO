@@ -93,7 +93,7 @@ export function CustomCursor() {
 
     if (!cursor || !trailContainer) return;
 
-    if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) {
+    if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse), (max-width: 768px)').matches) {
       return;
     }
 
