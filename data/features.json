@@ -1,11 +1,21 @@
 {
   "customCursor": {
-    "enabled": false,
+    "enabled": true,
     "hideOnTouch": true,
     "trail": {
       "count": 4,
-      "sizes": [28, 20, 14, 8],
-      "lerpFactors": [0.12, 0.09, 0.06, 0.04],
+      "sizes": [
+        28,
+        20,
+        14,
+        8
+      ],
+      "lerpFactors": [
+        0.12,
+        0.09,
+        0.06,
+        0.04
+      ],
       "colors": {
         "primary": "var(--color-primary-text)",
         "secondary": "#ffb224",
