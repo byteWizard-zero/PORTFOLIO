@@ -14,7 +14,6 @@ import { getRandomDirection, getDirectionTransform } from '@/lib/portalAnimation
 import styles from './Eclipse.module.css';
 
 const SVGNS = 'http://www.w3.org/2000/svg';
-const PIN_VH = 7.5; 
 const CX = 600;
 const CY = 350;
 const R = 215; 

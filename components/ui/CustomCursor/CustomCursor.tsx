@@ -27,8 +27,6 @@ interface TrailSphere {
 }
 
 export function CustomCursor() {
-  if (!features.customCursor.enabled) return null;
-
   const pathname = usePathname();
   const isArcade = pathname?.startsWith('/arcade') || false;
 
@@ -560,6 +558,8 @@ export function CustomCursor() {
       });
     };
   }, []);
+
+  if (!features.customCursor.enabled) return null;
 
   return (
     <>
