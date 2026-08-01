@@ -19,3 +19,11 @@
         border-color var(--duration-slow) var(--ease-out-quart);
     will-change: opacity, transform;
 }
+
+@media (max-width: 768px) {
+    .frameContainer {
+        display: none;
+        --frame-margin: 0px;
+        --frame-radius: 0px;
+    }
+}

@@ -355,7 +355,7 @@
 }
 
 .stackWord {
-  font-size: clamp(48px, 9vw, 140px);
+  font-size: clamp(26px, 9vw, 140px);
   font-weight: 600;
   letter-spacing: -0.035em;
   line-height: 0.92;

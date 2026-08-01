@@ -16,7 +16,7 @@
 }
 
 .navbar.menuOpen {
-    z-index: calc(var(--z-nav) + 1);
+    z-index: 200;
 }
 
 .navLeft {

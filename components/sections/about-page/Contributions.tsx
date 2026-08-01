@@ -222,6 +222,7 @@ export function AboutPageContributions() {
       const listeners: { element: HTMLElement; type: string; fn: EventListenerOrEventListenerObject }[] = [];
       
       if (gridWrap && !reduced) {
+        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
         gsap.set(gridWrap, { transformPerspective: 1000, transformStyle: "preserve-3d" });
         
         const handleMouseMove = (e: Event) => {

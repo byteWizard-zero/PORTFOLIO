@@ -388,6 +388,12 @@
   .btn {
     width: 100%;
   }
+
+  .typeSelector {
+    flex-wrap: wrap;
+    overflow-x: auto;
+    justify-content: center;
+  }
 }
 
 .typeSelector {

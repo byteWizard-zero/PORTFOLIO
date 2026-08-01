@@ -172,6 +172,14 @@
   .memoryGrid {
     grid-template-columns: 1fr;
   }
+  .actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 .stackSegment,
@@ -182,7 +190,8 @@
   border-radius: 4px;
   display: flex;
   flex-direction: column;
-  height: 380px;
+  min-height: 240px;
+  height: auto;
 }
 
 .segmentHeader {

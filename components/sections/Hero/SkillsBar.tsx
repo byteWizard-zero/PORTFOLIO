@@ -39,13 +39,15 @@ export function SkillsBar() {
   );
 
   return (
-    <div data-skills className={styles.skillsBar} aria-hidden="true">
-      <div className={styles.skillsBarInner}>
-        <div className={styles.skillsWrapper}>
-          <div ref={contentRef} className={styles.skillsContent}>
-            {skills.map((skill, index) => renderSkillItem(skill, index))}
-            
-            {skills.map((skill, index) => renderSkillItem(skill, index, 'dup-'))}
+    <div className={styles.skillsBarWrapper}>
+      <div data-skills className={styles.skillsBar} aria-hidden="true">
+        <div className={styles.skillsBarInner}>
+          <div className={styles.skillsWrapper}>
+            <div ref={contentRef} className={styles.skillsContent}>
+              {skills.map((skill, index) => renderSkillItem(skill, index))}
+              
+              {skills.map((skill, index) => renderSkillItem(skill, index, 'dup-'))}
+            </div>
           </div>
         </div>
       </div>

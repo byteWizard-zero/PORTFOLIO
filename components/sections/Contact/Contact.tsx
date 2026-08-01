@@ -404,7 +404,7 @@ export function Contact() {
     gsap.set(inputBorders, { width: 0 });
     if (submit) gsap.set(submit, { opacity: 0, y: 20 });
 
-    if (reducedMotion) {
+    if (reducedMotion || (typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches)) {
       gsap.set(chars, { opacity: 1 });
       gsap.set(revealItems, { opacity: 1, y: 0 });
       gsap.set(inputBorders, { width: '100%' });

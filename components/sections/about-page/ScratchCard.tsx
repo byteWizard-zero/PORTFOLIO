@@ -232,6 +232,7 @@ export function ScratchCard({ children, onReveal }: ScratchCardProps) {
         height: '100%',
         userSelect: 'none',
         WebkitUserSelect: 'none',
+        touchAction: 'pan-y',
       }}
     >
       

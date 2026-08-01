@@ -559,6 +559,8 @@ export function CustomCursor() {
     };
   }, []);
 
+  if (!features.customCursor.enabled) return null;
+
   return (
     <>
       

@@ -103,6 +103,8 @@ type Mode = 'gl' | 'fallback';
 
 const detectInitialMode = (): Mode => {
   if (typeof window === 'undefined') return 'fallback';
+  const spacing = computeGridSpacing(window.innerWidth);
+  document.documentElement.style.setProperty('--plus-grid-spacing', `${spacing}px`);
   if (window.matchMedia('(pointer: coarse)').matches) return 'fallback';
   if (window.innerWidth < MOBILE_BREAKPOINT) return 'fallback';
   return 'gl';

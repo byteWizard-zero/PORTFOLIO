@@ -497,7 +497,9 @@
     }
 
     .text {
+        display: inline;
         white-space: normal;
+        word-break: break-word;
     }
 
     .submit {

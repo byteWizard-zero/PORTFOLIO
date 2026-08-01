@@ -1,10 +1,21 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ScrollReveal from '@/components/ui/ScrollReveal/ScrollReveal';
 import styles from './QuoteReveal.module.css';
 
 export function QuoteReveal() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <section className={styles.section}>
       <div className={styles.glow} />
@@ -12,7 +23,7 @@ export function QuoteReveal() {
         <ScrollReveal
           baseOpacity={0.1}
           enableBlur
-          baseRotation={10}
+          baseRotation={isMobile ? 0 : 10}
           blurStrength={11}
           containerClassName={styles.revealContainer}
           textClassName={styles.revealText}

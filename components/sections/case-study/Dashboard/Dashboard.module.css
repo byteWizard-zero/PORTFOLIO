@@ -29,6 +29,13 @@
     border-radius: var(--radius-portrait);
 }
 
+@media (max-width: 480px) {
+    .slot {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
 .frame {
     position: absolute;
     inset: 0;

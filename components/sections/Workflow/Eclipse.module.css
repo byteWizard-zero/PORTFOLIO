@@ -184,12 +184,13 @@
     left: clamp(20px, 5vw, 32px);
     right: clamp(20px, 5vw, 32px);
     width: auto;
-    bottom: clamp(32px, 7vh, 72px);
+    bottom: clamp(16px, 4vh, 40px);
+    min-height: auto;
   }
   .detailTitle {
-    font-size: clamp(30px, 8vw, 46px);
+    font-size: clamp(26px, 7vw, 40px);
   }
   .detailCopy {
-    font-size: clamp(14px, 3.6vw, 17px);
+    font-size: clamp(13px, 3.4vw, 16px);
   }
 }

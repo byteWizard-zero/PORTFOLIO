@@ -428,6 +428,18 @@
   }
 }
 
+@media (max-width: 768px) {
+  .inputGroup {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .routeBtn,
+  .actionButton {
+    width: 100%;
+  }
+}
+
 @media (max-width: 480px) {
   .presets {
     flex-direction: column;

@@ -144,6 +144,7 @@ export function AboutPageLeetCodeStats() {
     const listeners: { element: HTMLElement; type: string; fn: EventListenerOrEventListenerObject }[] = [];
     
     if (!reducedMotion) {
+      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
       const cards = [
         sectionRef.current.querySelector<HTMLElement>(`.${styles.cardMain}`),
         sectionRef.current.querySelector<HTMLElement>(`.${styles.cardBars}`)

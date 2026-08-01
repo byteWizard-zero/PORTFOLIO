@@ -565,7 +565,8 @@ export function AiVisualizer() {
                     className={`${styles.interactiveNode} ${hoveredNodeId === 'input' ? styles.nodeHovered : ''}`}
                     onMouseEnter={() => setHoveredNodeId('input')}
                     onMouseLeave={() => setHoveredNodeId(null)}
-                    onClick={() => { playClick(); inputRef.current?.focus(); }}
+                    onPointerDown={() => setHoveredNodeId('input')}
+                    onClick={() => { playClick(); setHoveredNodeId('input'); inputRef.current?.focus(); }}
                   >
                     <circle cx="50" cy="120" r="16" className={styles.nodeCircle} data-node="input" />
                     <text x="50" y="148" textAnchor="middle" className={styles.nodeLabel}>Input</text>
@@ -575,6 +576,8 @@ export function AiVisualizer() {
                     className={`${styles.interactiveNode} ${hoveredNodeId === 'router' ? styles.nodeHovered : ''}`}
                     onMouseEnter={() => setHoveredNodeId('router')}
                     onMouseLeave={() => setHoveredNodeId(null)}
+                    onPointerDown={() => setHoveredNodeId('router')}
+                    onClick={() => { playClick(); setHoveredNodeId(prev => prev === 'router' ? null : 'router'); }}
                   >
                     <rect x="140" y="100" width="50" height="40" rx="6" className={styles.nodeRect} data-node="router" />
                     <text x="165" y="124" textAnchor="middle" className={styles.routerLabel}>Router</text>
@@ -584,7 +587,8 @@ export function AiVisualizer() {
                     className={`${styles.interactiveNode} ${hoveredNodeId === 'code' ? styles.nodeHovered : ''} ${lockedRoute === 'code' ? styles.nodeLocked : ''}`}
                     onMouseEnter={() => setHoveredNodeId('code')}
                     onMouseLeave={() => setHoveredNodeId(null)}
-                    onClick={() => { playClick(); setLockedRoute(lockedRoute === 'code' ? null : 'code'); }}
+                    onPointerDown={() => setHoveredNodeId('code')}
+                    onClick={() => { playClick(); setHoveredNodeId('code'); setLockedRoute(lockedRoute === 'code' ? null : 'code'); }}
                   >
                     <rect 
                       x="370" y="20" width="100" height="40" rx="6" 
@@ -600,7 +604,8 @@ export function AiVisualizer() {
                     className={`${styles.interactiveNode} ${hoveredNodeId === 'creative' ? styles.nodeHovered : ''} ${lockedRoute === 'creative' ? styles.nodeLocked : ''}`}
                     onMouseEnter={() => setHoveredNodeId('creative')}
                     onMouseLeave={() => setHoveredNodeId(null)}
-                    onClick={() => { playClick(); setLockedRoute(lockedRoute === 'creative' ? null : 'creative'); }}
+                    onPointerDown={() => setHoveredNodeId('creative')}
+                    onClick={() => { playClick(); setHoveredNodeId('creative'); setLockedRoute(lockedRoute === 'creative' ? null : 'creative'); }}
                   >
                     <rect 
                       x="370" y="100" width="100" height="40" rx="6" 
@@ -616,7 +621,8 @@ export function AiVisualizer() {
                     className={`${styles.interactiveNode} ${hoveredNodeId === 'debug' ? styles.nodeHovered : ''} ${lockedRoute === 'debug' ? styles.nodeLocked : ''}`}
                     onMouseEnter={() => setHoveredNodeId('debug')}
                     onMouseLeave={() => setHoveredNodeId(null)}
-                    onClick={() => { playClick(); setLockedRoute(lockedRoute === 'debug' ? null : 'debug'); }}
+                    onPointerDown={() => setHoveredNodeId('debug')}
+                    onClick={() => { playClick(); setHoveredNodeId('debug'); setLockedRoute(lockedRoute === 'debug' ? null : 'debug'); }}
                   >
                     <rect 
                       x="370" y="180" width="100" height="40" rx="6" 

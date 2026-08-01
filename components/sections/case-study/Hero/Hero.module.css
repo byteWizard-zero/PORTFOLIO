@@ -162,6 +162,13 @@
     will-change: transform, width, height, top, left;
 }
 
+@media (max-width: 480px) {
+    .imageCard {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
 .imageInner {
     position: absolute;
     inset: 0;

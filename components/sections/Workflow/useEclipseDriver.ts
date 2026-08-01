@@ -14,7 +14,6 @@ import { getRandomDirection, getDirectionTransform } from '@/lib/portalAnimation
 import styles from './Eclipse.module.css';
 
 const SVGNS = 'http://www.w3.org/2000/svg';
-const PIN_VH = 7.5; 
 const CX = 600;
 const CY = 350;
 const R = 215; 
@@ -225,10 +224,11 @@ export function useEclipseDriver(
         };
       }
 
+      const pinVh = typeof window !== 'undefined' && window.innerWidth <= 768 ? 1.5 : 7.5;
       const trigger = ScrollTrigger.create({
         trigger: section,
         start: 'top top',
-        end: () => '+=' + window.innerHeight * PIN_VH,
+        end: () => '+=' + window.innerHeight * pinVh,
         pin: viewport,
         pinType: 'fixed',
         scrub: 1,

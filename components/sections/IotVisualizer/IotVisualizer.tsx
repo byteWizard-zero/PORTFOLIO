@@ -325,7 +325,9 @@ export function IotVisualizer() {
 
               <g className={styles.interactiveChip} 
                  onMouseEnter={() => setHoveredPin('ESP32_CHIP')} 
-                 onMouseLeave={() => setHoveredPin(null)}>
+                 onMouseLeave={() => setHoveredPin(null)}
+                 onPointerDown={() => setHoveredPin('ESP32_CHIP')}
+                 onClick={() => setHoveredPin('ESP32_CHIP')}>
                 <rect x="150" y="70" width="120" height="135" rx="4" fill="url(#silverMetal)" stroke="#8F9499" strokeWidth="1.5" />
                 <text x="210" y="115" textAnchor="middle" className={styles.chipBrand}>ESPRESSIF</text>
                 <text x="210" y="135" textAnchor="middle" className={styles.chipTitle}>ESP32-WROOM-32</text>
@@ -349,7 +351,8 @@ export function IotVisualizer() {
               <g className={styles.interactiveComponent}
                  onMouseEnter={() => setHoveredPin('D2_LED')}
                  onMouseLeave={() => setHoveredPin(null)}
-                 onClick={handleLedToggle}>
+                 onPointerDown={() => setHoveredPin('D2_LED')}
+                 onClick={() => { setHoveredPin('D2_LED'); handleLedToggle(); }}>
                 <rect x="280" y="222" width="10" height="8" rx="1" fill="#222" stroke="#444" strokeWidth="0.5" />
                 <circle cx="285" cy="226" r="3" className={`${styles.boardLed} ${ledActive ? styles.boardLedActive : ''}`} />
                 <text x="285" y="240" textAnchor="middle" className={styles.schematicTinyLabel}>GPIO2</text>
@@ -357,7 +360,9 @@ export function IotVisualizer() {
 
               <g className={styles.interactiveComponent}
                  onMouseEnter={() => setHoveredPin('PWR_LED')}
-                 onMouseLeave={() => setHoveredPin(null)}>
+                 onMouseLeave={() => setHoveredPin(null)}
+                 onPointerDown={() => setHoveredPin('PWR_LED')}
+                 onClick={() => setHoveredPin('PWR_LED')}>
                 <rect x="130" y="222" width="10" height="8" rx="1" fill="#222" stroke="#444" strokeWidth="0.5" />
                 <circle cx="135" cy="226" r="3" className={`${styles.powerLed} ${!resetting ? styles.powerLedActive : ''}`} />
                 <text x="135" y="240" textAnchor="middle" className={styles.schematicTinyLabel}>PWR</text>
@@ -367,7 +372,8 @@ export function IotVisualizer() {
               <rect x="192" y="278" width="36" height="14" rx="2" fill="#111" />
 
               <g className={styles.tactileBtn} 
-                 onClick={triggerReset}
+                 onClick={() => { setHoveredPin('EN_BTN'); triggerReset(); }}
+                 onPointerDown={() => setHoveredPin('EN_BTN')}
                  onMouseEnter={() => setHoveredPin('EN_BTN')}
                  onMouseLeave={() => setHoveredPin(null)}>
                 <rect x="95" y="245" width="22" height="22" rx="2" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="1" />
@@ -378,7 +384,8 @@ export function IotVisualizer() {
               </g>
 
               <g className={styles.tactileBtn}
-                 onClick={triggerBoot}
+                 onClick={() => { setHoveredPin('BOOT_BTN'); triggerBoot(); }}
+                 onPointerDown={() => setHoveredPin('BOOT_BTN')}
                  onMouseEnter={() => setHoveredPin('BOOT_BTN')}
                  onMouseLeave={() => setHoveredPin(null)}>
                 <rect x="303" y="245" width="22" height="22" rx="2" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="1" />
@@ -396,7 +403,9 @@ export function IotVisualizer() {
                      className={styles.pinInteractive}
                      onMouseEnter={() => setHoveredPin(pinName)}
                      onMouseLeave={() => setHoveredPin(null)}
-                     onClick={() => handlePinClick(pinName)}>
+                     onPointerDown={() => setHoveredPin(pinName)}
+                     onClick={() => { setHoveredPin(pinName); handlePinClick(pinName); }}>
+                    <circle cx="63" cy={68 + i * 18} r="16" fill="transparent" style={{ pointerEvents: 'auto' }} />
                     <rect x="60" y={65 + i * 18} width="6" height="6" rx="0.5" fill="#D4AF37" stroke="#9E7815" strokeWidth="0.5" />
                     
                     {pinsState[pinName] && <circle cx="63" cy={68 + i * 18} r="4" className={styles.pinGlowActive} />}
@@ -414,7 +423,9 @@ export function IotVisualizer() {
                      className={styles.pinInteractive}
                      onMouseEnter={() => setHoveredPin(pinName)}
                      onMouseLeave={() => setHoveredPin(null)}
-                     onClick={() => handlePinClick(pinName)}>
+                     onPointerDown={() => setHoveredPin(pinName)}
+                     onClick={() => { setHoveredPin(pinName); handlePinClick(pinName); }}>
+                    <circle cx="357" cy={68 + i * 18} r="16" fill="transparent" style={{ pointerEvents: 'auto' }} />
                     <rect x="354" y={65 + i * 18} width="6" height="6" rx="0.5" fill="#D4AF37" stroke="#9E7815" strokeWidth="0.5" />
                     
                     {pinsState[pinName] && <circle cx="357" cy={68 + i * 18} r="4" className={styles.pinGlowActive} />}
@@ -426,9 +437,11 @@ export function IotVisualizer() {
 
               <g className={styles.interactiveSensor}
                  onClick={() => {
+                   setHoveredPin('TEMP_ADC');
                    playClick();
                    addLog(`[SENSOR] Calibration requested. Slide 'Thermal Sensor Input' to tweak temperature.`);
                  }}
+                 onPointerDown={() => setHoveredPin('TEMP_ADC')}
                  onMouseEnter={() => setHoveredPin('TEMP_ADC')}
                  onMouseLeave={() => setHoveredPin(null)}>
                 <rect x="330" y="200" width="16" height="16" rx="2" fill="#222" stroke="#444" strokeWidth="0.5" />

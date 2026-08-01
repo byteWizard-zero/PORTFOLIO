@@ -1,14 +1,23 @@
 
 
-.skillsBar {
+.skillsBarWrapper {
     position: absolute;
     bottom: clamp(10px, 2.5vh, 45px);
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.skillsBar {
+    position: relative;
+    bottom: auto;
     left: 0;
     width: 150vw;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 4;
     pointer-events: none;
     overflow: visible;
 }
@@ -87,8 +96,11 @@
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
-    .skillsBar {
+    .skillsBarWrapper {
         bottom: clamp(8px, 2.5vh, 32px);
+    }
+
+    .skillsBar {
         width: 160vw;
     }
 
@@ -112,9 +124,11 @@
 }
 
 @media (max-width: 768px) {
-    .skillsBar {
-        
+    .skillsBarWrapper {
         bottom: clamp(10px, 3vh, 32px);
+    }
+
+    .skillsBar {
         width: 200vw; 
     }
 

@@ -362,7 +362,7 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
     <div ref={menuRef} id="main-menu" className={`${styles.menu} ${isOpen ? styles.isOpen : ''}`}>
       <div ref={overlayRef} className={styles.overlay} />
 
-      <div className={styles.menuContent}>
+      <div className={styles.menuContent} data-lenis-prevent="">
         <nav className={styles.nav} role="navigation" aria-label="Main menu">
           <ul ref={linksContainerRef} className={styles.linkList}>
             {menuLinks.map((link, index) => (

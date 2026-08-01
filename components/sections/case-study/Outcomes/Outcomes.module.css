@@ -51,7 +51,7 @@
 .value {
     font-family: var(--font-primary);
     font-weight: 700;
-    font-size: clamp(72px, 9vw, 160px);
+    font-size: clamp(32px, 9vw, 160px);
     line-height: 0.85;
     letter-spacing: -0.05em;
     color: var(--color-primary-text);

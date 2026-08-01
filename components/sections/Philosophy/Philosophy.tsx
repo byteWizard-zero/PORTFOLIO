@@ -42,25 +42,21 @@ export function Philosophy() {
       onEnter: () => {
         if (window.lenis) {
           window.lenis.options.wheelMultiplier = 0.08;
-          window.lenis.options.touchMultiplier = 0.12;
         }
       },
       onLeave: () => {
         if (window.lenis) {
           window.lenis.options.wheelMultiplier = 0.45;
-          window.lenis.options.touchMultiplier = 0.65;
         }
       },
       onEnterBack: () => {
         if (window.lenis) {
           window.lenis.options.wheelMultiplier = 0.08;
-          window.lenis.options.touchMultiplier = 0.12;
         }
       },
       onLeaveBack: () => {
         if (window.lenis) {
           window.lenis.options.wheelMultiplier = 0.45;
-          window.lenis.options.touchMultiplier = 0.65;
         }
       },
     });
@@ -70,7 +66,6 @@ export function Philosophy() {
       if (labelTween.scrollTrigger) labelTween.scrollTrigger.kill();
       if (window.lenis) {
         window.lenis.options.wheelMultiplier = 0.45;
-        window.lenis.options.touchMultiplier = 0.65;
       }
     };
   }, { scope: wrapperRef, dependencies: [reducedMotion] });

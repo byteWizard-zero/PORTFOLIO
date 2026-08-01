@@ -239,10 +239,10 @@
     }
 
     .heroText {
-        
-        font-size: 18vw;
+        font-size: clamp(32px, 14vw, 100px);
         line-height: 0.85;
-        white-space: nowrap;
+        white-space: normal;
+        word-break: break-word;
     }
 
     .heroTextMohed {

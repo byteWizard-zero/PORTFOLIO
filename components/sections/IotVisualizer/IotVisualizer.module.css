@@ -616,3 +616,12 @@
 .logSensor { color: var(--color-accent-gold); }
 .logSystem { color: #555; }
 .logAdc { color: #93b99e; }
+
+@media (max-width: 768px) {
+  .sectionContainer {
+    padding: 16px;
+  }
+  .controlButtonsRow {
+    flex-direction: column;
+  }
+}

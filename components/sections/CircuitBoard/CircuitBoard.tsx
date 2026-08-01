@@ -53,15 +53,18 @@ export function CircuitBoard() {
     }
   }, [logs]);
 
+  const getScaleX = () => (typeof window !== 'undefined' && window.innerWidth <= 800 ? Math.min(1, (window.innerWidth - 80) / 540) : 1);
+
   const loadHalfAdderPreset = () => {
     playSweep();
+    const sx = getScaleX();
     const adderNodes: ComponentNode[] = [
-      { id: 'sw-a', type: 'switch', label: 'SWITCH_A', x: 80, y: 100, inputs: [], output: false },
-      { id: 'sw-b', type: 'switch', label: 'SWITCH_B', x: 80, y: 220, inputs: [], output: false },
-      { id: 'xor-sum', type: 'xor', label: 'XOR_SUM', x: 260, y: 90, inputs: [false, false], output: false },
-      { id: 'and-carry', type: 'and', label: 'AND_CARRY', x: 260, y: 230, inputs: [false, false], output: false },
-      { id: 'led-sum', type: 'led', label: 'LED_SUM', x: 440, y: 90, inputs: [false], output: false },
-      { id: 'led-carry', type: 'led', label: 'LED_CARRY', x: 440, y: 230, inputs: [false], output: false },
+      { id: 'sw-a', type: 'switch', label: 'SWITCH_A', x: Math.round(80 * sx), y: 100, inputs: [], output: false },
+      { id: 'sw-b', type: 'switch', label: 'SWITCH_B', x: Math.round(80 * sx), y: 220, inputs: [], output: false },
+      { id: 'xor-sum', type: 'xor', label: 'XOR_SUM', x: Math.round(260 * sx), y: 90, inputs: [false, false], output: false },
+      { id: 'and-carry', type: 'and', label: 'AND_CARRY', x: Math.round(260 * sx), y: 230, inputs: [false, false], output: false },
+      { id: 'led-sum', type: 'led', label: 'LED_SUM', x: Math.round(440 * sx), y: 90, inputs: [false], output: false },
+      { id: 'led-carry', type: 'led', label: 'LED_CARRY', x: Math.round(440 * sx), y: 230, inputs: [false], output: false },
     ];
 
     const adderWires: Wire[] = [
@@ -81,13 +84,14 @@ export function CircuitBoard() {
 
   const loadSrLatchPreset = () => {
     playSweep();
+    const sx = getScaleX();
     const latchNodes: ComponentNode[] = [
-      { id: 'sw-s', type: 'switch', label: 'SWITCH_SET', x: 80, y: 80, inputs: [], output: false },
-      { id: 'sw-r', type: 'switch', label: 'SWITCH_RESET', x: 80, y: 240, inputs: [], output: false },
-      { id: 'nor-q', type: 'nor', label: 'NOR_Q', x: 260, y: 90, inputs: [false, false], output: true },
-      { id: 'nor-qb', type: 'nor', label: 'NOR_Q_BAR', x: 260, y: 230, inputs: [false, false], output: false },
-      { id: 'led-q', type: 'led', label: 'LED_Q', x: 440, y: 90, inputs: [false], output: true },
-      { id: 'led-qb', type: 'led', label: 'LED_Q_BAR', x: 440, y: 230, inputs: [false], output: false },
+      { id: 'sw-s', type: 'switch', label: 'SWITCH_SET', x: Math.round(80 * sx), y: 80, inputs: [], output: false },
+      { id: 'sw-r', type: 'switch', label: 'SWITCH_RESET', x: Math.round(80 * sx), y: 240, inputs: [], output: false },
+      { id: 'nor-q', type: 'nor', label: 'NOR_Q', x: Math.round(260 * sx), y: 90, inputs: [false, false], output: true },
+      { id: 'nor-qb', type: 'nor', label: 'NOR_Q_BAR', x: Math.round(260 * sx), y: 230, inputs: [false, false], output: false },
+      { id: 'led-q', type: 'led', label: 'LED_Q', x: Math.round(440 * sx), y: 90, inputs: [false], output: true },
+      { id: 'led-qb', type: 'led', label: 'LED_Q_BAR', x: Math.round(440 * sx), y: 230, inputs: [false], output: false },
     ];
 
     const latchWires: Wire[] = [
@@ -288,7 +292,7 @@ export function CircuitBoard() {
     }
   };
 
-  const handleNodeMouseDown = (e: React.MouseEvent, id: string) => {
+  const handleNodeMouseDown = (e: React.MouseEvent | React.PointerEvent, id: string) => {
     if (e.target instanceof HTMLButtonElement || e.target instanceof SVGCircleElement) return;
     
     const node = nodes.find((n) => n.id === id);
@@ -306,15 +310,15 @@ export function CircuitBoard() {
     }
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = (e: React.MouseEvent | React.PointerEvent) => {
     if (!draggingNodeId || !workbenchRef.current) return;
 
     const rect = workbenchRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left - dragOffset.x;
     const y = e.clientY - rect.top - dragOffset.y;
 
-    const boundedX = Math.max(20, Math.min(rect.width - 120, x));
-    const boundedY = Math.max(20, Math.min(rect.height - 80, y));
+    const boundedX = Math.max(10, Math.min(rect.width - 100, x));
+    const boundedY = Math.max(10, Math.min(rect.height - 70, y));
 
     setNodes((prev) =>
       prev.map((n) => (n.id === draggingNodeId ? { ...n, x: boundedX, y: boundedY } : n))
@@ -421,10 +425,16 @@ export function CircuitBoard() {
           className={styles.workbenchPanel}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
+          onPointerMove={handleMouseMove}
+          onPointerUp={handleMouseUp}
           onMouseEnter={() => {
             window.dispatchEvent(new CustomEvent('canvas-hover-enter'));
           }}
           onMouseLeave={() => {
+            handleMouseUp();
+            window.dispatchEvent(new CustomEvent('canvas-hover-leave'));
+          }}
+          onPointerLeave={() => {
             handleMouseUp();
             window.dispatchEvent(new CustomEvent('canvas-hover-leave'));
           }}
@@ -494,8 +504,9 @@ export function CircuitBoard() {
               <div
                 key={node.id}
                 className={`${styles.componentNode} ${isSelected ? styles.nodeSelected : ''} ${node.type === 'switch' ? styles.nodeTypeSwitch : ''} ${node.type === 'led' ? styles.nodeTypeLed : ''}`}
-                style={{ left: node.x, top: node.y }}
+                style={{ left: node.x, top: node.y, touchAction: 'none' }}
                 onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
+                onPointerDown={(e) => handleNodeMouseDown(e, node.id)}
               >
                 
                 <div className={styles.inputContainer}>

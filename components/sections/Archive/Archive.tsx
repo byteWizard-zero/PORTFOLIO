@@ -209,16 +209,19 @@ export function Archive() {
         ease: 'power3.out',
       });
 
-      const archivePin = ScrollTrigger.create({
-        trigger: section,
-        start: 'top top',
-        end: () => '+=' + window.innerHeight * ARCHIVE_PIN_VH,
-        pin: section,
-        pinSpacing: true,
-        pinType: 'fixed',
-        anticipatePin: 0,
-        invalidateOnRefresh: true,
-      });
+      let archivePin: ScrollTrigger | null = null;
+      if (typeof window !== 'undefined' && window.innerWidth > 768) {
+        archivePin = ScrollTrigger.create({
+          trigger: section,
+          start: 'top top',
+          end: () => '+=' + window.innerHeight * ARCHIVE_PIN_VH,
+          pin: section,
+          pinSpacing: true,
+          pinType: 'fixed',
+          anticipatePin: 0,
+          invalidateOnRefresh: true,
+        });
+      }
 
       return () => {
 
@@ -237,7 +240,7 @@ export function Archive() {
         colorTrigger.kill();
 
         section.classList.remove(styles.hlOn);
-        archivePin.kill();
+        if (archivePin) archivePin.kill();
         if (window.scrollY !== savedScrollY) window.scrollTo(0, savedScrollY);
       };
     },
