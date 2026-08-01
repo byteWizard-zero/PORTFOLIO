@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from './MobileBlockOverlay.module.css';
+import { useScrollLock } from '@/lib/useScrollLock';
 
 const telemetrySteps = [
   { pending: "Initiating hardware handshake...", done: "Hardware handshake successful." },
@@ -16,6 +17,19 @@ export function MobileBlockOverlay() {
   const [isVerified, setIsVerified] = useState(false);
   const [step, setStep] = useState(0);
   const [logs, setLogs] = useState<string[]>([]);
+  const [isBlocked, setIsBlocked] = useState(false);
+
+  useEffect(() => {
+    const check = () => {
+      const blocked = window.matchMedia('(max-width: 1024px), (max-height: 500px) and (max-width: 1180px)').matches;
+      setIsBlocked(blocked);
+    };
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  useScrollLock(isBlocked, { compensateScrollbar: true });
 
   useEffect(() => {
     if (isChecked && step < telemetrySteps.length) {

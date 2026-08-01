@@ -38,6 +38,7 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
   const linksContainerRef = useRef<HTMLUListElement>(null);
   const socialSectionRef = useRef<HTMLDivElement>(null);
   const isAnimating = useRef(false);
+  const pendingNavRef = useRef<{ href: string; accent: string; x: number; y: number } | null>(null);
   const { scrollTo } = useLenis();
   const pathname = usePathname();
   const { triggerTransition } = useTransition();
@@ -183,6 +184,11 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
       const tl = gsap.timeline({
         onComplete: () => {
           isAnimating.current = false;
+          if (pendingNavRef.current) {
+            const nav = pendingNavRef.current;
+            pendingNavRef.current = null;
+            triggerTransition({ href: nav.href, origin: { x: nav.x, y: nav.y }, payload: { accent: nav.accent } });
+          }
         }
       });
 
@@ -247,6 +253,12 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
             overlayRef.current.style.backgroundColor = '';
           }
           isAnimating.current = false;
+          if (pendingNavRef.current) {
+            const nav = pendingNavRef.current;
+            pendingNavRef.current = null;
+            onClose();
+            triggerTransition({ href: nav.href, origin: { x: nav.x, y: nav.y }, payload: { accent: nav.accent } });
+          }
           
           onCloseComplete?.();
         }
@@ -295,11 +307,12 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
         ease: MENU_EASE,
       }, 0.5);
     }
-  }, [isOpen, onCloseComplete, onRevealStart]);
+  }, [isOpen, onClose, onCloseComplete, onRevealStart, triggerTransition]);
 
   const handleLinkClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (isAnimating.current) {
       e.preventDefault();
+      pendingNavRef.current = { href, accent: currentAccent, x: e.clientX, y: e.clientY };
       return;
     }
 

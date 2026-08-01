@@ -21,6 +21,9 @@ export function splitTextIntoWords(
 
   exclude?: string
 ): SplitResult {
+  if (typeof document === 'undefined') {
+    return { words: [], masks: [], inners: [], revert: () => {} };
+  }
   const words: SplitWord[] = [];
   const textNodes: Text[] = [];
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {

@@ -3,13 +3,6 @@
 }
 
 @media (max-width: 1024px), (max-height: 500px) and (max-width: 1180px) {
-    :global(html),
-    :global(body) {
-        overflow: hidden !important;
-        height: 100vh !important;
-        width: 100vw !important;
-        position: fixed !important;
-    }
 
     .mobileBlockOverlay {
         display: flex !important;

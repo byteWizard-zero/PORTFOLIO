@@ -30,14 +30,16 @@ const AccentColorContext = createContext<AccentColorContextType | null>(null);
 
 export function AccentColorProvider({ children }: { children: ReactNode }) {
 
+
   const [colorIndex, setColorIndex] = useState(DEFAULT_INDEX);
 
   useEffect(() => {
     try {
       const hasLoaded = sessionStorage.getItem(STORAGE_KEY);
       if (hasLoaded) {
-
-        setColorIndex(Math.floor(Math.random() * ACCENT_COLORS.length));
+        queueMicrotask(() => {
+          setColorIndex(Math.floor(Math.random() * ACCENT_COLORS.length));
+        });
       }
       sessionStorage.setItem(STORAGE_KEY, 'true');
     } catch {
