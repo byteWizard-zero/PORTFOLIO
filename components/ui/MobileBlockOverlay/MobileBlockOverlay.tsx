@@ -27,7 +27,7 @@ export function MobileBlockOverlay() {
       <main className={styles.content}>
         <div className={styles.quoteCard}>
           <p className={styles.quoteText}>
-            &quot;the lord Artificer is fu*ked up making the site responsive for mobile, please open the site on a desktop -thank you&quot;
+            &quot;the admin is fu*ked up making the site responsive for mobile, please open the site on a desktop -thank you&quot;
           </p>
         </div>
 
