@@ -27,6 +27,8 @@ interface TrailSphere {
 }
 
 export function CustomCursor() {
+  if (!features.customCursor.enabled) return null;
+
   const pathname = usePathname();
   const isArcade = pathname?.startsWith('/arcade') || false;
 
@@ -93,7 +95,7 @@ export function CustomCursor() {
 
     if (!cursor || !trailContainer) return;
 
-    if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse), (max-width: 768px)').matches) {
+    if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) {
       return;
     }
 
@@ -558,8 +560,6 @@ export function CustomCursor() {
       });
     };
   }, []);
-
-  if (!features.customCursor.enabled) return null;
 
   return (
     <>

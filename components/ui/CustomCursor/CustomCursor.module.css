@@ -60,7 +60,7 @@
     contain: layout style;
 }
 
-@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+@media (hover: none) and (pointer: coarse) {
     .cursor,
     .cursorWrapper,
     .trailContainer,
