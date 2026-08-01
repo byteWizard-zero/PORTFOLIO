@@ -1,4 +1,4 @@
-.overlay {
+.mobileBlockOverlay {
   display: none;
 }
 
@@ -11,61 +11,80 @@
     position: fixed !important;
   }
 
-  .overlay {
+  .mobileBlockOverlay {
     display: flex !important;
     position: fixed;
     inset: 0;
     width: 100vw;
     height: 100vh;
-    background-color: var(--color-background, #0b0d0e);
-    color: var(--color-primary-text, #f4f0e8);
+    background-color: var(--color-background, #09090b);
+    color: var(--color-primary-text, #ffffff);
     z-index: 999999999;
     flex-direction: column;
     justify-content: space-between;
-    padding: 32px 28px;
+    padding: 24px 20px;
     box-sizing: border-box;
-    font-family: var(--font-sans, "PP Neue Montreal", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+    font-family: var(--font-navbar), var(--font-primary), monospace, sans-serif;
     overflow: hidden;
   }
 
-  /* Header */
-  .header {
+  /* Background Subgrid */
+  .bgGrid {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+  }
+
+  /* Telemetry Header */
+  .hudHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    max-width: 520px;
+    max-width: 540px;
     margin: 0 auto;
+    z-index: 2;
   }
 
-  .statusBadge {
+  .statusIndicator {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-family: var(--font-navbar), monospace;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(244, 240, 232, 0.6);
   }
 
-  .dot {
+  .statusDot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background-color: #ff3344;
-    display: inline-block;
+    background-color: #ef4444;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
   }
 
-  .metaInfo {
+  .statusLabel {
     font-family: var(--font-navbar), monospace;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: rgba(244, 240, 232, 0.35);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
   }
 
-  /* Content */
-  .content {
+  .viewportBadge {
+    font-family: var(--font-navbar), monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+
+  /* Main Content Area */
+  .mainContent {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -73,101 +92,130 @@
     width: 100%;
     max-width: 480px;
     margin: 0 auto;
-    text-align: center;
+    z-index: 2;
   }
 
+  /* Quote Card */
   .quoteCard {
-    background: rgba(255, 255, 255, 0.025);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 12px;
-    padding: 32px 28px;
-    margin-bottom: 36px;
-    box-sizing: border-box;
     width: 100%;
+    background: rgba(18, 18, 22, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 28px 24px;
+    box-sizing: border-box;
+    margin-bottom: 28px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   }
 
-  .quoteText {
-    font-size: clamp(16px, 4.5vw, 20px);
+  .quoteHeader {
+    margin-bottom: 14px;
+  }
+
+  .quoteTag {
+    font-family: var(--font-navbar), monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: var(--color-accent-teal, #38bdf8);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .warningMessage {
+    font-size: clamp(15px, 4.2vw, 19px);
     font-weight: 400;
-    line-height: 1.55;
-    color: var(--color-primary-text, #f4f0e8);
+    line-height: 1.5;
+    color: #ffffff;
     margin: 0;
     letter-spacing: -0.01em;
   }
 
-  .actionGroup {
+  /* Action Container */
+  .actionContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     width: 100%;
   }
 
-  .subtext {
-    font-size: 13px;
-    color: rgba(244, 240, 232, 0.5);
-    margin: 0;
-    letter-spacing: -0.01em;
+  .actionSubtext {
+    font-family: var(--font-navbar), monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
   }
 
-  /* High-end Minimalist Button */
-  .button {
+  /* Kinetic Primary Button */
+  .primaryButton {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    background-color: #f4f0e8;
-    color: #0b0d0e;
+    width: 100%;
+    max-width: 260px;
+    min-height: 48px;
+    background-color: #ffffff;
+    color: #09090b;
     border: none;
-    border-radius: 6px;
-    padding: 16px 36px;
+    border-radius: 4px;
+    padding: 14px 24px;
     font-family: var(--font-navbar), monospace;
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, opacity 0.2s ease;
-    width: 100%;
-    max-width: 280px;
+    transition: transform 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.1);
     box-sizing: border-box;
   }
 
-  .button:hover,
-  .button:focus-visible {
-    background-color: #ffffff;
+  .primaryButton:hover,
+  .primaryButton:focus-visible {
+    background-color: #f4f4f5;
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
   }
 
-  .button:active {
+  .primaryButton:active {
     transform: translateY(0) scale(0.98);
-    opacity: 0.9;
+    background-color: #e4e4e7;
   }
 
-  .arrow {
-    transition: transform 0.2s ease;
+  .buttonLabel {
+    line-height: 1;
+  }
+
+  .buttonArrow {
+    transition: transform 150ms ease;
     flex-shrink: 0;
   }
 
-  .button:hover .arrow {
+  .primaryButton:hover .buttonArrow {
     transform: translate(2px, -2px);
   }
 
   /* Footer */
-  .footer {
+  .hudFooter {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     font-family: var(--font-navbar), monospace;
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    color: rgba(244, 240, 232, 0.3);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: rgba(255, 255, 255, 0.3);
     text-transform: uppercase;
+    z-index: 2;
     width: 100%;
   }
 
-  /* Suppress custom cursor overlay on mobile */
+  .footerSeparator {
+    color: rgba(255, 255, 255, 0.15);
+  }
+
+  /* Suppress custom cursor on touch devices */
   :global([class*="CustomCursor_cursorWrapper"]),
   :global([class*="CustomCursor_trailContainer"]),
   :global(.customCursor),
