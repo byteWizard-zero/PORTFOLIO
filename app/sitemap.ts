@@ -22,6 +22,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const worksRevised = worksRevisedDate();
   return [
     { url: base, ...(worksRevised ? { lastModified: worksRevised } : {}) },
+    { url: `${base}/about` },
+    { url: `${base}/arcade` },
+    { url: `${base}/arcade/circuit-board` },
     { url: `${base}/work2`, ...(worksRevised ? { lastModified: worksRevised } : {}) },
     ...getCaseStudySlugs().map((slug) => {
       const lastModified = caseStudyDate(slug);

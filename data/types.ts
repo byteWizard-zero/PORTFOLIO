@@ -295,6 +295,7 @@ export interface Navigation {
 
 export interface ColorTokens {
   background: string;
+  ogBackground?: string;
   text: {
     primary: string;
     dark: string;

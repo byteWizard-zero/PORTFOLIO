@@ -123,7 +123,7 @@ export function Footer() {
 
         <div className={styles.bottomBar}>
           <p className={styles.copyright}>
-            © {new Date().getFullYear()} Zenith Soumya · All Rights Reserved
+            © 2025 Zenith Soumya · All Rights Reserved
           </p>
         </div>
       </div>
