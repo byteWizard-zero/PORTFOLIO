@@ -1,45 +1,8 @@
 {
   "username": "byteWizard-zero",
-  "total": 1000,
-  "generatedAt": "2026-08-01",
+  "total": 1017,
+  "generatedAt": "2026-08-03",
   "weeks": [
-    [
-      {
-        "date": "2025-07-27",
-        "count": 0,
-        "level": 0
-      },
-      {
-        "date": "2025-07-28",
-        "count": 0,
-        "level": 0
-      },
-      {
-        "date": "2025-07-29",
-        "count": 0,
-        "level": 0
-      },
-      {
-        "date": "2025-07-30",
-        "count": 0,
-        "level": 0
-      },
-      {
-        "date": "2025-07-31",
-        "count": 0,
-        "level": 0
-      },
-      {
-        "date": "2025-08-01",
-        "count": 0,
-        "level": 0
-      },
-      {
-        "date": "2025-08-02",
-        "count": 0,
-        "level": 0
-      }
-    ],
     [
       {
         "date": "2025-08-03",
@@ -1963,6 +1926,23 @@
         "count": 10,
         "level": 1
       }
+    ],
+    [
+      {
+        "date": "2026-08-02",
+        "count": 15,
+        "level": 1
+      },
+      {
+        "date": "2026-08-03",
+        "count": 2,
+        "level": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null
     ]
   ]
 }
