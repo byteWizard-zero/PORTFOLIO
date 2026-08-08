@@ -203,7 +203,7 @@ export const Projects = () => {
                                 fill
                                 style={{ objectFit: 'cover', objectPosition: 'top' }}
                                 sizes="(max-width: 768px) 100vw, 80vw"
-                                unoptimized
+                                priority={isFirst}
                              />
                         </div>
                    </div>
@@ -267,7 +267,7 @@ export const Projects = () => {
                                 <div className={styles.textBacking}></div>
                                 <div className={styles.textContent}>{project.title}</div>
                             </div>
-                            <div className={styles.textBottom}>
+                            <div className={styles.textBottom} aria-hidden="true">
                                 <div className={styles.textBacking}></div>
                                 <div className={styles.textContent}>{project.title}</div>
                             </div>

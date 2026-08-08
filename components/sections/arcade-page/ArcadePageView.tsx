@@ -1,13 +1,30 @@
 'use client';
 
+import dynamic from "next/dynamic";
 import { TransitionLink } from "@/components/transitions";
-import { DsaRaceTrack } from "@/components/sections/Philosophy/DsaRaceTrack";
-import { AiVisualizer } from "@/components/sections/AiVisualizer";
-import { IotVisualizer } from "@/components/sections/IotVisualizer/IotVisualizer";
-import { MemoryVisualizer } from "@/components/sections/MemoryVisualizer/MemoryVisualizer";
-import { Contact } from "@/components/sections/Contact";
 import { MetaLabel } from "@/components/ui/MetaLabel";
 import styles from "./ArcadePage.module.css";
+
+const DsaRaceTrack = dynamic(
+  () => import("@/components/sections/Philosophy/DsaRaceTrack").then((mod) => mod.DsaRaceTrack),
+  { ssr: false }
+);
+const MemoryVisualizer = dynamic(
+  () => import("@/components/sections/MemoryVisualizer/MemoryVisualizer").then((mod) => mod.MemoryVisualizer),
+  { ssr: false }
+);
+const IotVisualizer = dynamic(
+  () => import("@/components/sections/IotVisualizer/IotVisualizer").then((mod) => mod.IotVisualizer),
+  { ssr: false }
+);
+const AiVisualizer = dynamic(
+  () => import("@/components/sections/AiVisualizer").then((mod) => mod.AiVisualizer),
+  { ssr: false }
+);
+const Contact = dynamic(
+  () => import("@/components/sections/Contact").then((mod) => mod.Contact),
+  { ssr: false }
+);
 
 export function ArcadePageView() {
   return (

@@ -154,7 +154,7 @@ export function Footer() {
     return () => clearInterval(interval);
   }, []);
 
-  // Cybernetic Canvas Wave Grid Background
+  // Cybernetic Canvas Wave Grid Background with IntersectionObserver pause
   useEffect(() => {
     if (reducedMotion || !canvasRef.current) return;
 
@@ -163,8 +163,21 @@ export function Footer() {
     if (!ctx) return;
 
     let animFrameId: number;
+    let isVisible = false;
     let width = (canvas.width = canvas.offsetWidth);
     let height = (canvas.height = canvas.offsetHeight);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        isVisible = entry.isIntersecting;
+        if (isVisible && !animFrameId) {
+          animFrameId = requestAnimationFrame(render);
+        }
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(canvas);
 
     const handleResize = () => {
       if (!canvas) return;
@@ -202,6 +215,11 @@ export function Footer() {
 
     let time = 0;
     const render = () => {
+      if (!isVisible) {
+        animFrameId = 0;
+        return;
+      }
+
       time += 0.02;
       ctx.clearRect(0, 0, width, height);
 
@@ -255,10 +273,9 @@ export function Footer() {
       animFrameId = requestAnimationFrame(render);
     };
 
-    render();
-
     return () => {
-      cancelAnimationFrame(animFrameId);
+      observer.disconnect();
+      if (animFrameId) cancelAnimationFrame(animFrameId);
       window.removeEventListener('resize', handleResize);
       if (canvas) canvas.removeEventListener('mousemove', handleMouseMove);
     };
@@ -469,6 +486,7 @@ export function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.linkItem}
+                    aria-label={`${link.label} (${link.handle}) (opens in a new tab)`}
                   >
                     <div className={styles.linkTextGroup}>
                       <span className={styles.linkLabel}>{link.label}</span>
@@ -501,7 +519,7 @@ export function Footer() {
                     className={`${styles.tag} ${isActive ? styles.tagActive : ''}`}
                     onClick={() => setActiveTech(isActive ? null : spec)}
                   >
-                    <span className={styles.tagIcon}>{spec.icon}</span>
+                    <span className={styles.tagIcon} aria-hidden="true">{spec.icon}</span>
                     <span>{spec.name}</span>
                   </button>
                 );

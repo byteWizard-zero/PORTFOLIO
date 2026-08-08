@@ -29,6 +29,11 @@
     transform: scale(1.1);
 }
 
+.toggle:focus-visible {
+    outline: 2px solid var(--color-accent-purple);
+    outline-offset: 4px;
+}
+
 .toggle:active {
     transform: scale(0.95);
 }

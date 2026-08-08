@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Doppio_One } from "next/font/google";
+import dynamic from "next/dynamic";
 import "./globals.css";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -8,7 +9,6 @@ import { MobileBlockOverlay } from "@/components/ui/MobileBlockOverlay/MobileBlo
 import { AccentColorProvider } from "@/lib/AccentColorContext";
 import { LenisProvider } from "@/lib/LenisProvider";
 import { ViewportFrame } from "@/components/ui/ViewportFrame";
-import { InteractiveBackground } from "@/components/sections/Hero";
 import { Navbar } from "@/components/layout/Navbar";
 import {
   TransitionProvider,
@@ -16,6 +16,10 @@ import {
   PageReadyNotifier,
 } from "@/components/transitions";
 import { siteMetadata } from "@/data";
+
+const InteractiveBackground = dynamic(
+  () => import("@/components/sections/Hero").then((mod) => mod.InteractiveBackground)
+);
 
 const doppioOne = Doppio_One({
   weight: "400",
@@ -101,7 +105,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={doppioOne.variable} suppressHydrationWarning>
-        
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[99999] focus:px-4 focus:py-2 focus:bg-black focus:text-white focus:shadow-lg focus:rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          Skip to main content
+        </a>
         <script
           dangerouslySetInnerHTML={{
             __html: BOOTSTRAP_SCRIPT,
@@ -124,7 +133,9 @@ export default function RootLayout({
               <ViewportFrame />
               <MobileBlockOverlay />
               <PageReadyNotifier>
-                {children}
+                <main id="main-content">
+                  {children}
+                </main>
               </PageReadyNotifier>
               <TransitionStage />
             </TransitionProvider>
@@ -134,3 +145,4 @@ export default function RootLayout({
     </html>
   );
 }
+

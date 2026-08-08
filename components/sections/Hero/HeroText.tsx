@@ -303,21 +303,36 @@ export function HeroText() {
     };
   }, { scope: sectionRef, dependencies: [reducedMotion] });
 
+  const handleLetterKeyDown = useCallback((e: React.KeyboardEvent<HTMLSpanElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (reducedMotion) return;
+      const portalLetter = e.currentTarget.querySelector(`.${styles.portalLetter}`) as HTMLElement;
+      if (portalLetter) {
+        triggerPortalLoop(portalLetter);
+      }
+    }
+  }, [reducedMotion]);
+
   return (
     <section ref={sectionRef} className={styles.textAndArm}>
-      
-      <h1 ref={mohedRef} data-hero-mohed className={`${styles.heroText} ${styles.heroTextMohed}`}>
+      <h1 className="sr-only">
+        {firstName.join('')} {lastName.join('')}
+      </h1>
+
+      <div ref={mohedRef} data-hero-mohed className={`${styles.heroText} ${styles.heroTextMohed}`} aria-hidden="true">
         {MOHED_LETTERS.map((letter, index) => {
           const isTarget = index === 0;
 
           if (isTarget) {
-            
             return (
               <span
                 key={index}
                 className={`${styles.letter} ${styles.portalMask}`}
                 id="target-m"
+                tabIndex={0}
                 onMouseEnter={handleLetterHover}
+                onKeyDown={handleLetterKeyDown}
               >
                 <span className={styles.portalLetter}>{letter}</span>
               </span>
@@ -328,27 +343,30 @@ export function HeroText() {
             <span
               key={index}
               className={`${styles.letter} ${styles.portalMask} portal-expansion`}
+              tabIndex={0}
               onMouseEnter={handleLetterHover}
+              onKeyDown={handleLetterKeyDown}
             >
               <span className={styles.portalLetter}>{letter}</span>
             </span>
           );
         })}
-      </h1>
+      </div>
 
-      <h1 ref={abbasRef} data-hero-abbas className={`${styles.heroText} ${styles.heroTextAbbas}`}>
+      <div ref={abbasRef} data-hero-abbas className={`${styles.heroText} ${styles.heroTextAbbas}`} aria-hidden="true">
         {ABBAS_LETTERS_CONFIG.map((item, index) => {
           const isTarget = index === 0;
           const colorClass = item.color === 'purple' ? styles.textPurple : styles.textDark;
 
           if (isTarget) {
-            
             return (
               <span
                 key={index}
                 id="target-a"
                 className={`${styles.abbasLetter} ${styles.portalMask} ${colorClass}`}
+                tabIndex={0}
                 onMouseEnter={handleLetterHover}
+                onKeyDown={handleLetterKeyDown}
               >
                 <span className={styles.portalLetter}>{item.letter}</span>
               </span>
@@ -359,13 +377,15 @@ export function HeroText() {
             <span
               key={index}
               className={`${styles.abbasLetter} ${styles.portalMask} ${colorClass} portal-expansion`}
+              tabIndex={0}
               onMouseEnter={handleLetterHover}
+              onKeyDown={handleLetterKeyDown}
             >
               <span className={styles.portalLetter}>{item.letter}</span>
             </span>
           );
         })}
-      </h1>
+      </div>
 
       <div
         ref={taglineContainerRef}

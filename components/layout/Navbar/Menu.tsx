@@ -402,6 +402,7 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
                     target="_blank"
                     rel="noopener noreferrer"
                     tabIndex={isOpen ? 0 : -1}
+                    aria-label={`${social.label} (opens in a new tab)`}
                   >
                     
                     <span className={styles.socialTextBase}>
@@ -442,7 +443,7 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
               <span className={styles.flirtyLine}>
                 basically in your heart baby...
                 <span className={styles.flirtyEmoji}>
-                  <svg viewBox="0 0 100 100" fill="none">
+                  <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
                     <ellipse className={styles.emojiBlush} cx="26" cy="58" rx="10" ry="5" fill="#ff7597" />
                     <ellipse className={styles.emojiBlush} cx="74" cy="58" rx="10" ry="5" fill="#ff7597" />
                     <circle className={styles.emojiLeftEyeOpen} cx="30" cy="45" r="7" fill="currentColor" />
