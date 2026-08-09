@@ -594,7 +594,7 @@ export function CustomCursor() {
       <div
         ref={trailContainerRef}
         className={styles.trailContainer}
-        style={{ visibility: isVisible ? 'visible' : 'hidden' }}
+        style={{ visibility: (isVisible && !isFooterMode) ? 'visible' : 'hidden' }}
         aria-hidden="true"
       />
       

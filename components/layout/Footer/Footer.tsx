@@ -54,18 +54,19 @@ export function Footer() {
     if (reducedMotion || !footerRef.current || !pillRef.current) return;
 
     const rect = footerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
 
-    // Offset pill so cursor aligns near the bottom-left pointer arrow
-    const pillWidth = pillRef.current.offsetWidth || 240;
-    const targetX = x - (pillWidth * 0.15);
-    const targetY = y - 12;
+    // Pointer arrow is at left: -8px, bottom: -6px relative to pill
+    // Align pointer tip exactly at cursor (mouseX, mouseY)
+    const pillHeight = pillRef.current.offsetHeight || 44;
+    const targetX = mouseX + 8;
+    const targetY = mouseY - pillHeight + 6;
 
     gsap.to(pillRef.current, {
       x: targetX,
       y: targetY,
-      duration: 0.45,
+      duration: 0.18,
       ease: 'power2.out',
       overwrite: 'auto',
     });
@@ -84,17 +85,31 @@ export function Footer() {
       window.dispatchEvent(new CustomEvent('footer-hover-leave'));
     }
 
-    // Reset pill position gracefully to default alignment when mouse exits
-    if (pillRef.current) {
+    // Reset pill position gracefully to default static position between "Get In" & "Touch"
+    if (pillRef.current && footerRef.current) {
+      const rect = footerRef.current.getBoundingClientRect();
+      const defaultX = Math.min(rect.width * 0.42, 600);
+      const defaultY = Math.min(rect.height * 0.32, 160);
+
       gsap.to(pillRef.current, {
-        x: 0,
-        y: 0,
+        x: defaultX,
+        y: defaultY,
         duration: 0.6,
         ease: 'power3.out',
         overwrite: 'auto',
       });
     }
   };
+
+  // Set initial static position on mount
+  useEffect(() => {
+    if (pillRef.current && footerRef.current) {
+      const rect = footerRef.current.getBoundingClientRect();
+      const defaultX = Math.min(rect.width * 0.42, 600);
+      const defaultY = Math.min(rect.height * 0.32, 160);
+      gsap.set(pillRef.current, { x: defaultX, y: defaultY });
+    }
+  }, []);
 
   // GSAP Entrance Reveal Animations
   useGSAP(() => {

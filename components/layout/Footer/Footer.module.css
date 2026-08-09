@@ -59,8 +59,8 @@
 
 .contactPill {
   position: absolute;
-  top: clamp(80px, 14vw, 200px);
-  left: clamp(240px, 42vw, 620px);
+  top: 0;
+  left: 0;
   pointer-events: auto;
   display: inline-flex;
   align-items: center;
