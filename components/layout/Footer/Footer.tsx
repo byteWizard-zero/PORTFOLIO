@@ -1,64 +1,66 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
+import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '@/lib/gsap';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 import styles from './Footer.module.css';
 
-const DIRECTORY_LINKS = [
-  { label: 'Work', href: '#projects' },
-  { label: 'About', href: '/about' },
-  { label: 'Services', href: '#services' },
-  { label: 'Arcade', href: '/arcade' },
-  { label: 'Contact', href: '#contact' },
-];
-
-const SOCIAL_LINKS = [
-  { label: 'GitHub', href: 'https://github.com/byteWizard-zero' },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/soumya-ranjan-jana-414586370' },
-  { label: 'LeetCode', href: 'https://leetcode.com/u/byteWizard-zero/' },
-  { label: 'Twitter / X', href: 'https://x.com/byte_wizard1' },
-  { label: 'Instagram', href: 'https://www.instagram.com/zenith.soumya' },
-];
-
-const TECH_TAGS = [
-  'Next.js 14',
-  'TypeScript',
-  'GSAP & ScrollTrigger',
-  'Lenis Scroll',
-  'Java / DSA',
-  'IoT Architecture',
-  'Gemini AI',
+const SUB_FOOTER_GRID = [
+  {
+    label: 'DESIGNED BY',
+    items: [
+      { text: '© Zenith Soumya', href: '#' },
+    ],
+  },
+  {
+    label: 'WEB DESIGN',
+    items: [
+      { text: 'FreeLLMProxy', href: '#projects' },
+      { text: 'PineCarve', href: '#projects' },
+      { text: 'Stead', href: '#projects' },
+    ],
+  },
+  {
+    label: 'PRODUCT DESIGN',
+    items: [
+      { text: 'IoT Mesh', href: '#services' },
+      { text: 'Xwana', href: '#services' },
+      { text: 'CaseCoach', href: '#services' },
+    ],
+  },
+  {
+    label: 'SOCIAL MEDIA',
+    items: [
+      { text: 'Instagram', href: 'https://www.instagram.com/zenith.soumya' },
+      { text: 'GitHub', href: 'https://github.com/byteWizard-zero' },
+      { text: 'LinkedIn', href: 'https://www.linkedin.com/in/soumya-ranjan-jana-414586370' },
+      { text: 'LeetCode', href: 'https://leetcode.com/u/byteWizard-zero/' },
+    ],
+  },
 ];
 
 export function Footer() {
   const footerRef = useRef<HTMLElement>(null);
+  const pillRef = useRef<HTMLButtonElement>(null);
   const reducedMotion = useReducedMotion();
-  const [timeString, setTimeString] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
 
-  // Live Bhubaneswar (Asia/Kolkata) Clock
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const formatted = now.toLocaleTimeString('en-US', {
-        timeZone: 'Asia/Kolkata',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      });
-      setTimeString(formatted);
-    };
+  // Custom Cursor Mode Events
+  const handleMouseEnter = () => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('footer-hover-enter'));
+    }
+  };
 
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const handleMouseLeave = () => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('footer-hover-leave'));
+    }
+  };
 
-  // GSAP ScrollTrigger reveal animation
+  // GSAP Entrance Animations
   useGSAP(() => {
     if (!footerRef.current || reducedMotion) return;
 
@@ -66,16 +68,16 @@ export function Footer() {
 
     gsap.fromTo(
       elements,
-      { opacity: 0, y: 20 },
+      { opacity: 0, y: 30 },
       {
         opacity: 1,
         y: 0,
-        duration: 0.7,
-        stagger: 0.08,
+        duration: 0.8,
+        stagger: 0.1,
         ease: 'power3.out',
         scrollTrigger: {
           trigger: footerRef.current,
-          start: 'top 88%',
+          start: 'top 85%',
           toggleActions: 'play none none none',
         },
       }
@@ -104,126 +106,81 @@ export function Footer() {
     }
   };
 
-  // Scroll to Top Handler
-  const handleScrollTop = () => {
-    if (typeof window !== 'undefined') {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
-    }
-  };
-
   return (
-    <footer ref={footerRef} className={styles.footer} role="contentinfo" id="footer">
+    <footer
+      ref={footerRef}
+      className={styles.footer}
+      role="contentinfo"
+      id="footer"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className={styles.inner}>
         
-        {/* Top Status & Telemetry Clock Bar */}
-        <div className={`${styles.topBar} ${styles.revealItem}`}>
-          <div className={styles.statusIndicator}>
-            <span className={styles.statusDot} aria-hidden="true" />
-            <span>AVAILABLE FOR SELECT PROJECTS</span>
+        {/* Massive Stacked Hero Title ("Get In Touch") */}
+        <div className={`${styles.heroSection} ${styles.revealItem}`}>
+          <div className={styles.textLine}>
+            <span className={styles.heroText}>Get In</span>
           </div>
 
-          <div className={styles.clockContainer}>
-            <span className={styles.locationText}>Bhubaneswar, IN</span>
-            <span className={styles.clockDivider} aria-hidden="true">·</span>
-            <span className={styles.clockValue}>
-              {timeString ? `${timeString} IST` : '--:--:-- IST'}
-            </span>
+          {/* Floating Contact Email Pill Badge */}
+          <div className={styles.pillContainer}>
+            <button
+              ref={pillRef}
+              type="button"
+              className={styles.contactPill}
+              onClick={handleCopyEmail}
+              aria-label="Copy email address contact@karunsuresh.com"
+              title="Click to copy email address"
+            >
+              <div className={styles.avatarWrapper}>
+                <Image
+                  src="/profile1.png"
+                  alt="Soumya (Asher)"
+                  width={32}
+                  height={32}
+                  priority
+                  className={styles.avatarImg}
+                />
+              </div>
+              <span className={styles.emailText}>
+                {copied ? 'copied ✓' : 'soumyaranjanjana810@gmail.com'}
+              </span>
+            </button>
+          </div>
+
+          <div className={styles.textLine}>
+            <span className={styles.heroText}>Touch</span>
           </div>
         </div>
 
-        {/* Main Grid */}
-        <div className={styles.grid}>
-          
-          {/* Column 1: Brand & Persona */}
-          <div className={`${styles.col} ${styles.revealItem}`}>
-            <h2 className={styles.brandName}>Zenith Soumya</h2>
-            <p className={styles.brandTitle}>IoT & AI Systems Architect · CS Engineer</p>
-            <p className={styles.brandDesc}>
-              Architecting resilient IoT frameworks, dynamic full-stack applications, and high-performance agentic AI systems with sub-millisecond precision.
-            </p>
+        {/* Separator Divider Line */}
+        <div className={`${styles.divider} ${styles.revealItem}`} aria-hidden="true" />
 
-            <div className={styles.emailActionWrap}>
-              <button
-                type="button"
-                className={styles.emailBtn}
-                onClick={handleCopyEmail}
-                aria-label="Copy email address to clipboard"
-              >
-                <span className={styles.emailText}>soumyaranjanjana810@gmail.com</span>
-                <span className={styles.copyBadge}>
-                  {copied ? 'Copied ✓' : 'Copy'}
-                </span>
-              </button>
+        {/* 4-Column Sub-Footer Metadata Grid */}
+        <div className={`${styles.subFooterGrid} ${styles.revealItem}`}>
+          {SUB_FOOTER_GRID.map((col, idx) => (
+            <div key={idx} className={styles.gridCol}>
+              <span className={styles.colLabel}>{col.label}</span>
+              <div className={styles.colItems}>
+                {col.items.map((item, itemIdx) => (
+                  <span key={itemIdx} className={styles.itemSpan}>
+                    <a
+                      href={item.href}
+                      target={item.href.startsWith('http') ? '_blank' : '_self'}
+                      rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                      className={styles.itemLink}
+                    >
+                      {item.text}
+                    </a>
+                    {itemIdx < col.items.length - 1 && (
+                      <span className={styles.pipeSeparator}>|</span>
+                    )}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-
-          {/* Column 2: Directory */}
-          <div className={`${styles.col} ${styles.revealItem}`}>
-            <div className={styles.colHeading}>Directory</div>
-            <ul className={styles.linkList}>
-              {DIRECTORY_LINKS.map((link) => (
-                <li key={link.label}>
-                  <Link href={link.href} className={styles.linkItem}>
-                    <span>{link.label}</span>
-                    <span className={styles.arrowIcon} aria-hidden="true">↗</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 3: Social Protocol */}
-          <div className={`${styles.col} ${styles.revealItem}`}>
-            <div className={styles.colHeading}>Social Protocol</div>
-            <ul className={styles.linkList}>
-              {SOCIAL_LINKS.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.linkItem}
-                  >
-                    <span>{link.label}</span>
-                    <span className={styles.arrowIcon} aria-hidden="true">↗</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 4: Engineered Stack */}
-          <div className={`${styles.col} ${styles.revealItem}`}>
-            <div className={styles.colHeading}>Engineered With</div>
-            <div className={styles.tagGroup}>
-              {TECH_TAGS.map((tag) => (
-                <span key={tag} className={styles.tag}>
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-
-        </div>
-
-        {/* Bottom Copyright & Back To Top Bar */}
-        <div className={`${styles.bottomBar} ${styles.revealItem}`}>
-          <p className={styles.copyright}>
-            © {new Date().getFullYear()} Zenith Soumya · All Rights Reserved
-          </p>
-
-          <button
-            type="button"
-            className={styles.scrollTopBtn}
-            onClick={handleScrollTop}
-            aria-label="Back to top"
-          >
-            <span>Back to top</span>
-            <span className={styles.scrollTopIcon} aria-hidden="true">↑</span>
-          </button>
+          ))}
         </div>
 
       </div>

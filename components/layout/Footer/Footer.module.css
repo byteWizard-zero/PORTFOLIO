@@ -2,10 +2,12 @@
   width: 100%;
   background: var(--color-background);
   color: var(--color-primary-text);
-  border-top: 1px solid var(--color-grid-line);
-  padding: clamp(60px, 8vh, 100px) var(--spacing-nav-side) clamp(30px, 4vh, 50px);
+  padding: clamp(60px, 10vh, 120px) var(--spacing-nav-side) clamp(40px, 5vh, 60px);
   position: relative;
   z-index: var(--z-base);
+  overflow: hidden;
+  transition: background-color var(--duration-slow) var(--ease-out-quart),
+              color var(--duration-slow) var(--ease-out-quart);
 }
 
 .inner {
@@ -13,331 +15,189 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: clamp(40px, 6vh, 70px);
 }
 
-/* Top Telemetry & Status Bar */
-.topBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  padding-bottom: clamp(24px, 3vh, 36px);
-  border-bottom: 1px solid var(--color-grid-line);
-  font-family: var(--font-navbar);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.statusIndicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--color-primary-text);
-  font-weight: 500;
-}
-
-.statusDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #22c55e;
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+/* Hero Title Section ("Get In Touch") */
+.heroSection {
   position: relative;
-  flex-shrink: 0;
-}
-
-.statusDot::after {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border-radius: 50%;
-  border: 1.5px solid #22c55e;
-  animation: pulseRing 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-}
-
-@keyframes pulseRing {
-  0% {
-    transform: scale(0.6);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1.8);
-    opacity: 0;
-  }
-}
-
-.clockContainer {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--color-gray-dark);
-}
-
-.locationText {
-  color: var(--color-gray-dark);
-}
-
-.clockDivider {
-  color: var(--color-grid-line);
-}
-
-.clockValue {
-  font-variant-numeric: tabular-nums;
-  color: var(--color-primary-text);
-  font-weight: 500;
-}
-
-/* Main Grid Layout */
-.grid {
-  display: grid;
-  grid-template-columns: 2.2fr 1fr 1fr 1.3fr;
-  gap: clamp(32px, 4vw, 64px);
-}
-
-.col {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
 }
 
-.brandName {
+.textLine {
+  display: block;
+  width: 100%;
+}
+
+.heroText {
   font-family: var(--font-primary);
-  font-size: clamp(28px, 3.5vw, 44px);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  text-transform: uppercase;
-  margin: 0 0 8px 0;
+  font-size: clamp(72px, 17.5vw, 250px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.88;
   color: var(--color-primary-text);
+  display: block;
+  text-transform: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: color var(--duration-slow) var(--ease-out-quart);
 }
 
-.brandTitle {
-  font-family: var(--font-navbar);
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-accent-purple);
-  font-weight: 500;
-  margin: 0 0 16px 0;
+/* Floating Contact Email Pill Badge */
+.pillContainer {
+  position: absolute;
+  top: 48%;
+  left: clamp(320px, 48vw, 680px);
+  transform: translateY(-50%);
+  z-index: 10;
 }
 
-.brandDesc {
-  font-family: var(--font-primary);
-  font-size: 15px;
-  line-height: 1.55;
-  color: var(--color-gray-dark);
-  max-width: 42ch;
-  margin: 0 0 20px 0;
-}
-
-/* Email Copy Action Button */
-.emailActionWrap {
-  margin-top: 4px;
-}
-
-.emailBtn {
+.contactPill {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 16px;
+  padding: 6px 20px 6px 6px;
   border-radius: 999px;
+  background: var(--color-primary-text);
+  color: var(--color-background);
   border: 1px solid var(--color-grid-line);
-  background: transparent;
-  color: var(--color-primary-text);
-  font-family: var(--font-navbar);
-  font-size: 12px;
-  letter-spacing: 0.04em;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
   cursor: pointer;
-  transition: border-color var(--duration-fast) ease, background var(--duration-fast) ease, transform var(--duration-fast) ease;
+  transition: transform var(--duration-fast) var(--ease-out-expo),
+              box-shadow var(--duration-fast) var(--ease-out-expo),
+              background-color var(--duration-slow) var(--ease-out-quart),
+              color var(--duration-slow) var(--ease-out-quart);
 }
 
-.emailBtn:hover {
-  border-color: var(--color-accent-purple);
-  background: rgba(98, 182, 203, 0.06);
-  transform: translateY(-1px);
+.contactPill:hover {
+  transform: scale(1.04) translateY(-2px);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.35);
+}
+
+.avatarWrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  background: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .emailText {
   font-family: var(--font-primary);
-  font-size: 13px;
+  font-size: clamp(12px, 1.1vw, 15px);
   font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
-.copyBadge {
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 999px;
+/* Separator Divider Line */
+.divider {
+  width: 100%;
+  height: 1px;
   background: var(--color-grid-line);
-  color: var(--color-primary-text);
-  font-weight: 600;
-  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
+  margin: clamp(48px, 8vh, 90px) 0 clamp(32px, 4vh, 50px) 0;
+  opacity: 0.7;
 }
 
-.emailBtn:hover .copyBadge {
-  background: var(--color-accent-purple);
-  color: #000;
+/* 4-Column Sub-Footer Metadata Grid */
+.subFooterGrid {
+  display: grid;
+  grid-template-columns: 1.2fr 1.5fr 1.5fr 1.8fr;
+  gap: clamp(24px, 3vw, 48px);
 }
 
-/* Headings */
-.colHeading {
+.gridCol {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.colLabel {
   font-family: var(--font-navbar);
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-gray-dark);
-  margin-bottom: 24px;
+  font-weight: 500;
 }
 
-/* Link Lists */
-.linkList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.colItems {
   display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.linkItem {
-  display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   font-family: var(--font-primary);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--color-primary-text);
+}
+
+.itemSpan {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.itemLink {
+  color: var(--color-primary-text);
   text-decoration: none;
-  transition: transform var(--duration-fast) var(--ease-out-expo), color var(--duration-fast) var(--ease-out-expo);
-  width: fit-content;
+  transition: color var(--duration-fast) ease, opacity var(--duration-fast) ease;
 }
 
-.linkItem:hover {
+.itemLink:hover {
   color: var(--color-accent-purple);
-  transform: translateX(4px);
+  opacity: 0.9;
 }
 
-.arrowIcon {
-  font-size: 12px;
-  opacity: 0.5;
-  transition: opacity var(--duration-fast) ease, transform var(--duration-fast) ease;
-}
-
-.linkItem:hover .arrowIcon {
-  opacity: 1;
-  transform: translate(2px, -2px);
-}
-
-/* Tech Tags */
-.tagGroup {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--color-grid-line);
-  font-family: var(--font-navbar);
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-gray-dark);
-  background: transparent;
-  transition: border-color var(--duration-fast) ease, color var(--duration-fast) ease;
-}
-
-.tag:hover {
-  border-color: var(--color-primary-text);
-  color: var(--color-primary-text);
-}
-
-/* Bottom Bar */
-.bottomBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  padding-top: clamp(24px, 3vh, 36px);
-  border-top: 1px solid var(--color-grid-line);
-}
-
-.copyright {
-  font-family: var(--font-navbar);
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-gray-dark);
-  margin: 0;
-}
-
-.scrollTopBtn {
-  background: transparent;
-  border: 1px solid var(--color-grid-line);
-  border-radius: 999px;
-  padding: 10px 20px;
-  font-family: var(--font-navbar);
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-primary-text);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: background var(--duration-fast) var(--ease-out-expo),
-              color var(--duration-fast) var(--ease-out-expo),
-              border-color var(--duration-fast) var(--ease-out-expo),
-              transform var(--duration-fast) var(--ease-out-expo);
-}
-
-.scrollTopBtn:hover {
-  background: var(--color-primary-text);
-  color: var(--color-background);
-  border-color: var(--color-primary-text);
-  transform: translateY(-2px);
-}
-
-.scrollTopIcon {
-  transition: transform var(--duration-fast) ease;
-}
-
-.scrollTopBtn:hover .scrollTopIcon {
-  transform: translateY(-2px);
+.pipeSeparator {
+  color: var(--color-grid-line);
+  font-weight: 300;
+  user-select: none;
 }
 
 /* Responsive Media Queries */
 @media (max-width: 1024px) {
-  .grid {
+  .subFooterGrid {
     grid-template-columns: 1fr 1fr;
-    row-gap: 40px;
+    row-gap: 32px;
+  }
+
+  .pillContainer {
+    position: relative;
+    top: 0;
+    left: 0;
+    transform: none;
+    margin: 16px 0;
   }
 }
 
 @media (max-width: 640px) {
-  .grid {
+  .subFooterGrid {
     grid-template-columns: 1fr;
+    row-gap: 28px;
   }
-  
-  .topBar {
-    flex-direction: column;
-    align-items: flex-start;
+
+  .heroText {
+    font-size: clamp(56px, 16vw, 100px);
   }
-  
-  .bottomBar {
-    flex-direction: column-reverse;
-    align-items: flex-start;
+
+  .pillContainer {
+    margin: 12px 0;
   }
-  
-  .scrollTopBtn {
+
+  .contactPill {
     width: 100%;
-    justify-content: center;
+    justify-content: flex-start;
   }
 }

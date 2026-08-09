@@ -34,6 +34,7 @@ export function CustomCursor() {
   const trailContainerRef = useRef<HTMLDivElement>(null);
   const trailSpheresRef = useRef<TrailSphere[]>([]);
   const [isVisible, setIsVisible] = useState(false);
+  const [isFooterMode, setIsFooterMode] = useState(false);
 
   const isHoveringRef = useRef(false);
 
@@ -481,12 +482,36 @@ export function CustomCursor() {
       trailVisibleRef.current = false;
     };
 
+    const handleFooterEnter = () => {
+      setIsFooterMode(true);
+      if (cursorRef.current) {
+        gsap.to(cursorRef.current, {
+          scale: 1,
+          duration: 0.25,
+          ease: 'power2.out',
+        });
+      }
+    };
+
+    const handleFooterLeave = () => {
+      setIsFooterMode(false);
+      if (cursorRef.current) {
+        gsap.to(cursorRef.current, {
+          scale: 1,
+          duration: 0.25,
+          ease: 'power2.out',
+        });
+      }
+    };
+
     window.addEventListener('tagline-spotlight-enter', handleSpotlightEnter);
     window.addEventListener('tagline-spotlight-leave', handleSpotlightLeave);
     window.addEventListener('scratchcard-hover-enter', handleScratchcardEnter);
     window.addEventListener('scratchcard-hover-leave', handleScratchcardLeave);
     window.addEventListener('canvas-hover-enter', handleScratchcardEnter);
     window.addEventListener('canvas-hover-leave', handleScratchcardLeave);
+    window.addEventListener('footer-hover-enter', handleFooterEnter);
+    window.addEventListener('footer-hover-leave', handleFooterLeave);
 
     const INTERACTIVE_SELECTOR = 'a, button, [role="button"], input, textarea, select';
 
@@ -531,6 +556,8 @@ export function CustomCursor() {
       window.removeEventListener('scratchcard-hover-leave', handleScratchcardLeave);
       window.removeEventListener('canvas-hover-enter', handleScratchcardEnter);
       window.removeEventListener('canvas-hover-leave', handleScratchcardLeave);
+      window.removeEventListener('footer-hover-enter', handleFooterEnter);
+      window.removeEventListener('footer-hover-leave', handleFooterLeave);
 
       if (animateFnRef.current) {
         gsap.ticker.remove(animateFnRef.current);
@@ -575,20 +602,39 @@ export function CustomCursor() {
         className={`${styles.cursorWrapper} ${isArcade ? styles.arcadeWrapper : ''}`}
         style={{
           visibility: isVisible ? 'visible' : 'hidden',
-          mixBlendMode: isArcade ? 'normal' : undefined
+          mixBlendMode: (isArcade || isFooterMode) ? 'normal' : undefined
         }}
         aria-hidden="true"
       >
         <div
           ref={cursorRef}
           className={`${styles.cursor} ${isArcade ? styles.arcadeCursor : ''}`}
-          style={isArcade ? {
+          style={(isArcade || isFooterMode) ? {
             backgroundColor: 'transparent',
             borderRadius: '0',
-            width: '64px',
-            height: '64px'
+            width: isFooterMode ? '28px' : '64px',
+            height: isFooterMode ? '28px' : '64px'
           } : undefined}
         >
+          {isFooterMode && !isArcade && (
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ filter: 'drop-shadow(0px 2px 6px rgba(0,0,0,0.3))' }}
+            >
+              <path
+                d="M3 3L10.07 19.97L13.58 12.58L20.97 9.07L3 3Z"
+                fill="#171717"
+                stroke="#FFFFFF"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+
           {isArcade && (
             <svg
               width="64"
