@@ -49,7 +49,7 @@ export function Footer() {
   const [copied, setCopied] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
-  // Mouse Tracking for Graceful Cursor-Following Pill
+  // Mouse Tracking & Graceful Entrance/Exit Animations for Email Pill
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     if (reducedMotion || !footerRef.current || !pillRef.current) return;
 
@@ -57,8 +57,6 @@ export function Footer() {
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
-    // Pointer arrow is at left: -8px, bottom: -6px relative to pill
-    // Align pointer tip exactly at cursor (mouseX, mouseY)
     const pillHeight = pillRef.current.offsetHeight || 44;
     const targetX = mouseX + 8;
     const targetY = mouseY - pillHeight + 6;
@@ -72,10 +70,30 @@ export function Footer() {
     });
   };
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = (e: React.MouseEvent<HTMLElement>) => {
     setIsHovered(true);
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('footer-hover-enter'));
+    }
+
+    if (pillRef.current && footerRef.current) {
+      const rect = footerRef.current.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      const pillHeight = pillRef.current.offsetHeight || 44;
+      const targetX = mouseX + 8;
+      const targetY = mouseY - pillHeight + 6;
+
+      // Position at mouse entry point & pop into view gracefully
+      gsap.set(pillRef.current, { x: targetX, y: targetY });
+      gsap.to(pillRef.current, {
+        opacity: 1,
+        scale: 1,
+        autoAlpha: 1,
+        duration: 0.35,
+        ease: 'back.out(1.5)',
+        overwrite: 'auto',
+      });
     }
   };
 
@@ -85,29 +103,23 @@ export function Footer() {
       window.dispatchEvent(new CustomEvent('footer-hover-leave'));
     }
 
-    // Reset pill position gracefully to default static position between "Get In" & "Touch"
-    if (pillRef.current && footerRef.current) {
-      const rect = footerRef.current.getBoundingClientRect();
-      const defaultX = Math.min(rect.width * 0.42, 600);
-      const defaultY = Math.min(rect.height * 0.32, 160);
-
+    // Gracefully scale down & fade out on mouse exit
+    if (pillRef.current) {
       gsap.to(pillRef.current, {
-        x: defaultX,
-        y: defaultY,
-        duration: 0.6,
-        ease: 'power3.out',
+        opacity: 0,
+        scale: 0.85,
+        autoAlpha: 0,
+        duration: 0.25,
+        ease: 'power2.in',
         overwrite: 'auto',
       });
     }
   };
 
-  // Set initial static position on mount
+  // Hide pill initially on mount
   useEffect(() => {
-    if (pillRef.current && footerRef.current) {
-      const rect = footerRef.current.getBoundingClientRect();
-      const defaultX = Math.min(rect.width * 0.42, 600);
-      const defaultY = Math.min(rect.height * 0.32, 160);
-      gsap.set(pillRef.current, { x: defaultX, y: defaultY });
+    if (pillRef.current) {
+      gsap.set(pillRef.current, { opacity: 0, scale: 0.85, autoAlpha: 0 });
     }
   }, []);
 
