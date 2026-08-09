@@ -601,8 +601,8 @@ export function CustomCursor() {
       <div
         className={`${styles.cursorWrapper} ${isArcade ? styles.arcadeWrapper : ''}`}
         style={{
-          visibility: isVisible ? 'visible' : 'hidden',
-          mixBlendMode: (isArcade || isFooterMode) ? 'normal' : undefined
+          visibility: (isVisible && !isFooterMode) ? 'visible' : 'hidden',
+          mixBlendMode: isArcade ? 'normal' : undefined
         }}
         aria-hidden="true"
       >

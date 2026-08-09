@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '@/lib/gsap';
@@ -43,24 +43,60 @@ const SUB_FOOTER_GRID = [
 
 export function Footer() {
   const footerRef = useRef<HTMLElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
   const pillRef = useRef<HTMLButtonElement>(null);
   const reducedMotion = useReducedMotion();
   const [copied, setCopied] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
 
-  // Custom Cursor Mode Events
+  // Mouse Tracking for Graceful Cursor-Following Pill
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    if (reducedMotion || !footerRef.current || !pillRef.current) return;
+
+    const rect = footerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Offset pill so cursor aligns near the bottom-left pointer arrow
+    const pillWidth = pillRef.current.offsetWidth || 240;
+    const targetX = x - (pillWidth * 0.15);
+    const targetY = y - 12;
+
+    gsap.to(pillRef.current, {
+      x: targetX,
+      y: targetY,
+      duration: 0.45,
+      ease: 'power2.out',
+      overwrite: 'auto',
+    });
+  };
+
   const handleMouseEnter = () => {
+    setIsHovered(true);
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('footer-hover-enter'));
     }
   };
 
   const handleMouseLeave = () => {
+    setIsHovered(false);
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('footer-hover-leave'));
     }
+
+    // Reset pill position gracefully to default alignment when mouse exits
+    if (pillRef.current) {
+      gsap.to(pillRef.current, {
+        x: 0,
+        y: 0,
+        duration: 0.6,
+        ease: 'power3.out',
+        overwrite: 'auto',
+      });
+    }
   };
 
-  // GSAP Entrance Animations
+  // GSAP Entrance Reveal Animations
   useGSAP(() => {
     if (!footerRef.current || reducedMotion) return;
 
@@ -84,8 +120,9 @@ export function Footer() {
     );
   }, { scope: footerRef, dependencies: [reducedMotion] });
 
-  // Quick Copy Email
-  const handleCopyEmail = async () => {
+  // Quick Copy Email Action
+  const handleCopyEmail = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     const email = 'soumyaranjanjana810@gmail.com';
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -112,27 +149,45 @@ export function Footer() {
       className={styles.footer}
       role="contentinfo"
       id="footer"
+      onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <div className={styles.inner}>
         
         {/* Massive Stacked Hero Title ("Get In Touch") */}
-        <div className={`${styles.heroSection} ${styles.revealItem}`}>
+        <div ref={heroRef} className={`${styles.heroSection} ${styles.revealItem}`}>
           <div className={styles.textLine}>
             <span className={styles.heroText}>Get In</span>
           </div>
+          <div className={styles.textLine}>
+            <span className={styles.heroText}>Touch</span>
+          </div>
 
-          {/* Floating Contact Email Pill Badge */}
-          <div className={styles.pillContainer}>
+          {/* Floating Cursor-Following Email Pill Badge */}
+          <div className={`${styles.pillWrapper} ${isHovered ? styles.pillTracking : ''}`}>
             <button
               ref={pillRef}
               type="button"
               className={styles.contactPill}
               onClick={handleCopyEmail}
-              aria-label="Copy email address contact@karunsuresh.com"
+              aria-label="Copy email address soumyaranjanjana810@gmail.com"
               title="Click to copy email address"
             >
+              {/* Pointer Arrow Cursor attached at bottom-left */}
+              <div className={styles.pointerArrowWrap} aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M3 3L10.07 19.97L13.58 12.58L20.97 9.07L3 3Z"
+                    fill="#171717"
+                    stroke="#FFFFFF"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+
+              {/* Avatar Image from ScratchCard */}
               <div className={styles.avatarWrapper}>
                 <Image
                   src="/profile1.png"
@@ -143,14 +198,12 @@ export function Footer() {
                   className={styles.avatarImg}
                 />
               </div>
+
+              {/* Email Text & Status */}
               <span className={styles.emailText}>
                 {copied ? 'copied ✓' : 'soumyaranjanjana810@gmail.com'}
               </span>
             </button>
-          </div>
-
-          <div className={styles.textLine}>
-            <span className={styles.heroText}>Touch</span>
           </div>
         </div>
 
