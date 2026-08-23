@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Doppio_One } from "next/font/google";
-import dynamic from "next/dynamic";
 import "./globals.css";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -17,17 +16,13 @@ import {
 } from "@/components/transitions";
 import { siteMetadata } from "@/data";
 
-const InteractiveBackground = dynamic(
-  () => import("@/components/sections/Hero").then((mod) => mod.InteractiveBackground)
-);
+import { ClientInteractiveBackground } from "@/components/ui/ClientInteractiveBackground";
 
 const doppioOne = Doppio_One({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-navbar",
   display: "swap",
-
-  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -125,7 +120,7 @@ export default function RootLayout({
         <LenisProvider>
           <AccentColorProvider>
             <TransitionProvider>
-              <InteractiveBackground />
+              <ClientInteractiveBackground />
               <Navbar />
               <CustomCursor />
               <BackToTop />
