@@ -345,7 +345,13 @@ export function DialServicesV2() {
         },
       });
 
-      ScrollTrigger.refresh();
+      // Delay refresh to after the browser paints the full DialServicesV2 height,
+      // so downstream triggers (Projects, Archive) recalculate correctly.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          ScrollTrigger.refresh();
+        });
+      });
 
       return () => {
         

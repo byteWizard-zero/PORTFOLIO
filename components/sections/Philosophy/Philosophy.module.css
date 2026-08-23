@@ -13,6 +13,7 @@
   justify-content: center;
   position: relative;
   contain: content;
+  background-color: var(--color-background);
 }
 
 .plusIcon {

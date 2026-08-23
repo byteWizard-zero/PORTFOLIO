@@ -6,7 +6,7 @@
 .wrapper[data-overlap='true'] {
   
   margin-top: -55vh;
-  z-index: 50;
+  z-index: calc(var(--z-above) + 5);
 }
 
 .section {

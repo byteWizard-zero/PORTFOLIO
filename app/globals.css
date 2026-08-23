@@ -1,5 +1,4 @@
 
-
 @import '../styles/fonts.css';
 @import '../styles/variables.css';
 @import '../styles/animations.css';
@@ -124,9 +123,4 @@ img {
 * {
     -ms-overflow-style: none;
     scrollbar-width: none;
-}
-
-#philosophy ~ section {
-    position: relative;
-    z-index: var(--z-above);
 }
