@@ -168,8 +168,8 @@
   }
 
   /* Suppress custom cursor overlay on mobile */
-  :global([class*="CustomCursor_cursorWrapper"]),
-  :global([class*="CustomCursor_trailContainer"]),
+  :global(.global-cursor-wrapper),
+  :global(.global-trail-container),
   :global(.customCursor),
   :global(.cursorWrapper),
   :global(.trailContainer) {

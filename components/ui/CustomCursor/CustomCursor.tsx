@@ -593,13 +593,13 @@ export function CustomCursor() {
       
       <div
         ref={trailContainerRef}
-        className={styles.trailContainer}
+        className={`${styles.trailContainer} global-trail-container`}
         style={{ visibility: (isVisible && !isFooterMode) ? 'visible' : 'hidden' }}
         aria-hidden="true"
       />
       
       <div
-        className={`${styles.cursorWrapper} ${isArcade ? styles.arcadeWrapper : ''}`}
+        className={`${styles.cursorWrapper} global-cursor-wrapper ${isArcade ? styles.arcadeWrapper : ''}`}
         style={{
           visibility: (isVisible && !isFooterMode) ? 'visible' : 'hidden',
           mixBlendMode: isArcade ? 'normal' : undefined

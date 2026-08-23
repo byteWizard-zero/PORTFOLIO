@@ -159,7 +159,7 @@
     aspect-ratio: 16 / 10;
     border-radius: var(--card-radius);
     box-shadow: 0 5px 10px 20px rgba(0, 0, 0, 0.18);
-    will-change: transform, width, height, top, left;
+    will-change: transform;
 }
 
 @media (max-width: 480px) {

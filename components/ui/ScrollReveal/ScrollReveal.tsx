@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect, useRef, useMemo, useCallback, ReactNode, RefObject } from 'react';
-import { gsap, ScrollTrigger } from '@/lib/gsap';
+import React, { useRef, useMemo, useCallback, ReactNode, RefObject } from 'react';
+import { useGSAP } from '@gsap/react';
+import { gsap } from '@/lib/gsap';
 import { triggerPortalLoop } from '@/lib/portalAnimation';
 import './ScrollReveal.css';
 
@@ -143,7 +144,7 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
     });
   }, [children, handleLetterHover]);
 
-  useEffect(() => {
+  useGSAP(() => {
     const el = containerRef.current;
     if (!el) return;
 
@@ -223,17 +224,11 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       .to(typewriterChars, {
         opacity: 1,
         duration: 0.01,
-        stagger: 0.035, // Typer keypress interval
+        stagger: 0.035,
         ease: 'none'
       });
     }
-
-    return () => {
-      ScrollTrigger.getAll()
-        .filter(t => t.trigger === el || (t.vars as Record<string, unknown>).trigger === el)
-        .forEach(trigger => trigger.kill());
-    };
-  }, [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength]);
+  }, { scope: containerRef, dependencies: [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength] });
 
   return (
     <h2 ref={containerRef} className={`scroll-reveal ${containerClassName}`}>
