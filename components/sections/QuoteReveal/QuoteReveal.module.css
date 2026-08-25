@@ -1,6 +1,7 @@
 .section {
   position: relative;
-  background-color: transparent;
+  background-color: var(--color-background);
+  z-index: var(--z-above);
   min-height: 90vh;
   display: flex;
   align-items: center;

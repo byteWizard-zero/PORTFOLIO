@@ -3,6 +3,7 @@
     width: 100%;
     margin-top: -35vh; 
     z-index: var(--z-above);
+    background-color: var(--color-background);
 }
 
 :global(#ai-visualizer) + #projects {

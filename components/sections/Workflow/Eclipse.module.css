@@ -3,9 +3,9 @@
 .eclipse {
   position: relative;
   --wf-live-accent: var(--wf-teal);
-
-  background: transparent;
+  background: var(--color-background);
   color: var(--color-primary-text);
+  z-index: var(--z-above);
 }
 
 .viewport {
