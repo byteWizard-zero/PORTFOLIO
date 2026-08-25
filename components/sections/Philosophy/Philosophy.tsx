@@ -38,7 +38,6 @@ export function Philosophy() {
       end: () => '+=' + window.innerHeight * PHILOSOPHY_PIN_VH,
       pin: sectionRef.current,
       pinSpacing: true,
-      pinType: 'fixed',
       onEnter: () => {
         if (window.lenis) {
           window.lenis.options.wheelMultiplier = 0.08;

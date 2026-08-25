@@ -217,7 +217,6 @@ export function Archive() {
           end: () => '+=' + window.innerHeight * ARCHIVE_PIN_VH,
           pin: section,
           pinSpacing: true,
-          pinType: 'fixed',
           anticipatePin: 0,
           invalidateOnRefresh: true,
         });

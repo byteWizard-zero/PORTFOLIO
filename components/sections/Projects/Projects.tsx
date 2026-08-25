@@ -72,7 +72,6 @@ export const Projects = () => {
                     end: "top top",
                     pin: stickyContainer,
                     pinSpacing: true,
-                    pinType: "fixed",
                     anticipatePin: 1,
                     invalidateOnRefresh: true,
                 });

@@ -330,7 +330,6 @@ export function DialServicesV2() {
         pin: pinEl,
         pinSpacing: true,
         
-        pinType: 'fixed',
         scrub: PIN_SCRUB,
         
         anticipatePin: 0,

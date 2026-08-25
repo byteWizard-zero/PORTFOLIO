@@ -178,6 +178,12 @@ export function Hero() {
       scrub: SCRUB_SMOOTHING,
       animation: tl,
       invalidateOnRefresh: true,
+      onLeave: () => {
+        if (hero) hero.style.visibility = 'hidden';
+      },
+      onEnterBack: () => {
+        if (hero) hero.style.visibility = 'visible';
+      },
       onRefresh: () => {
         
         spacer.style.height = `${window.innerHeight * SCROLL_RANGE_VH * DOCKING_PROGRESS + window.innerHeight}px`;
