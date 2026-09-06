@@ -10,6 +10,11 @@ if (typeof window !== "undefined") {
     ease: "power3.out",
     duration: animationConfig.durations.slow,
   });
+  ScrollTrigger.addEventListener("refreshInit", () => {
+    ScrollTrigger.sort();
+  });
+  window.gsap = gsap;
+  window.ScrollTrigger = ScrollTrigger;
 }
 
 export { gsap, ScrollTrigger };

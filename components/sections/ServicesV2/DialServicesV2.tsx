@@ -335,6 +335,7 @@ export function DialServicesV2() {
         anticipatePin: 0,
         
         invalidateOnRefresh: true,
+        refreshPriority: 10,
         onUpdate: (self) => applyDial(self.progress),
         
         onRefresh: (self) => {
@@ -348,6 +349,7 @@ export function DialServicesV2() {
       // so downstream triggers (Projects, Archive) recalculate correctly.
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
+          ScrollTrigger.sort();
           ScrollTrigger.refresh();
         });
       });

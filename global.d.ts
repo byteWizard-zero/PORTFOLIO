@@ -4,6 +4,8 @@ declare module '*.module.css' {
 }
 
 import Lenis from 'lenis';
+import type { gsap } from 'gsap';
+import type { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 declare global {
   interface Window {
@@ -11,6 +13,8 @@ declare global {
     __welcomeComplete?: boolean;
     __welcomeHandoff?: boolean;
     lenis?: Lenis;
+    gsap?: typeof gsap;
+    ScrollTrigger?: typeof ScrollTrigger;
   }
 }
 

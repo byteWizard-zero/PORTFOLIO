@@ -74,6 +74,7 @@ export const Projects = () => {
                     pinSpacing: true,
                     anticipatePin: 1,
                     invalidateOnRefresh: true,
+                    refreshPriority: 8,
                 });
             }
 
@@ -86,6 +87,7 @@ export const Projects = () => {
                         end: () => "+=" + window.innerHeight * SPLIT_RUNWAY_VH,
                         scrub: HANDOFF_SCRUB,
                         invalidateOnRefresh: true,
+                        refreshPriority: 8,
                         onUpdate: openFromTimeline,
                     }
                     : {
@@ -94,6 +96,8 @@ export const Projects = () => {
                         end: "bottom bottom",
                         scrub: 2.5,
                         pin: stickyContainer,
+                        invalidateOnRefresh: true,
+                        refreshPriority: 8,
                         onUpdate: openFromTimeline,
                         // No background color changes - InteractiveBackground shows through entirely
                     }
@@ -170,7 +174,10 @@ export const Projects = () => {
 
     let rafId = 0;
     if (overlapEnabled) {
-        rafId = requestAnimationFrame(() => ScrollTrigger.refresh());
+        rafId = requestAnimationFrame(() => {
+            ScrollTrigger.sort();
+            ScrollTrigger.refresh();
+        });
     }
 
     return () => {

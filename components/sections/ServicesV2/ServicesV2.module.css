@@ -5,8 +5,6 @@
   --gap-px: 220px;
   position: relative;
   z-index: var(--z-above);
-  
-  margin-bottom: 35vh;
 }
 
 :global([data-theme='dark']) .wrapper {
