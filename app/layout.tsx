@@ -59,7 +59,7 @@ window.scrollTo(0,0);
 window.__freshLoad=true;
 (function(){
   var isDark=document.documentElement.getAttribute("data-theme")==="dark";
-  var bg=isDark?"#000000":"#FFFFFF";
+  var bg=isDark?"#171717":"#FFFFFF";
   var overlay=document.createElement("div");
   overlay.id="welcome-gate";
   overlay.setAttribute("aria-hidden","true");

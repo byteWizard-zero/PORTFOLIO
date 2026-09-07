@@ -65,13 +65,13 @@
 }
 
 :root[data-theme="dark"] {
-    --color-background: #000000;
+    --color-background: #171717;
     --color-primary-text: #ffffff;
-    --color-grid-line: #1c1c1c;
+    --color-grid-line: #2A2A2A;
     --color-gray-dark: #B3B3B3;
     --color-text-muted: rgba(255, 255, 255, 0.5);
     --color-text-muted-strong: rgba(255, 255, 255, 0.8);
-    --paper: #0a0a0a;
-    --color-screen-bezel: #000000;
+    --paper: #1F1C17;
+    --color-screen-bezel: #08090c;
     --color-screen-border: transparent;
 }
