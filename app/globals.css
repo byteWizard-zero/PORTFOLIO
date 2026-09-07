@@ -46,6 +46,12 @@ body {
     user-select: text;
 }
 
+#main-content {
+    position: relative;
+    z-index: var(--z-base);
+    width: 100%;
+}
+
 input, textarea {
     -webkit-user-select: text;
     -moz-user-select: text;
