@@ -48,7 +48,6 @@ body {
 
 #main-content {
     position: relative;
-    z-index: var(--z-base);
     width: 100%;
 }
 
