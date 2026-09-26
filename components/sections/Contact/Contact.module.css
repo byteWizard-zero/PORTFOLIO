@@ -258,7 +258,10 @@
     left: 0;
     bottom: 0;
     height: 2px;
-    width: 0;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left center;
+    will-change: transform;
     background-color: color-mix(in oklab, var(--color-primary-text) 35%, transparent);
     pointer-events: none;
 }
@@ -576,6 +579,7 @@
 
     .inputBorder {
         width: 100%;
+        transform: scaleX(1);
     }
 
     .chip,

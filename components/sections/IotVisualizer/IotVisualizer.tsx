@@ -165,6 +165,9 @@ export function IotVisualizer() {
     }
   };
 
+  const stateRef = useRef({ temperature, voltage, resetting });
+  stateRef.current = { temperature, voltage, resetting };
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -172,17 +175,32 @@ export function IotVisualizer() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animationId: number;
+    let animationId: number | null = null;
     let offset = 0;
+    let isVisible = false;
 
-    const draw = () => {
+    const updateDimensions = () => {
       const rect = canvas.getBoundingClientRect();
       if (canvas.width !== rect.width || canvas.height !== rect.height) {
         canvas.width = rect.width;
         canvas.height = rect.height;
       }
+    };
+    updateDimensions();
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateDimensions();
+    });
+    resizeObserver.observe(canvas);
+
+    const draw = () => {
+      if (!isVisible) return;
 
       const { width, height } = canvas;
+      if (width === 0 || height === 0) {
+        animationId = requestAnimationFrame(draw);
+        return;
+      }
       ctx.clearRect(0, 0, width, height);
 
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -218,15 +236,16 @@ export function IotVisualizer() {
       ctx.lineWidth = 2.5;
       ctx.beginPath();
 
-      const amp = resetting ? 0 : (temperature * 1.4) + 12;
-      const freq = resetting ? 0 : (voltage * 0.028) + 0.012;
+      const { temperature: currentTemp, voltage: currentVolt, resetting: isResetting } = stateRef.current;
+      const amp = isResetting ? 0 : (currentTemp * 1.4) + 12;
+      const freq = isResetting ? 0 : (currentVolt * 0.028) + 0.012;
       const midY = height / 2;
 
       for (let x = 0; x < width; x++) {
         const angle = x * freq + offset;
         let y = Math.sin(angle) * amp;
 
-        if (!resetting) {
+        if (!isResetting) {
           const noise = (Math.sin(x * 0.08 + offset * 4.5) * 1.8) + ((Math.random() - 0.5) * 1.2);
           y += noise;
         }
@@ -240,16 +259,33 @@ export function IotVisualizer() {
       }
 
       ctx.stroke();
-      offset += resetting ? 0.02 : 0.08;
+      offset += isResetting ? 0.02 : 0.08;
       animationId = requestAnimationFrame(draw);
     };
 
-    draw();
+    const intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        isVisible = entry ? entry.isIntersecting : false;
+        if (isVisible) {
+          if (!animationId) {
+            animationId = requestAnimationFrame(draw);
+          }
+        } else if (animationId) {
+          cancelAnimationFrame(animationId);
+          animationId = null;
+        }
+      },
+      { threshold: 0.05 }
+    );
+    intersectionObserver.observe(canvas);
 
     return () => {
-      cancelAnimationFrame(animationId);
+      if (animationId) cancelAnimationFrame(animationId);
+      resizeObserver.disconnect();
+      intersectionObserver.disconnect();
     };
-  }, [temperature, voltage, resetting]);
+  }, []);
 
   const handleLedToggle = () => {
     if (resetting) return;

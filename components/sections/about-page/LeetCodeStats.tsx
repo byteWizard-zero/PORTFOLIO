@@ -155,9 +155,11 @@ export function AboutPageLeetCodeStats() {
         
         gsap.set(card, { transformPerspective: 1000, transformStyle: "preserve-3d" });
         
+        let cachedRect: DOMRect | null = null;
         const handleMouseMove = (e: Event) => {
           const mouseEvent = e as unknown as MouseEvent;
-          const rect = card.getBoundingClientRect();
+          if (!cachedRect) cachedRect = card.getBoundingClientRect();
+          const rect = cachedRect;
           const x = mouseEvent.clientX - rect.left;
           const y = mouseEvent.clientY - rect.top;
           const normX = (x / rect.width) - 0.5;
@@ -177,10 +179,12 @@ export function AboutPageLeetCodeStats() {
         };
         
         const handleMouseEnter = () => {
+          cachedRect = null;
           playSweep();
         };
         
         const handleMouseLeave = () => {
+          cachedRect = null;
           gsap.to(card, {
             rotateX: 0,
             rotateY: 0,

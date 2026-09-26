@@ -15,6 +15,7 @@
     transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    mix-blend-mode: exclusion;
 }
 
 .cursorWrapper {
@@ -26,8 +27,6 @@
     pointer-events: none;
     z-index: var(--z-cursor);
     
-    mix-blend-mode: exclusion;
-
     isolation: isolate;
     contain: layout style paint;
 }

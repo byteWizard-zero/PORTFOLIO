@@ -225,9 +225,11 @@ export function AboutPageContributions() {
         if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
         gsap.set(gridWrap, { transformPerspective: 1000, transformStyle: "preserve-3d" });
         
+        let cachedRect: DOMRect | null = null;
         const handleMouseMove = (e: Event) => {
           const mouseEvent = e as unknown as MouseEvent;
-          const rect = gridWrap.getBoundingClientRect();
+          if (!cachedRect) cachedRect = gridWrap.getBoundingClientRect();
+          const rect = cachedRect;
           const x = mouseEvent.clientX - rect.left;
           const y = mouseEvent.clientY - rect.top;
           const normX = (x / rect.width) - 0.5;
@@ -248,10 +250,12 @@ export function AboutPageContributions() {
         };
         
         const handleMouseEnter = () => {
+          cachedRect = null;
           playSweep();
         };
         
         const handleMouseLeave = () => {
+          cachedRect = null;
           gsap.to(gridWrap, {
             rotateX: 0,
             rotateY: 0,

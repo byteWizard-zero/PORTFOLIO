@@ -401,13 +401,13 @@ export function Contact() {
 
     gsap.set(chars, { opacity: 0 });
     gsap.set(revealItems, { opacity: 0, y: 14 });
-    gsap.set(inputBorders, { width: 0 });
+    gsap.set(inputBorders, { scaleX: 0, transformOrigin: 'left center' });
     if (submit) gsap.set(submit, { opacity: 0, y: 20 });
 
     if (reducedMotion || (typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches)) {
       gsap.set(chars, { opacity: 1 });
       gsap.set(revealItems, { opacity: 1, y: 0 });
-      gsap.set(inputBorders, { width: '100%' });
+      gsap.set(inputBorders, { scaleX: 1 });
       if (submit) gsap.set(submit, { opacity: 1, y: 0 });
       return;
     }
@@ -456,7 +456,7 @@ export function Contact() {
       if (rowBorders.length) {
         tl.to(
           rowBorders,
-          { width: '100%', duration: TIMING.BORDER_DURATION, stagger: TIMING.BORDER_STAGGER },
+          { scaleX: 1, duration: TIMING.BORDER_DURATION, stagger: TIMING.BORDER_STAGGER },
           start + TIMING.BORDER_OFFSET
         );
       }
