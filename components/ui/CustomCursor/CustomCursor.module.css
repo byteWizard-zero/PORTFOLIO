@@ -24,6 +24,7 @@
     height: 100%;
     pointer-events: none;
     z-index: var(--z-cursor);
+    mix-blend-mode: difference;
 }
 
 .trailContainer {

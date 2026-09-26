@@ -602,7 +602,7 @@ export function CustomCursor() {
         className={`${styles.cursorWrapper} global-cursor-wrapper ${isArcade ? styles.arcadeWrapper : ''}`}
         style={{
           visibility: (isVisible && !isFooterMode) ? 'visible' : 'hidden',
-          mixBlendMode: isArcade ? 'normal' : undefined
+          mixBlendMode: (isArcade || isFooterMode) ? 'normal' : 'difference',
         }}
         aria-hidden="true"
       >
@@ -613,7 +613,8 @@ export function CustomCursor() {
             backgroundColor: 'transparent',
             borderRadius: '0',
             width: isFooterMode ? '28px' : '64px',
-            height: isFooterMode ? '28px' : '64px'
+            height: isFooterMode ? '28px' : '64px',
+            mixBlendMode: 'normal',
           } : undefined}
         >
           {isFooterMode && !isArcade && (
