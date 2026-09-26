@@ -221,7 +221,6 @@ export function Footer() {
                   alt="Soumya (Asher)"
                   width={32}
                   height={32}
-                  priority
                   className={styles.avatarImg}
                 />
               </div>

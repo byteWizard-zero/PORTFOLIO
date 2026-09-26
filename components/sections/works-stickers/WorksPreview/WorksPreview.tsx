@@ -86,7 +86,6 @@ export function WorksPreview({ entries, activeIndex, visible }: WorksPreviewProp
               height={1000}
               sizes="(min-width: 1024px) 360px, 280px"
               priority={false}
-              unoptimized
             />
           </div>
         ))}
