@@ -64,6 +64,8 @@ export function CustomCursor() {
         yPercent: -50,
         rotation: 0,
         scale: 1,
+        width: 50,
+        height: 50,
         duration: 0.4,
         ease: 'power2.out',
       });
@@ -120,20 +122,37 @@ export function CustomCursor() {
         }
       });
 
-      gsap.timeline()
-        .to(cursor, {
-          scale: 1.5,
-          transformOrigin: isArcadeRef.current ? '0% 0%' : '50% 50%',
-          duration: 0.15,
-          delay: 0.1,
-          ease: 'power2.out',
-        })
-        .to(cursor, {
-          scale: 1,
-          transformOrigin: isArcadeRef.current ? '0% 0%' : '50% 50%',
-          duration: 0.3,
-          ease: 'elastic.out(1, 0.5)',
-        });
+      if (isArcadeRef.current) {
+        gsap.timeline()
+          .to(cursor, {
+            scale: 1.5,
+            transformOrigin: '0% 0%',
+            duration: 0.15,
+            delay: 0.1,
+            ease: 'power2.out',
+          })
+          .to(cursor, {
+            scale: 1,
+            transformOrigin: '0% 0%',
+            duration: 0.3,
+            ease: 'elastic.out(1, 0.5)',
+          });
+      } else {
+        gsap.timeline()
+          .to(cursor, {
+            width: 68,
+            height: 68,
+            duration: 0.15,
+            delay: 0.1,
+            ease: 'power2.out',
+          })
+          .to(cursor, {
+            width: 50,
+            height: 50,
+            duration: 0.3,
+            ease: 'elastic.out(1, 0.5)',
+          });
+      }
     };
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -235,6 +254,7 @@ export function CustomCursor() {
     gsap.set(cursor, {
       xPercent: isArcadeRef.current ? 0 : -50,
       yPercent: isArcadeRef.current ? 0 : -50,
+      scale: 1,
     });
     trailSpheresRef.current.forEach(sphere => {
       if (sphere.element) gsap.set(sphere.element, { xPercent: -50, yPercent: -50 });
@@ -350,8 +370,8 @@ export function CustomCursor() {
         });
       } else {
         gsap.to(cursor, {
-          scale: 2.2,
-          transformOrigin: '50% 50%',
+          width: 95,
+          height: 95,
           duration: 0.35,
           ease: 'power2.out',
         });
@@ -380,8 +400,8 @@ export function CustomCursor() {
         });
       } else {
         gsap.to(cursor, {
-          scale: 1,
-          transformOrigin: '50% 50%',
+          width: 50,
+          height: 50,
           duration: 0.3,
           ease: 'power2.out',
         });
@@ -414,13 +434,23 @@ export function CustomCursor() {
       
       startTicker();
 
-      gsap.to(cursor, {
-        scale: 1.5, // Slight scale up before disappearing for effect
-        opacity: 0,
-        transformOrigin: isArcadeRef.current ? '0% 0%' : '50% 50%',
-        duration: 0.2,
-        ease: 'power2.out',
-      });
+      if (isArcadeRef.current) {
+        gsap.to(cursor, {
+          scale: 1.5,
+          opacity: 0,
+          transformOrigin: '0% 0%',
+          duration: 0.2,
+          ease: 'power2.out',
+        });
+      } else {
+        gsap.to(cursor, {
+          width: 70,
+          height: 70,
+          opacity: 0,
+          duration: 0.2,
+          ease: 'power2.out',
+        });
+      }
 
       trailSpheresRef.current.forEach((sphere) => {
         if (sphere.element) {
@@ -442,13 +472,23 @@ export function CustomCursor() {
       document.documentElement.style.setProperty('--spotlight-active', '0');
       document.documentElement.style.setProperty('--spotlight-size', '0px');
 
-      gsap.to(cursor, {
-        scale: 1,
-        opacity: 1,
-        transformOrigin: isArcadeRef.current ? '0% 0%' : '50% 50%',
-        duration: 0.3,
-        ease: 'power2.out',
-      });
+      if (isArcadeRef.current) {
+        gsap.to(cursor, {
+          scale: 1,
+          opacity: 1,
+          transformOrigin: '0% 0%',
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      } else {
+        gsap.to(cursor, {
+          width: 50,
+          height: 50,
+          opacity: 1,
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      }
 
       // Trail will reappear naturally on next movement
     };
@@ -486,7 +526,8 @@ export function CustomCursor() {
       setIsFooterMode(true);
       if (cursorRef.current) {
         gsap.to(cursorRef.current, {
-          scale: 1,
+          width: 28,
+          height: 28,
           duration: 0.25,
           ease: 'power2.out',
         });
@@ -497,7 +538,8 @@ export function CustomCursor() {
       setIsFooterMode(false);
       if (cursorRef.current) {
         gsap.to(cursorRef.current, {
-          scale: 1,
+          width: 50,
+          height: 50,
           duration: 0.25,
           ease: 'power2.out',
         });

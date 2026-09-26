@@ -8,12 +8,8 @@
     border-radius: 50%;
     pointer-events: none;
     z-index: var(--z-cursor);
-    will-change: transform;
+    will-change: transform, width, height;
     mix-blend-mode: difference;
-
-    transform: translate3d(0, 0, 0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
 }
 
 .cursorWrapper {
