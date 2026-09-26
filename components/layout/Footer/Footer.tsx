@@ -1,311 +1,232 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useGSAP } from '@gsap/react';
-import { gsap } from '@/lib/gsap';
-import { useReducedMotion } from '@/lib/useReducedMotion';
+import { useRef, useEffect } from 'react';
 import styles from './Footer.module.css';
 
-interface NavLinkItem {
-  label: string;
-  href: string;
-  isExternal?: boolean;
-  badge?: string;
+interface GridPoint {
+  baseX: number;
+  baseY: number;
+  currX: number;
+  currY: number;
 }
-
-interface FooterColumn {
-  title: string;
-  links: NavLinkItem[];
-}
-
-const FOOTER_COLUMNS: FooterColumn[] = [
-  {
-    title: 'INDEX',
-    links: [
-      { label: 'Overview / Home', href: '/' },
-      { label: 'Selected Works', href: '/work' },
-      { label: 'Profile & Experience', href: '/about' },
-      { label: 'Hardware Arcade', href: '/arcade' },
-    ],
-  },
-  {
-    title: 'FEATURED WORKS',
-    links: [
-      { label: 'Furina AI Companion', href: '/work/furina', badge: 'AI' },
-      { label: 'CartSnap Architecture', href: '/work/cartsnap', badge: 'IoT' },
-      { label: 'Flavr Food Experience', href: '/work/flavr' },
-      { label: 'FreeLLMProxy Engine', href: '/work' },
-    ],
-  },
-  {
-    title: 'CAPABILITIES',
-    links: [
-      { label: 'IoT Mesh & Embedded Systems', href: '/about' },
-      { label: 'Java & High-Performance DSA', href: '/about' },
-      { label: 'Agentic AI & Prompt Pipelines', href: '/about' },
-      { label: 'Offline-First Systems', href: '/about' },
-    ],
-  },
-  {
-    title: 'NETWORK & SOCIAL',
-    links: [
-      { label: 'GitHub', href: 'https://github.com/byteWizard-zero', isExternal: true },
-      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/soumya-ranjan-jana-414586370', isExternal: true },
-      { label: 'LeetCode', href: 'https://leetcode.com/u/byteWizard-zero/', isExternal: true, badge: '290+' },
-      { label: 'Instagram', href: 'https://www.instagram.com/zenith.soumya', isExternal: true },
-    ],
-  },
-];
 
 export function Footer() {
-  const footerRef = useRef<HTMLElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const reducedMotion = useReducedMotion();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [copied, setCopied] = useState<boolean>(false);
-  const [istTime, setIstTime] = useState<string>('');
-
-  const email = 'soumyaranjanjana810@gmail.com';
-
-  // Live IST Clock (Bhubaneswar, India: UTC+5:30)
   useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const options: Intl.DateTimeFormatOptions = {
-        timeZone: 'Asia/Kolkata',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      };
-      setIstTime(now.toLocaleTimeString('en-US', options) + ' IST');
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
+
+    const ctx = canvas.getContext('2d', { alpha: true });
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let isVisible = false;
+    let time = 0;
+
+    // Wide grid gap spacing (generous breathing room)
+    const SPACING = 68;
+    const MOUSE_RADIUS = 260;
+
+    let points: GridPoint[][] = [];
+    let cols = 0;
+    let rows = 0;
+
+    const mouse = {
+      x: -2000,
+      y: -2000,
+      currX: -2000,
+      currY: -2000,
+      isHovered: false,
     };
 
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
+    const initGrid = () => {
+      const rect = container.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      // Grid dimensions with padding boundary
+      cols = Math.ceil(rect.width / SPACING) + 3;
+      rows = Math.ceil(rect.height / SPACING) + 3;
+
+      const startX = (rect.width - (cols - 1) * SPACING) / 2;
+      const startY = (rect.height - (rows - 1) * SPACING) / 2;
+
+      points = [];
+      for (let c = 0; c < cols; c++) {
+        points[c] = [];
+        for (let r = 0; r < rows; r++) {
+          const x = startX + c * SPACING;
+          const y = startY + r * SPACING;
+          points[c][r] = {
+            baseX: x,
+            baseY: y,
+            currX: x,
+            currY: y,
+          };
+        }
+      }
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.isHovered = true;
+    };
+
+    const handleMouseLeave = () => {
+      mouse.x = -2000;
+      mouse.y = -2000;
+      mouse.isHovered = false;
+    };
+
+    const render = () => {
+      if (!isVisible) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+
+      const rect = container.getBoundingClientRect();
+      time += 0.016;
+
+      // Smooth mouse coordinate lerping
+      mouse.currX += (mouse.x - mouse.currX) * 0.1;
+      mouse.currY += (mouse.y - mouse.currY) * 0.1;
+
+      // Update point coordinates with harmonic wave distortion + mouse tension
+      for (let c = 0; c < cols; c++) {
+        for (let r = 0; r < rows; r++) {
+          const pt = points[c][r];
+
+          // Harmonic multi-frequency distortion waves
+          const waveX =
+            Math.cos(pt.baseY * 0.005 + time * 0.9) * Math.sin(pt.baseX * 0.004 + time * 0.7) * 20 +
+            Math.sin(pt.baseY * 0.012 + time * 1.4) * 8;
+
+          const waveY =
+            Math.sin(pt.baseX * 0.005 + time * 1.1) * Math.cos(pt.baseY * 0.004 + time * 0.8) * 24 +
+            Math.cos(pt.baseX * 0.01 + time * 1.3) * 10;
+
+          // Interactive mouse gravitational warp
+          const dx = pt.baseX + waveX - mouse.currX;
+          const dy = pt.baseY + waveY - mouse.currY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          let mouseDispX = 0;
+          let mouseDispY = 0;
+
+          if (dist < MOUSE_RADIUS && dist > 0) {
+            const factor = 1 - dist / MOUSE_RADIUS;
+            const force = factor * factor * 55;
+            mouseDispX = (dx / dist) * force;
+            mouseDispY = (dy / dist) * force;
+          }
+
+          const targetX = pt.baseX + waveX + mouseDispX;
+          const targetY = pt.baseY + waveY + mouseDispY;
+
+          // Spring damping towards target
+          pt.currX += (targetX - pt.currX) * 0.14;
+          pt.currY += (targetY - pt.currY) * 0.14;
+        }
+      }
+
+      ctx.clearRect(0, 0, rect.width, rect.height);
+
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const lineColor = isDark ? 'rgba(98, 182, 203, 0.28)' : 'rgba(27, 32, 40, 0.18)';
+      const markerColor = isDark ? 'rgba(98, 182, 203, 0.65)' : 'rgba(27, 32, 40, 0.35)';
+
+      ctx.lineWidth = 1.25;
+      ctx.strokeStyle = lineColor;
+
+      // Draw distorted horizontal spline curves
+      for (let r = 0; r < rows; r++) {
+        ctx.beginPath();
+        ctx.moveTo(points[0][r].currX, points[0][r].currY);
+        for (let c = 0; c < cols - 1; c++) {
+          const p0 = points[c][r];
+          const p1 = points[c + 1][r];
+          const midX = (p0.currX + p1.currX) / 2;
+          const midY = (p0.currY + p1.currY) / 2;
+          ctx.quadraticCurveTo(p0.currX, p0.currY, midX, midY);
+        }
+        ctx.lineTo(points[cols - 1][r].currX, points[cols - 1][r].currY);
+        ctx.stroke();
+      }
+
+      // Draw distorted vertical spline curves
+      for (let c = 0; c < cols; c++) {
+        ctx.beginPath();
+        ctx.moveTo(points[c][0].currX, points[c][0].currY);
+        for (let r = 0; r < rows - 1; r++) {
+          const p0 = points[c][r];
+          const p1 = points[c][r + 1];
+          const midX = (p0.currX + p1.currX) / 2;
+          const midY = (p0.currY + p1.currY) / 2;
+          ctx.quadraticCurveTo(p0.currX, p0.currY, midX, midY);
+        }
+        ctx.lineTo(points[c][rows - 1].currX, points[c][rows - 1].currY);
+        ctx.stroke();
+      }
+
+      // Draw precision blueprint crosshair markers at vertices
+      ctx.fillStyle = markerColor;
+      for (let c = 0; c < cols; c++) {
+        for (let r = 0; r < rows; r++) {
+          const p = points[c][r];
+          // Delicate 2x2 vertex square marker
+          ctx.fillRect(p.currX - 1.5, p.currY - 1.5, 3, 3);
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    initGrid();
+
+    // IntersectionObserver to save GPU/CPU cycles when scrolled off-screen
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isVisible = entry.isIntersecting;
+        });
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(container);
+
+    const resizeObserver = new ResizeObserver(() => {
+      initGrid();
+    });
+    resizeObserver.observe(container);
+
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
+
+    render();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
+      resizeObserver.disconnect();
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseleave', handleMouseLeave);
+    };
   }, []);
 
-  // Quick Copy Email
-  const handleCopyEmail = async () => {
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(email);
-      } else {
-        const textarea = document.createElement('textarea');
-        textarea.value = email;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-      }
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2600);
-    } catch {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2600);
-    }
-  };
-
-  // Back to top scroll handler
-  const handleBackToTop = () => {
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  // GSAP Entrance Reveal Animations
-  useGSAP(() => {
-    if (!footerRef.current || reducedMotion) return;
-
-    const revealItems = footerRef.current.querySelectorAll(`.${styles.reveal}`);
-
-    gsap.fromTo(
-      revealItems,
-      { opacity: 0, y: 32 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.85,
-        stagger: 0.08,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: 'top 85%',
-          toggleActions: 'play none none none',
-        },
-      }
-    );
-  }, { scope: footerRef, dependencies: [reducedMotion] });
-
   return (
-    <footer ref={footerRef} className={styles.footer} role="contentinfo" id="footer">
+    <footer className={styles.footer} role="contentinfo" id="footer">
       <div className={styles.container}>
-        {/* Double-Bezel Architectural Enclosure */}
-        <div ref={cardRef} className={styles.bezelCard}>
-          {/* Subtle Ambient Radial Highlight */}
+        <div ref={containerRef} className={styles.gridCard}>
           <div className={styles.ambientGlow} aria-hidden="true" />
-
-          {/* Top Eyebrow / Availability Row */}
-          <div className={`${styles.topRow} ${styles.reveal}`}>
-            <div className={styles.statusPill}>
-              <span className={styles.pulseDot} aria-hidden="true" />
-              <span className={styles.statusText}>AVAILABLE FOR AMBITIOUS BUILDS · 2026</span>
-            </div>
-            <div className={styles.locationTag}>
-              <span className={styles.coordDot} aria-hidden="true" />
-              <span>BHUBANESWAR, IN · 20.2488° N, 85.8007° E</span>
-            </div>
-          </div>
-
-          {/* Hero Section: Editorial Headline & Action Capsule */}
-          <div className={`${styles.heroSection} ${styles.reveal}`}>
-            <div className={styles.headlineCol}>
-              <h2 className={styles.headline}>
-                LET’S BUILD SOMETHING <br />
-                <span className={styles.accentText}>EXTRAORDINARY.</span>
-              </h2>
-              <p className={styles.subheadline}>
-                Bridging hardware microcontrollers, high-performance Java/DSA systems,
-                and agentic AI applications with zero lag.
-              </p>
-            </div>
-
-            {/* Transmission / Direct Contact Card */}
-            <div className={styles.actionCol}>
-              <div className={styles.avatarCard}>
-                <div className={styles.avatarGroup}>
-                  <div className={styles.avatarWrap}>
-                    <Image
-                      src="/profile1.png"
-                      alt="Zenith Soumya"
-                      width={48}
-                      height={48}
-                      className={styles.avatarImg}
-                    />
-                    <span className={styles.onlineBadge} title="Active System" />
-                  </div>
-                  <div className={styles.avatarInfo}>
-                    <span className={styles.avatarName}>Zenith Soumya</span>
-                    <span className={styles.avatarRole}>IoT & AI Systems Architect</span>
-                  </div>
-                </div>
-
-                <div className={styles.emailActionWrap}>
-                  <button
-                    type="button"
-                    className={`${styles.copyButton} ${copied ? styles.copySuccess : ''}`}
-                    onClick={handleCopyEmail}
-                    aria-label="Copy email address"
-                  >
-                    <span className={styles.emailAddress}>{email}</span>
-                    <span className={styles.copyIconBadge}>
-                      {copied ? (
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      ) : (
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                        </svg>
-                      )}
-                    </span>
-                    <span className={styles.feedbackTooltip}>
-                      {copied ? 'Copied to Clipboard!' : 'Click to Copy'}
-                    </span>
-                  </button>
-
-                  <a
-                    href={`mailto:${email}`}
-                    className={styles.directMailLink}
-                    aria-label="Send direct email"
-                  >
-                    <span>Send Direct Email</span>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="7" y1="17" x2="17" y2="7" />
-                      <polyline points="7 7 17 7 17 17" />
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Architectural Divider */}
-          <div className={`${styles.divider} ${styles.reveal}`} aria-hidden="true" />
-
-          {/* 4-Column Navigation Matrix */}
-          <div className={`${styles.columnsGrid} ${styles.reveal}`}>
-            {FOOTER_COLUMNS.map((col, idx) => (
-              <div key={idx} className={styles.navColumn}>
-                <span className={styles.columnHeading}>{col.title}</span>
-                <ul className={styles.linksList}>
-                  {col.links.map((link, linkIdx) => (
-                    <li key={linkIdx} className={styles.linkItem}>
-                      {link.isExternal ? (
-                        <a
-                          href={link.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.navLink}
-                        >
-                          <span>{link.label}</span>
-                          <svg className={styles.externalArrow} width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <line x1="7" y1="17" x2="17" y2="7" />
-                            <polyline points="7 7 17 7 17 17" />
-                          </svg>
-                          {link.badge && <span className={styles.linkBadge}>{link.badge}</span>}
-                        </a>
-                      ) : (
-                        <Link href={link.href} className={styles.navLink}>
-                          <span>{link.label}</span>
-                          {link.badge && <span className={styles.linkBadge}>{link.badge}</span>}
-                        </Link>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {/* Telemetry / Bottom Bar */}
-          <div className={`${styles.bottomBar} ${styles.reveal}`}>
-            <div className={styles.colophonLeft}>
-              <span className={styles.clockPill}>
-                <span className={styles.clockIcon} aria-hidden="true">⏱</span>
-                <span>{istTime || '20:30:00 IST'}</span>
-              </span>
-              <span className={styles.uptimeBadge}>
-                <span className={styles.greenDot} aria-hidden="true" />
-                <span>99.98% OPERATIONAL</span>
-              </span>
-            </div>
-
-            <div className={styles.colophonCenter}>
-              <span className={styles.copyrightText}>
-                © 2026 ZENITH SOUMYA · ARCHITECTED WITH PRECISION
-              </span>
-            </div>
-
-            <div className={styles.colophonRight}>
-              <button
-                type="button"
-                className={styles.backTopBtn}
-                onClick={handleBackToTop}
-                aria-label="Back to top of page"
-              >
-                <span>BACK TO TOP</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="19" x2="12" y2="5" />
-                  <polyline points="5 12 12 5 19 12" />
-                </svg>
-              </button>
-            </div>
-          </div>
+          <canvas ref={canvasRef} className={styles.canvas} />
         </div>
       </div>
     </footer>
