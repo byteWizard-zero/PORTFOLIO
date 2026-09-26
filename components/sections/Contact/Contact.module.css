@@ -3,7 +3,7 @@
 .section {
     position: relative;
     width: 100%;
-    background: var(--color-background);
+    background: transparent;
     z-index: var(--z-above);
     color: var(--color-primary-text);
 }

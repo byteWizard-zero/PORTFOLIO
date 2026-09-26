@@ -58,7 +58,7 @@ export default async function CaseStudyPage({
   const nextTarget = entry.nextCase ? caseStudies[entry.nextCase.slug]?.hero : undefined;
 
   return (
-    <main>
+    <article className="case-study-page">
       {entry.hero && <Hero {...entry.hero} />}
       {entry.ledger && <Ledger {...entry.ledger} />}
       {entry.context && <Context {...entry.context} />}
@@ -86,6 +86,6 @@ export default async function CaseStudyPage({
           }
         />
       )}
-    </main>
+    </article>
   );
 }

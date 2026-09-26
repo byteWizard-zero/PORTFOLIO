@@ -39,34 +39,11 @@ export function Philosophy() {
       pin: sectionRef.current,
       pinSpacing: true,
       refreshPriority: 12,
-      onEnter: () => {
-        if (window.lenis) {
-          window.lenis.options.wheelMultiplier = 0.08;
-        }
-      },
-      onLeave: () => {
-        if (window.lenis) {
-          window.lenis.options.wheelMultiplier = 0.45;
-        }
-      },
-      onEnterBack: () => {
-        if (window.lenis) {
-          window.lenis.options.wheelMultiplier = 0.08;
-        }
-      },
-      onLeaveBack: () => {
-        if (window.lenis) {
-          window.lenis.options.wheelMultiplier = 0.45;
-        }
-      },
     });
 
     return () => {
       pinTrigger.kill();
       if (labelTween.scrollTrigger) labelTween.scrollTrigger.kill();
-      if (window.lenis) {
-        window.lenis.options.wheelMultiplier = 0.45;
-      }
     };
   }, { scope: wrapperRef, dependencies: [reducedMotion] });
 

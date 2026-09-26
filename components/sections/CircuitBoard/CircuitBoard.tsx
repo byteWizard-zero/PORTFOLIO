@@ -353,7 +353,7 @@ export function CircuitBoard() {
   };
 
   return (
-    <main className={styles.boardContainer}>
+    <div className={styles.boardContainer}>
       
       <div className={styles.header}>
         <div className={styles.headerTitleGroup}>
@@ -423,8 +423,6 @@ export function CircuitBoard() {
         <div 
           ref={workbenchRef}
           className={styles.workbenchPanel}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
           onPointerMove={handleMouseMove}
           onPointerUp={handleMouseUp}
           onMouseEnter={() => {
@@ -598,6 +596,6 @@ export function CircuitBoard() {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

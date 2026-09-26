@@ -12,9 +12,9 @@ import { content, getCaseStudySlugs, caseStudies } from '@/data';
 
 const caseStudySlugs = new Set(getCaseStudySlugs());
 
-const SPLIT_RUNWAY_VH = 1.4;
+const SPLIT_RUNWAY_VH = 0.95;
 
-const HANDOFF_SCRUB = 2.5;
+const HANDOFF_SCRUB = 1.0;
 
 const OPEN_THRESHOLD = 0.6;
 
@@ -94,7 +94,7 @@ export const Projects = () => {
                         trigger: section,
                         start: "top top",
                         end: "bottom bottom",
-                        scrub: 2.5,
+                        scrub: HANDOFF_SCRUB,
                         pin: stickyContainer,
                         invalidateOnRefresh: true,
                         refreshPriority: 8,

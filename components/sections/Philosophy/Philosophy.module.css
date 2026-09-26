@@ -1,6 +1,7 @@
 .wrapper {
   position: relative;
   z-index: var(--z-above);
+  background-color: var(--color-background);
 }
 
 .section {

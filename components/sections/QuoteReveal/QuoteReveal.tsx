@@ -22,9 +22,8 @@ export function QuoteReveal() {
       <div className={styles.container}>
         <ScrollReveal
           baseOpacity={0.1}
-          enableBlur
-          baseRotation={isMobile ? 0 : 10}
-          blurStrength={11}
+          enableBlur={false}
+          baseRotation={isMobile ? 0 : 6}
           containerClassName={styles.revealContainer}
           textClassName={styles.revealText}
           rotationEnd="+=80%"
@@ -34,13 +33,13 @@ export function QuoteReveal() {
 
           The loudest bug is rarely the worst one.
 
-          It`s the silent bug...
+          It’s the silent bug…
 
-          The one hiding deep inside the system...
+          The one hiding deep inside the system…
 
           That costs you the most.
 
-          The same is true for unspoken pain...
+          The same is true for unspoken pain…
 
           {"//NO ERRORS LOGGED. ▒▒░░█[0x44]DΔMAGE DETECTED..."}
         </ScrollReveal>

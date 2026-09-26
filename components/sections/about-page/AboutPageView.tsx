@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import dynamic from "next/dynamic";
@@ -33,7 +31,7 @@ const VITALS = [
 
 export function AboutPageView() {
   return (
-    <main>
+    <div className="about-page">
       <AboutPageHeroEcho />
       <Ledger entries={VITALS} />
       <AboutPageIntro />
@@ -43,7 +41,6 @@ export function AboutPageView() {
       <AboutPageLeetCodeStats />
       <AboutPageCredentials />
       <Footer />
-    </main>
+    </div>
   );
 }
-

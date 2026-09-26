@@ -28,8 +28,7 @@ const Contact = dynamic(
 
 export function ArcadePageView() {
   return (
-    <main className={styles.main}>
-      
+    <div className={styles.main}>
       <section className={styles.heroSection}>
         <div className={styles.headerContent}>
           <MetaLabel>Interactive Systems</MetaLabel>
@@ -65,6 +64,6 @@ export function ArcadePageView() {
       <AiVisualizer />
 
       <Contact />
-    </main>
+    </div>
   );
 }

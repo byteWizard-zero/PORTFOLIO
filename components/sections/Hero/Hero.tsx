@@ -149,7 +149,6 @@ export function Hero() {
       tl.to(taglineContainer, { opacity: 0, duration: 0.2, ease: 'power2.in' }, 0.08);
     }
     if (skillsBar) {
-
       tl.to(skillsBar, { yPercent: SKILLS_EXIT_YPERCENT, duration: 0.12, ease: 'power2.in' }, 0.15);
     }
 
@@ -185,9 +184,6 @@ export function Hero() {
         if (hero) hero.style.visibility = 'visible';
       },
       onRefresh: () => {
-        
-        spacer.style.height = `${window.innerHeight * SCROLL_RANGE_VH * DOCKING_PROGRESS + window.innerHeight}px`;
-
         seedFlyingLetterTypography();
         recomputeScaleRatios();
       },
@@ -199,7 +195,7 @@ export function Hero() {
 
   return (
     <>
-      <main ref={heroRef} className={styles.hero}>
+      <section ref={heroRef} className={styles.hero} aria-label="Hero">
         <HeroText />
         <SkillsBar />
 
@@ -209,7 +205,7 @@ export function Hero() {
         <span ref={flyingARef} className={styles.flyingLetter} aria-hidden="true">
           {INITIALS.last}
         </span>
-      </main>
+      </section>
 
       <div ref={spacerRef} className={styles.heroScrollSpacer} />
     </>

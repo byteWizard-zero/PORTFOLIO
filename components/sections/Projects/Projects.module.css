@@ -3,7 +3,7 @@
     width: 100%;
     margin-top: 0; 
     z-index: var(--z-above);
-    background-color: var(--color-background);
+    background-color: transparent;
 }
 
 .metaLabel {
@@ -37,14 +37,13 @@
 }
 
 .projectSection {
-    height: 250vh; 
+    height: 160vh; 
     position: relative;
     width: 100%;
 }
 
 .projectSticky {
-    position: sticky;
-    top: 0;
+    position: relative;
     height: 100vh;
     width: 100%;
     overflow: visible;

@@ -7,7 +7,7 @@ export const GAP_PX = 220;
 
 export const PAD_CELLS = 3;
 
-export const PIN_RUNWAY_VH = 10;
+export const PIN_RUNWAY_VH = 4.0;
 
 export const PIN_RUNWAY_REF_PX = 900;
 

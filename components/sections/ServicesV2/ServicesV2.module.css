@@ -22,8 +22,7 @@
   overflow: hidden;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  
-  background: var(--color-background);
+  background: transparent;
 }
 
 .stackMetaLabel {

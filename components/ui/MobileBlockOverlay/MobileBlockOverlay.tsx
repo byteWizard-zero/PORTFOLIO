@@ -24,7 +24,7 @@ export function MobileBlockOverlay() {
       </header>
 
       {/* Main Content Area */}
-      <main className={styles.content}>
+      <div className={styles.content}>
         <div className={styles.quoteCard}>
           <p className={styles.quoteText}>
             &quot;the admin is fu*ked up making the site responsive for mobile, please open the site on a desktop -thank you&quot;
@@ -60,7 +60,7 @@ export function MobileBlockOverlay() {
             </svg>
           </button>
         </div>
-      </main>
+      </div>
 
       {/* Footer Meta */}
       <footer className={styles.footer}>

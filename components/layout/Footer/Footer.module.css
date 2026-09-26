@@ -1,6 +1,6 @@
 .footer {
   width: 100%;
-  background: var(--color-background);
+  background: transparent;
   color: var(--color-primary-text);
   padding: clamp(60px, 10vh, 120px) var(--spacing-nav-side) clamp(40px, 5vh, 60px);
   position: relative;

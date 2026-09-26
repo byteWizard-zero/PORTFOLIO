@@ -76,7 +76,7 @@ export function WorksPage() {
 
   return (
     <div ref={rootRef} className={styles.root} style={rootStyle}>
-      <main className={styles.main}>
+      <div className={styles.main}>
         <section className={styles.intro}>
           <h1 className={styles.headline}>
             
@@ -127,7 +127,7 @@ export function WorksPage() {
             {worksIndex.end.right} <b>{worksIndex.topBar.lastRevised}</b>
           </span>
         </div>
-      </main>
+      </div>
 
       <WorksCursor hovered={cursorHovered} accent={cursorAccent} />
       <WorksPreview

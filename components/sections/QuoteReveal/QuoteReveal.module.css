@@ -1,6 +1,6 @@
 .section {
   position: relative;
-  background-color: var(--color-background);
+  background-color: transparent;
   z-index: var(--z-above);
   min-height: 90vh;
   display: flex;

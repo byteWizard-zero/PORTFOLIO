@@ -3,7 +3,7 @@
 .eclipse {
   position: relative;
   --wf-live-accent: var(--wf-teal);
-  background: var(--color-background);
+  background: transparent;
   color: var(--color-primary-text);
   z-index: var(--z-above);
 }

@@ -91,7 +91,7 @@ export function WorksStickersPage() {
 
   return (
     <div ref={rootRef} className={styles.root} style={rootStyle}>
-      <main className={styles.main}>
+      <div className={styles.main}>
         
         <div className={styles.topBar}>
           <TransitionLink
@@ -163,7 +163,7 @@ export function WorksStickersPage() {
             {worksIndex.end.right} <b>{worksIndex.topBar.lastRevised}</b>
           </span>
         </div>
-      </main>
+      </div>
 
       <WorksCursor hovered={cursorHovered} accent={cursorAccent} />
       <WorksPreview

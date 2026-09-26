@@ -5,15 +5,6 @@ import { usePathname } from 'next/navigation';
 import Lenis from 'lenis';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 
-let originalLagSmoothing: number | null = null;
-function snapshotLagSmoothing(): number {
-  if (originalLagSmoothing === null && typeof window !== 'undefined') {
-    const fn = gsap.ticker.lagSmoothing as (threshold?: number, adjustedLag?: number) => number;
-    originalLagSmoothing = fn();
-  }
-  return originalLagSmoothing ?? 500;
-}
-
 interface LenisContextValue {
   scrollTo: (target: string | number | HTMLElement, options?: { offset?: number; duration?: number; easing?: (t: number) => number }) => void;
 }
@@ -34,15 +25,18 @@ export function LenisProvider({ children }: LenisProviderProps) {
   const initialPathRef = useRef<string | null>(null);
 
   useEffect(() => {
+    const prefersReduced = typeof window !== 'undefined' && window.matchMedia
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false;
 
     const lenis = new Lenis({
-      lerp: 0.05, // Direct interpolation factor (between 0 and 1) for a heavy, consistent, and symmetric kinetic feel
+      lerp: 0.09,
       orientation: 'vertical',
       gestureOrientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 0.45, // Decreased scroll density (scroll is slightly faster/lighter than before)
-      touchMultiplier: 1.5,  // Adjusted Touch/Trackpad multiplier
-      syncTouch: true,
+      smoothWheel: !prefersReduced,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.8,
+      syncTouch: false,
     });
 
     lenisRef.current = lenis;
@@ -57,9 +51,10 @@ export function LenisProvider({ children }: LenisProviderProps) {
         lenis.raf(time * 1000);
       }
     };
-    const prevLagSmoothing = snapshotLagSmoothing();
+
     gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0); 
+    // Keep standard lag smoothing to avoid abrupt skips/teleporting on GC or frame hiccups
+    gsap.ticker.lagSmoothing(500, 33);
 
     const handleVisibilityChange = () => {
       if (!document.hidden) ScrollTrigger.update();
@@ -68,7 +63,7 @@ export function LenisProvider({ children }: LenisProviderProps) {
 
     return () => {
       gsap.ticker.remove(tick);
-      gsap.ticker.lagSmoothing(prevLagSmoothing);
+      gsap.ticker.lagSmoothing(500, 33);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
 
       lenis.off('scroll', ScrollTrigger.update);
@@ -82,12 +77,10 @@ export function LenisProvider({ children }: LenisProviderProps) {
 
   useEffect(() => {
     if (initialPathRef.current === null) {
-      
       initialPathRef.current = pathname;
       return;
     }
     if (initialPathRef.current === pathname) {
-      
       return;
     }
     const lenis = lenisRef.current;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { content } from '@/data';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 import { MetaLabel } from '@/components/ui/MetaLabel';
@@ -13,12 +13,18 @@ export function EclipseWorkflow() {
   const { label, stops } = content.workflow;
   const reducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const accents = stops.map((s, i) => workflowAccent(s.accent, i, stops.length));
 
   useEclipseDriver(sectionRef, { accents, reducedMotion });
 
-  const className = [styles.eclipse, reducedMotion ? styles.isStatic : '']
+  // Only apply isStatic on client after mount to prevent SSR className hydration mismatch
+  const className = [styles.eclipse, mounted && reducedMotion ? styles.isStatic : '']
     .filter(Boolean)
     .join(' ');
 

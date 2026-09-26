@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Doppio_One } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -18,9 +18,8 @@ import { siteMetadata } from "@/data";
 
 import { ClientInteractiveBackground } from "@/components/ui/ClientInteractiveBackground";
 
-const doppioOne = Doppio_One({
-  weight: "400",
-  subsets: ["latin"],
+const doppioOne = localFont({
+  src: "./fonts/DoppioOne-Regular.ttf",
   variable: "--font-navbar",
   display: "swap",
 });

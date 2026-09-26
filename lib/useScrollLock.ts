@@ -18,6 +18,11 @@ function acquire(compensateScrollbar: boolean) {
       if (gutter > 0) body.style.paddingRight = `${gutter}px`;
     }
     body.style.overflow = 'hidden';
+
+    // Pause Lenis smooth scrolling so wheel events don't accumulate while locked
+    if (typeof window !== 'undefined' && window.lenis) {
+      window.lenis.stop();
+    }
   }
   lockCount += 1;
 }
@@ -29,6 +34,11 @@ function release() {
     document.body.style.overflow = saved.overflow;
     document.body.style.paddingRight = saved.paddingRight;
     saved = null;
+
+    // Resume Lenis smooth scrolling cleanly
+    if (typeof window !== 'undefined' && window.lenis) {
+      window.lenis.start();
+    }
   }
 }
 

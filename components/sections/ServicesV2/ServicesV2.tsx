@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 import { useStaticFallback } from './useStaticFallback';
@@ -11,8 +12,20 @@ const DialServicesV2 = dynamic(
 );
 
 export function ServicesV2() {
+  const [mounted, setMounted] = useState(false);
   const reducedMotion = useReducedMotion();
   const isCoarseOrSmall = useStaticFallback();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const useStaticLayout = reducedMotion || isCoarseOrSmall;
+
+  // SSR and initial client hydration render matching StaticServicesV2 for SEO & zero hydration mismatch
+  if (!mounted) {
+    return <StaticServicesV2 />;
+  }
+
   return useStaticLayout ? <StaticServicesV2 /> : <DialServicesV2 />;
 }
