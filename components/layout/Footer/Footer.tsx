@@ -1,156 +1,95 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '@/lib/gsap';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 import styles from './Footer.module.css';
 
-const SUB_FOOTER_GRID = [
+interface NavLinkItem {
+  label: string;
+  href: string;
+  isExternal?: boolean;
+  badge?: string;
+}
+
+interface FooterColumn {
+  title: string;
+  links: NavLinkItem[];
+}
+
+const FOOTER_COLUMNS: FooterColumn[] = [
   {
-    label: 'DESIGNED BY',
-    items: [
-      { text: '© Zenith Soumya', href: '#' },
+    title: 'INDEX',
+    links: [
+      { label: 'Overview / Home', href: '/' },
+      { label: 'Selected Works', href: '/work' },
+      { label: 'Profile & Experience', href: '/about' },
+      { label: 'Hardware Arcade', href: '/arcade' },
     ],
   },
   {
-    label: 'WEB DESIGN',
-    items: [
-      { text: 'FreeLLMProxy', href: '#projects' },
-      { text: 'PineCarve', href: '#projects' },
-      { text: 'Stead', href: '#projects' },
+    title: 'FEATURED WORKS',
+    links: [
+      { label: 'Furina AI Companion', href: '/work/furina', badge: 'AI' },
+      { label: 'CartSnap Architecture', href: '/work/cartsnap', badge: 'IoT' },
+      { label: 'Flavr Food Experience', href: '/work/flavr' },
+      { label: 'FreeLLMProxy Engine', href: '/work' },
     ],
   },
   {
-    label: 'PRODUCT DESIGN',
-    items: [
-      { text: 'IoT Mesh', href: '#services' },
-      { text: 'Xwana', href: '#services' },
-      { text: 'CaseCoach', href: '#services' },
+    title: 'CAPABILITIES',
+    links: [
+      { label: 'IoT Mesh & Embedded Systems', href: '/about' },
+      { label: 'Java & High-Performance DSA', href: '/about' },
+      { label: 'Agentic AI & Prompt Pipelines', href: '/about' },
+      { label: 'Offline-First Systems', href: '/about' },
     ],
   },
   {
-    label: 'SOCIAL MEDIA',
-    items: [
-      { text: 'Instagram', href: 'https://www.instagram.com/zenith.soumya' },
-      { text: 'GitHub', href: 'https://github.com/byteWizard-zero' },
-      { text: 'LinkedIn', href: 'https://www.linkedin.com/in/soumya-ranjan-jana-414586370' },
-      { text: 'LeetCode', href: 'https://leetcode.com/u/byteWizard-zero/' },
+    title: 'NETWORK & SOCIAL',
+    links: [
+      { label: 'GitHub', href: 'https://github.com/byteWizard-zero', isExternal: true },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/soumya-ranjan-jana-414586370', isExternal: true },
+      { label: 'LeetCode', href: 'https://leetcode.com/u/byteWizard-zero/', isExternal: true, badge: '290+' },
+      { label: 'Instagram', href: 'https://www.instagram.com/zenith.soumya', isExternal: true },
     ],
   },
 ];
 
 export function Footer() {
   const footerRef = useRef<HTMLElement>(null);
-  const heroRef = useRef<HTMLDivElement>(null);
-  const pillRef = useRef<HTMLButtonElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
+
   const [copied, setCopied] = useState<boolean>(false);
-  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [istTime, setIstTime] = useState<string>('');
 
-  // Mouse Tracking & Graceful Entrance/Exit Animations for Email Pill
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    if (reducedMotion || !footerRef.current || !pillRef.current) return;
+  const email = 'soumyaranjanjana810@gmail.com';
 
-    const rect = footerRef.current.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    const pillHeight = pillRef.current.offsetHeight || 44;
-    const targetX = mouseX + 8;
-    const targetY = mouseY - pillHeight + 6;
-
-    gsap.to(pillRef.current, {
-      x: targetX,
-      y: targetY,
-      duration: 0.18,
-      ease: 'power2.out',
-      overwrite: 'auto',
-    });
-  };
-
-  const handleMouseEnter = (e: React.MouseEvent<HTMLElement>) => {
-    setIsHovered(true);
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('footer-hover-enter'));
-    }
-
-    if (pillRef.current && footerRef.current) {
-      const rect = footerRef.current.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
-      const pillHeight = pillRef.current.offsetHeight || 44;
-      const targetX = mouseX + 8;
-      const targetY = mouseY - pillHeight + 6;
-
-      // Position at mouse entry point & pop into view gracefully
-      gsap.set(pillRef.current, { x: targetX, y: targetY });
-      gsap.to(pillRef.current, {
-        opacity: 1,
-        scale: 1,
-        autoAlpha: 1,
-        duration: 0.35,
-        ease: 'back.out(1.5)',
-        overwrite: 'auto',
-      });
-    }
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('footer-hover-leave'));
-    }
-
-    // Gracefully scale down & fade out on mouse exit
-    if (pillRef.current) {
-      gsap.to(pillRef.current, {
-        opacity: 0,
-        scale: 0.85,
-        autoAlpha: 0,
-        duration: 0.25,
-        ease: 'power2.in',
-        overwrite: 'auto',
-      });
-    }
-  };
-
-  // Hide pill initially on mount
+  // Live IST Clock (Bhubaneswar, India: UTC+5:30)
   useEffect(() => {
-    if (pillRef.current) {
-      gsap.set(pillRef.current, { opacity: 0, scale: 0.85, autoAlpha: 0 });
-    }
+    const updateTime = () => {
+      const now = new Date();
+      const options: Intl.DateTimeFormatOptions = {
+        timeZone: 'Asia/Kolkata',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      };
+      setIstTime(now.toLocaleTimeString('en-US', options) + ' IST');
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
   }, []);
 
-  // GSAP Entrance Reveal Animations
-  useGSAP(() => {
-    if (!footerRef.current || reducedMotion) return;
-
-    const elements = footerRef.current.querySelectorAll(`.${styles.revealItem}`);
-
-    gsap.fromTo(
-      elements,
-      { opacity: 0, y: 30 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: 'top 85%',
-          toggleActions: 'play none none none',
-        },
-      }
-    );
-  }, { scope: footerRef, dependencies: [reducedMotion] });
-
-  // Quick Copy Email Action
-  const handleCopyEmail = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const email = 'soumyaranjanjana810@gmail.com';
+  // Quick Copy Email
+  const handleCopyEmail = async () => {
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(email);
@@ -163,105 +102,211 @@ export function Footer() {
         document.body.removeChild(textarea);
       }
       setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
+      setTimeout(() => setCopied(false), 2600);
     } catch {
       setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
+      setTimeout(() => setCopied(false), 2600);
     }
   };
 
+  // Back to top scroll handler
+  const handleBackToTop = () => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // GSAP Entrance Reveal Animations
+  useGSAP(() => {
+    if (!footerRef.current || reducedMotion) return;
+
+    const revealItems = footerRef.current.querySelectorAll(`.${styles.reveal}`);
+
+    gsap.fromTo(
+      revealItems,
+      { opacity: 0, y: 32 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.85,
+        stagger: 0.08,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        },
+      }
+    );
+  }, { scope: footerRef, dependencies: [reducedMotion] });
+
   return (
-    <footer
-      ref={footerRef}
-      className={styles.footer}
-      role="contentinfo"
-      id="footer"
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <div className={styles.inner}>
-        
-        {/* Massive Stacked Hero Title ("Get In Touch") */}
-        <div ref={heroRef} className={`${styles.heroSection} ${styles.revealItem}`}>
-          <div className={styles.textLine}>
-            <span className={styles.heroText}>Get In</span>
+    <footer ref={footerRef} className={styles.footer} role="contentinfo" id="footer">
+      <div className={styles.container}>
+        {/* Double-Bezel Architectural Enclosure */}
+        <div ref={cardRef} className={styles.bezelCard}>
+          {/* Subtle Ambient Radial Highlight */}
+          <div className={styles.ambientGlow} aria-hidden="true" />
+
+          {/* Top Eyebrow / Availability Row */}
+          <div className={`${styles.topRow} ${styles.reveal}`}>
+            <div className={styles.statusPill}>
+              <span className={styles.pulseDot} aria-hidden="true" />
+              <span className={styles.statusText}>AVAILABLE FOR AMBITIOUS BUILDS · 2026</span>
+            </div>
+            <div className={styles.locationTag}>
+              <span className={styles.coordDot} aria-hidden="true" />
+              <span>BHUBANESWAR, IN · 20.2488° N, 85.8007° E</span>
+            </div>
           </div>
-          <div className={styles.textLine}>
-            <span className={styles.heroText}>Touch</span>
-          </div>
 
-          {/* Floating Cursor-Following Email Pill Badge */}
-          <div className={`${styles.pillWrapper} ${isHovered ? styles.pillTracking : ''}`}>
-            <button
-              ref={pillRef}
-              type="button"
-              className={styles.contactPill}
-              onClick={handleCopyEmail}
-              aria-label="Copy email address soumyaranjanjana810@gmail.com"
-              title="Click to copy email address"
-            >
-              {/* Pointer Arrow Cursor attached at bottom-left */}
-              <div className={styles.pointerArrowWrap} aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M3 3L10.07 19.97L13.58 12.58L20.97 9.07L3 3Z"
-                    fill="#171717"
-                    stroke="#FFFFFF"
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
+          {/* Hero Section: Editorial Headline & Action Capsule */}
+          <div className={`${styles.heroSection} ${styles.reveal}`}>
+            <div className={styles.headlineCol}>
+              <h2 className={styles.headline}>
+                LET’S BUILD SOMETHING <br />
+                <span className={styles.accentText}>EXTRAORDINARY.</span>
+              </h2>
+              <p className={styles.subheadline}>
+                Bridging hardware microcontrollers, high-performance Java/DSA systems,
+                and agentic AI applications with zero lag.
+              </p>
+            </div>
 
-              {/* Avatar Image from ScratchCard */}
-              <div className={styles.avatarWrapper}>
-                <Image
-                  src="/profile1.png"
-                  alt="Soumya (Asher)"
-                  width={32}
-                  height={32}
-                  className={styles.avatarImg}
-                />
-              </div>
+            {/* Transmission / Direct Contact Card */}
+            <div className={styles.actionCol}>
+              <div className={styles.avatarCard}>
+                <div className={styles.avatarGroup}>
+                  <div className={styles.avatarWrap}>
+                    <Image
+                      src="/profile1.png"
+                      alt="Zenith Soumya"
+                      width={48}
+                      height={48}
+                      className={styles.avatarImg}
+                    />
+                    <span className={styles.onlineBadge} title="Active System" />
+                  </div>
+                  <div className={styles.avatarInfo}>
+                    <span className={styles.avatarName}>Zenith Soumya</span>
+                    <span className={styles.avatarRole}>IoT & AI Systems Architect</span>
+                  </div>
+                </div>
 
-              {/* Email Text & Status */}
-              <span className={styles.emailText}>
-                {copied ? 'copied ✓' : 'soumyaranjanjana810@gmail.com'}
-              </span>
-            </button>
-          </div>
-        </div>
+                <div className={styles.emailActionWrap}>
+                  <button
+                    type="button"
+                    className={`${styles.copyButton} ${copied ? styles.copySuccess : ''}`}
+                    onClick={handleCopyEmail}
+                    aria-label="Copy email address"
+                  >
+                    <span className={styles.emailAddress}>{email}</span>
+                    <span className={styles.copyIconBadge}>
+                      {copied ? (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      ) : (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                        </svg>
+                      )}
+                    </span>
+                    <span className={styles.feedbackTooltip}>
+                      {copied ? 'Copied to Clipboard!' : 'Click to Copy'}
+                    </span>
+                  </button>
 
-        {/* Separator Divider Line */}
-        <div className={`${styles.divider} ${styles.revealItem}`} aria-hidden="true" />
-
-        {/* 4-Column Sub-Footer Metadata Grid */}
-        <div className={`${styles.subFooterGrid} ${styles.revealItem}`}>
-          {SUB_FOOTER_GRID.map((col, idx) => (
-            <div key={idx} className={styles.gridCol}>
-              <span className={styles.colLabel}>{col.label}</span>
-              <div className={styles.colItems}>
-                {col.items.map((item, itemIdx) => (
-                  <span key={itemIdx} className={styles.itemSpan}>
-                    <a
-                      href={item.href}
-                      target={item.href.startsWith('http') ? '_blank' : '_self'}
-                      rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      className={styles.itemLink}
-                    >
-                      {item.text}
-                    </a>
-                    {itemIdx < col.items.length - 1 && (
-                      <span className={styles.pipeSeparator}>|</span>
-                    )}
-                  </span>
-                ))}
+                  <a
+                    href={`mailto:${email}`}
+                    className={styles.directMailLink}
+                    aria-label="Send direct email"
+                  >
+                    <span>Send Direct Email</span>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7" />
+                      <polyline points="7 7 17 7 17 17" />
+                    </svg>
+                  </a>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
 
+          {/* Architectural Divider */}
+          <div className={`${styles.divider} ${styles.reveal}`} aria-hidden="true" />
+
+          {/* 4-Column Navigation Matrix */}
+          <div className={`${styles.columnsGrid} ${styles.reveal}`}>
+            {FOOTER_COLUMNS.map((col, idx) => (
+              <div key={idx} className={styles.navColumn}>
+                <span className={styles.columnHeading}>{col.title}</span>
+                <ul className={styles.linksList}>
+                  {col.links.map((link, linkIdx) => (
+                    <li key={linkIdx} className={styles.linkItem}>
+                      {link.isExternal ? (
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.navLink}
+                        >
+                          <span>{link.label}</span>
+                          <svg className={styles.externalArrow} width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <line x1="7" y1="17" x2="17" y2="7" />
+                            <polyline points="7 7 17 7 17 17" />
+                          </svg>
+                          {link.badge && <span className={styles.linkBadge}>{link.badge}</span>}
+                        </a>
+                      ) : (
+                        <Link href={link.href} className={styles.navLink}>
+                          <span>{link.label}</span>
+                          {link.badge && <span className={styles.linkBadge}>{link.badge}</span>}
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Telemetry / Bottom Bar */}
+          <div className={`${styles.bottomBar} ${styles.reveal}`}>
+            <div className={styles.colophonLeft}>
+              <span className={styles.clockPill}>
+                <span className={styles.clockIcon} aria-hidden="true">⏱</span>
+                <span>{istTime || '20:30:00 IST'}</span>
+              </span>
+              <span className={styles.uptimeBadge}>
+                <span className={styles.greenDot} aria-hidden="true" />
+                <span>99.98% OPERATIONAL</span>
+              </span>
+            </div>
+
+            <div className={styles.colophonCenter}>
+              <span className={styles.copyrightText}>
+                © 2026 ZENITH SOUMYA · ARCHITECTED WITH PRECISION
+              </span>
+            </div>
+
+            <div className={styles.colophonRight}>
+              <button
+                type="button"
+                className={styles.backTopBtn}
+                onClick={handleBackToTop}
+                aria-label="Back to top of page"
+              >
+                <span>BACK TO TOP</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="19" x2="12" y2="5" />
+                  <polyline points="5 12 12 5 19 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </footer>
   );
