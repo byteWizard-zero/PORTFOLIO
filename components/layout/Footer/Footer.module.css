@@ -11,14 +11,18 @@
 }
 
 .container {
-  max-width: var(--canvas-max-width);
+  max-width: calc(var(--canvas-max-width) + 2cm);
   margin: 0 auto;
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .blackBlock {
   position: relative;
-  width: 100%;
+  width: calc(100% + 2cm);
+  margin-left: -1cm;
+  margin-right: -1cm;
   height: clamp(450px, 60vh, 750px);
   border-radius: clamp(24px, 3.5vw, 44px);
   background: #000000;
@@ -32,6 +36,9 @@
   }
 
   .blackBlock {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
     height: 380px;
     border-radius: 20px;
   }
