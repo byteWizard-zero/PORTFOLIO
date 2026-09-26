@@ -23,7 +23,7 @@
   width: calc(100% + 2cm);
   margin-left: -1cm;
   margin-right: -1cm;
-  height: clamp(450px, 60vh, 750px);
+  height: clamp(540px, 70vh, 840px);
   border-radius: clamp(24px, 3.5vw, 44px);
   background: #000000;
   overflow: hidden;
@@ -39,7 +39,7 @@
     width: 100%;
     margin-left: 0;
     margin-right: 0;
-    height: 380px;
+    height: 440px;
     border-radius: 20px;
   }
 }
