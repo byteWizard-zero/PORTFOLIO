@@ -30,12 +30,13 @@ export function LenisProvider({ children }: LenisProviderProps) {
       : false;
 
     const lenis = new Lenis({
-      lerp: 0.09,
+      duration: 1.3,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // easeOutExpo
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: !prefersReduced,
       wheelMultiplier: 1.0,
-      touchMultiplier: 1.8,
+      touchMultiplier: 1.6,
       syncTouch: false,
     });
 

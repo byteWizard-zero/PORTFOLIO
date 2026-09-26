@@ -350,9 +350,9 @@ export function CustomCursor() {
         });
       } else {
         gsap.to(cursor, {
-          scale: 2,
+          scale: 2.2,
           transformOrigin: '50% 50%',
-          duration: 0.3,
+          duration: 0.35,
           ease: 'power2.out',
         });
       }
@@ -513,7 +513,7 @@ export function CustomCursor() {
     window.addEventListener('footer-hover-enter', handleFooterEnter);
     window.addEventListener('footer-hover-leave', handleFooterLeave);
 
-    const INTERACTIVE_SELECTOR = 'a, button, [role="button"], input, textarea, select';
+    const INTERACTIVE_SELECTOR = 'a, button, [role="button"], input, textarea, select, [data-cursor-hover], [data-cursor], .clickable, [tabindex="0"]';
 
     const handleInteractiveEnter = (e: PointerEvent) => {
       const target = e.target;
