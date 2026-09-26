@@ -7,12 +7,11 @@
   position: relative;
   background-color: transparent;
   z-index: var(--z-above);
-  height: 100vh;
-  min-height: 100vh;
+  min-height: 140vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 80px var(--spacing-nav-side);
+  padding: clamp(140px, 20vh, 240px) var(--spacing-nav-side);
   overflow: visible;
   box-sizing: border-box;
 }
@@ -36,8 +35,8 @@
 
 .revealText {
   font-family: var(--font-primary);
-  font-size: clamp(1.15rem, 2.3vw, 2.15rem);
-  line-height: 1.4;
+  font-size: clamp(1.2rem, 2.5vw, 2.3rem);
+  line-height: 1.45;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--color-primary-text);
@@ -50,8 +49,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(600px, 90vw);
-  height: min(600px, 90vw);
+  width: min(700px, 90vw);
+  height: min(700px, 90vw);
   background: radial-gradient(circle, rgba(168, 85, 247, 0.05) 0%, transparent 70%);
   pointer-events: none;
   z-index: 1;
@@ -59,12 +58,12 @@
 
 @media (max-width: 768px) {
   .section {
-    padding: 60px 5%;
-    min-height: 100vh;
+    padding: clamp(100px, 15vh, 160px) 5%;
+    min-height: 120vh;
   }
 
   .revealText {
-    font-size: clamp(1.0rem, 4.2vw, 1.35rem);
-    line-height: 1.45;
+    font-size: clamp(1.05rem, 4.4vw, 1.45rem);
+    line-height: 1.5;
   }
 }

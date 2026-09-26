@@ -11,8 +11,6 @@ interface ScrollRevealProps {
   scrollContainerRef?: RefObject<HTMLElement | null>;
   triggerRef?: RefObject<HTMLElement | null>;
   wrapperRef?: RefObject<HTMLElement | null>;
-  pin?: boolean;
-  pinSpacing?: boolean;
   scrollMultiplier?: number;
   enableBlur?: boolean;
   baseOpacity?: number;
@@ -20,11 +18,8 @@ interface ScrollRevealProps {
   blurStrength?: number;
   containerClassName?: string;
   textClassName?: string;
-  rotationEnd?: string;
-  wordAnimationEnd?: string;
-  start?: string;
-  end?: string;
-  scrub?: boolean | number;
+  lineAnimationStart?: string;
+  lineAnimationEnd?: string;
 }
 
 const ScrollReveal: React.FC<ScrollRevealProps> = ({
@@ -32,20 +27,15 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
   scrollContainerRef,
   triggerRef,
   wrapperRef,
-  pin = false,
-  pinSpacing = true,
   scrollMultiplier = 1.0,
   enableBlur = true,
-  baseOpacity = 0.3,
+  baseOpacity = 0.25,
   baseRotation = 8,
   blurStrength = 10,
   containerClassName = '',
   textClassName = '',
-  rotationEnd = 'bottom bottom',
-  wordAnimationEnd = 'bottom bottom',
-  start,
-  end,
-  scrub = 0.8
+  lineAnimationStart = 'top 88%',
+  lineAnimationEnd = 'top 45%',
 }) => {
   const containerRef = useRef<HTMLHeadingElement>(null);
 
@@ -163,7 +153,8 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
     if (!el) return;
 
     const textWrapper = el.querySelector<HTMLElement>('.scroll-reveal-text') || el;
-    const wordElements = el.querySelectorAll<HTMLElement>('.word');
+    const allWords = el.querySelectorAll<HTMLElement>('.word');
+    const lines = el.querySelectorAll<HTMLElement>('.reveal-line:not(.glitch-line)');
     const typewriterChars = el.querySelectorAll<HTMLElement>('.typewriter-char');
     const cursor = el.querySelector<HTMLElement>('.terminal-cursor');
     const glitchLine = el.querySelector<HTMLElement>('.glitch-line');
@@ -184,7 +175,7 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
         trigger: dampTarget,
         scroller,
         start: 'top 85%',
-        end: 'bottom top',
+        end: 'bottom 15%',
         onEnter: () => setLenisMultiplier(scrollMultiplier),
         onLeave: () => setLenisMultiplier(1.0),
         onEnterBack: () => setLenisMultiplier(scrollMultiplier),
@@ -197,102 +188,37 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
     // Reduced motion accessibility fallback
     mm.add('(prefers-reduced-motion: reduce)', () => {
       gsap.set(textWrapper, { rotate: 0 });
-      gsap.set(wordElements, { opacity: 1, filter: 'none' });
+      gsap.set(allWords, { opacity: 1, filter: 'none' });
       if (typewriterChars.length > 0) gsap.set(typewriterChars, { opacity: 1 });
       if (cursor) gsap.set(cursor, { opacity: 1 });
     });
 
-    // High fidelity animation sequence
+    // High fidelity animation sequence: line-by-line reveal as lines scroll up
     mm.add('(prefers-reduced-motion: no-preference)', () => {
-      if (pin) {
-        // Coordinated master timeline for pinned section
-        const tl = gsap.timeline({
+      // 1. Container rotation: smoothly straightens from baseRotation to 0 deg as it enters
+      gsap.fromTo(
+        textWrapper,
+        { transformOrigin: '0% 50%', rotate: baseRotation },
+        {
+          ease: 'none',
+          rotate: 0,
           scrollTrigger: {
-            trigger,
+            trigger: el,
             scroller,
-            start: start || 'top top',
-            end: end || '+=160%',
-            pin: true,
-            pinSpacing: pinSpacing !== false,
-            anticipatePin: 1,
-            scrub: typeof scrub === 'number' ? scrub : 0.8,
-            onLeave: () => {
-              gsap.set(wordElements, { filter: 'none', willChange: 'auto' });
-            },
-            onLeaveBack: () => {
-              if (enableBlur) {
-                gsap.set(wordElements, { filter: `blur(${blurStrength}px)` });
-              }
-            }
+            start: 'top 90%',
+            end: 'top 30%',
+            scrub: true
           }
-        });
-
-        // 1. Rotation: settles from baseRotation to 0 deg
-        tl.fromTo(
-          textWrapper,
-          { transformOrigin: '0% 50%', rotate: baseRotation },
-          { ease: 'none', rotate: 0, duration: 0.6 },
-          0
-        );
-
-        // 2. Word reveal: un-blur and fade from baseOpacity
-        tl.fromTo(
-          wordElements,
-          {
-            opacity: baseOpacity,
-            filter: enableBlur ? `blur(${blurStrength}px)` : 'none',
-            willChange: 'opacity, filter'
-          },
-          {
-            ease: 'none',
-            opacity: 1,
-            filter: 'blur(0px)',
-            stagger: {
-              each: 0.02,
-              ease: 'none'
-            },
-            duration: 0.8
-          },
-          0
-        );
-
-        // 3. Glitch line typewriter reveal towards end of scrub
-        if (typewriterChars.length > 0) {
-          gsap.set(typewriterChars, { opacity: 0 });
-          if (cursor) gsap.set(cursor, { opacity: 0 });
-
-          tl.set(cursor, { opacity: 1 }, 0.65)
-            .to(
-              typewriterChars,
-              {
-                opacity: 1,
-                duration: 0.25,
-                stagger: 0.015,
-                ease: 'none'
-              },
-              0.7
-            );
         }
-      } else {
-        // Standard unpinned mode
-        gsap.fromTo(
-          textWrapper,
-          { transformOrigin: '0% 50%', rotate: baseRotation },
-          {
-            ease: 'none',
-            rotate: 0,
-            scrollTrigger: {
-              trigger: el,
-              scroller,
-              start: start || 'top bottom',
-              end: rotationEnd || 'bottom bottom',
-              scrub: true
-            }
-          }
-        );
+      );
+
+      // 2. Line-by-line reveal: each line un-blurs and brightens as it rises up into view
+      lines.forEach((lineEl) => {
+        const wordsInLine = lineEl.querySelectorAll<HTMLElement>('.word');
+        if (wordsInLine.length === 0) return;
 
         gsap.fromTo(
-          wordElements,
+          wordsInLine,
           {
             opacity: baseOpacity,
             filter: enableBlur ? `blur(${blurStrength}px)` : 'none',
@@ -302,40 +228,46 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
             ease: 'none',
             opacity: 1,
             filter: 'blur(0px)',
-            stagger: 0.05,
+            stagger: 0.02,
             scrollTrigger: {
-              trigger: el,
+              trigger: lineEl,
               scroller,
-              start: start || 'top bottom-=20%',
-              end: wordAnimationEnd || 'bottom bottom',
+              start: lineAnimationStart,
+              end: lineAnimationEnd,
               scrub: true,
               onLeave: () => {
-                gsap.set(wordElements, { filter: 'none', willChange: 'auto' });
+                gsap.set(wordsInLine, { filter: 'none', willChange: 'auto' });
+              },
+              onLeaveBack: () => {
+                if (enableBlur) {
+                  gsap.set(wordsInLine, { filter: `blur(${blurStrength}px)` });
+                }
               }
             }
           }
         );
+      });
 
-        if (typewriterChars.length > 0 && glitchLine) {
-          gsap.set(typewriterChars, { opacity: 0 });
-          if (cursor) gsap.set(cursor, { opacity: 0 });
+      // 3. Glitch terminal line: typewrites character-by-character as it scrolls into view
+      if (typewriterChars.length > 0 && glitchLine) {
+        gsap.set(typewriterChars, { opacity: 0 });
+        if (cursor) gsap.set(cursor, { opacity: 0 });
 
-          gsap.timeline({
-            scrollTrigger: {
-              trigger: glitchLine,
-              scroller,
-              start: 'top bottom-=10%',
-              toggleActions: 'play none none none'
-            }
-          })
-          .set(cursor, { opacity: 1 })
-          .to(typewriterChars, {
-            opacity: 1,
-            duration: 0.01,
-            stagger: 0.035,
-            ease: 'none'
-          });
-        }
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: glitchLine,
+            scroller,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse'
+          }
+        })
+        .set(cursor, { opacity: 1 })
+        .to(typewriterChars, {
+          opacity: 1,
+          duration: 0.01,
+          stagger: 0.03,
+          ease: 'none'
+        });
       }
     });
 
@@ -348,18 +280,13 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       scrollContainerRef,
       triggerRef,
       wrapperRef,
-      pin,
-      pinSpacing,
       scrollMultiplier,
       enableBlur,
       baseRotation,
       baseOpacity,
-      rotationEnd,
-      wordAnimationEnd,
       blurStrength,
-      start,
-      end,
-      scrub
+      lineAnimationStart,
+      lineAnimationEnd
     ]
   });
 

@@ -36,18 +36,15 @@ export function QuoteReveal() {
           <ScrollReveal
             triggerRef={sectionRef}
             wrapperRef={wrapperRef}
-            pin={true}
-            pinSpacing={true}
             scrollMultiplier={0.45}
             enableBlur={true}
             blurStrength={10}
             baseRotation={isMobile ? 3 : 8}
-            baseOpacity={0.3}
-            start="top top"
-            end="+=160%"
-            scrub={0.8}
+            baseOpacity={0.25}
             containerClassName={styles.revealContainer}
             textClassName={styles.revealText}
+            lineAnimationStart="top 88%"
+            lineAnimationEnd="top 45%"
           >
             {QUOTE_LINES.join('\n\n')}
           </ScrollReveal>
