@@ -30,7 +30,7 @@ const HANDLE_ITEMS: MenuItem[] = [
   },
   {
     image: '/whatsapp.jpg',
-    link: 'https://wa.me/?text=Hi%20Zenith%2C%20I%20came%20across%20your%20portfolio!',
+    link: 'https://wa.me/917854041120?text=Hi%20Zenith%2C%20I%20came%20across%20your%20portfolio!',
     title: 'WhatsApp',
     description: 'Direct communications, rapid inquiries & high-priority collabs.',
     platform: 'whatsapp',
