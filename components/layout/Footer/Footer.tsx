@@ -9,31 +9,43 @@ const InfiniteMenu = dynamic(
   { ssr: false }
 );
 
-const DEMO_ITEMS: MenuItem[] = [
+const HANDLE_ITEMS: MenuItem[] = [
   {
-    image: 'https://images.unsplash.com/photo-1782977389500-dd7adad33ebe?q=80&w=600&h=600&fit=crop&sat=-100&auto=format',
-    link: 'https://google.com/',
-    title: 'Item 1',
-    description: 'This is pretty cool, right?'
+    image: '/github.jpg',
+    link: 'https://github.com/byteWizard-zero',
+    title: 'GitHub',
+    description: 'Open-source repositories, system architecture & full-stack experiments.',
+    platform: 'github',
+    buttonColor: '#24292e',
+    buttonTextColor: '#ffffff',
   },
   {
-    image: 'https://images.unsplash.com/photo-1781499455083-6ccc3beb20cd?q=80&w=600&h=600&fit=crop&sat=-100&auto=format',
-    link: 'https://google.com/',
-    title: 'Item 2',
-    description: 'This is pretty cool, right?'
+    image: '/instagram.jpg',
+    link: 'https://www.instagram.com/zenith.soumya',
+    title: 'Instagram',
+    description: 'Visual design, engineering life & behind-the-scenes moments.',
+    platform: 'instagram',
+    buttonColor: '#E1306C',
+    buttonTextColor: '#ffffff',
   },
   {
-    image: 'https://images.unsplash.com/photo-1776394254711-4a0d7345269a?q=80&w=600&h=600&fit=crop&sat=-100&auto=format',
-    link: 'https://google.com/',
-    title: 'Item 3',
-    description: 'This is pretty cool, right?'
+    image: '/whatsapp.jpg',
+    link: 'https://wa.me/?text=Hi%20Zenith%2C%20I%20came%20across%20your%20portfolio!',
+    title: 'WhatsApp',
+    description: 'Direct communications, rapid inquiries & high-priority collabs.',
+    platform: 'whatsapp',
+    buttonColor: '#25D366',
+    buttonTextColor: '#ffffff',
   },
   {
-    image: 'https://images.unsplash.com/photo-1781242629922-6f39cc3671cd?q=80&w=600&h=600&fit=crop&sat=-100&auto=format',
-    link: 'https://google.com/',
-    title: 'Item 4',
-    description: 'This is pretty cool, right?'
-  }
+    image: '/profile1.png',
+    link: 'https://leetcode.com/u/zenithsoumya',
+    title: 'LeetCode',
+    description: 'Algorithms, Data Structures & high-performance problem solving.',
+    platform: 'leetcode',
+    buttonColor: '#FFA116',
+    buttonTextColor: '#1a1a1a',
+  },
 ];
 
 export function Footer() {
@@ -41,7 +53,7 @@ export function Footer() {
     <footer className={styles.footer} role="contentinfo" id="footer" aria-label="Footer">
       <div className={styles.container}>
         <div className={styles.blackBlock}>
-          <InfiniteMenu items={DEMO_ITEMS} scale={1} backgroundColor="#000000" />
+          <InfiniteMenu items={HANDLE_ITEMS} scale={1} backgroundColor="#000000" />
         </div>
       </div>
     </footer>
