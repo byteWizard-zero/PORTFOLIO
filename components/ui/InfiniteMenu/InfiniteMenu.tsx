@@ -582,6 +582,7 @@ export interface MenuItem {
   platform?: 'github' | 'instagram' | 'whatsapp' | 'leetcode' | string;
   buttonColor?: string;
   buttonTextColor?: string;
+  imageScale?: number;
 }
 
 type ActiveItemCallback = (index: number) => void;
@@ -859,9 +860,25 @@ class InfiniteGridMenu {
     ).then(images => {
       if (this.isDestroyed || !this.gl || !this.tex) return;
       images.forEach((img, i) => {
+        const item = this.items[i];
+        const zoom = item.imageScale || 1.0;
         const x = (i % this.atlasSize) * cellSize;
         const y = Math.floor(i / this.atlasSize) * cellSize;
-        ctx.drawImage(img, x, y, cellSize, cellSize);
+
+        if (zoom === 1.0) {
+          ctx.drawImage(img, x, y, cellSize, cellSize);
+        } else {
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(x, y, cellSize, cellSize);
+          ctx.clip();
+          const drawW = cellSize * zoom;
+          const drawH = cellSize * zoom;
+          const drawX = x + (cellSize - drawW) / 2;
+          const drawY = y + (cellSize - drawH) / 2;
+          ctx.drawImage(img, drawX, drawY, drawW, drawH);
+          ctx.restore();
+        }
       });
 
       gl.bindTexture(gl.TEXTURE_2D, this.tex);
@@ -1112,12 +1129,14 @@ export interface InfiniteMenuProps {
   items?: MenuItem[];
   scale?: number;
   backgroundColor?: string;
+  showTitle?: boolean;
 }
 
 export const InfiniteMenu: FC<InfiniteMenuProps> = ({
   items = [],
   scale = 1.0,
-  backgroundColor = '#000000'
+  backgroundColor = '#000000',
+  showTitle = false
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -1202,9 +1221,11 @@ export const InfiniteMenu: FC<InfiniteMenuProps> = ({
 
       {activeItem && (
         <>
-          <h2 className={`${styles.faceTitle} ${isMoving ? styles.inactive : styles.active}`}>
-            {activeItem.title}
-          </h2>
+          {showTitle && (
+            <h2 className={`${styles.faceTitle} ${isMoving ? styles.inactive : styles.active}`}>
+              {activeItem.title}
+            </h2>
+          )}
 
           <p className={`${styles.faceDescription} ${isMoving ? styles.inactive : styles.active}`}>
             {activeItem.description}
