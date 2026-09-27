@@ -38,7 +38,7 @@ const HANDLE_ITEMS: MenuItem[] = [
     buttonTextColor: '#ffffff',
   },
   {
-    image: '/profile1.png',
+    image: '/leetcode.png',
     link: 'https://leetcode.com/u/zenithsoumya',
     title: 'LeetCode',
     description: 'Algorithms, Data Structures & high-performance problem solving.',

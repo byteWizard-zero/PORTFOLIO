@@ -865,20 +865,38 @@ class InfiniteGridMenu {
         const x = (i % this.atlasSize) * cellSize;
         const y = Math.floor(i / this.atlasSize) * cellSize;
 
+        // Preserve aspect ratio (cover mode) so faces are never squeezed
+        const naturalW = img.naturalWidth || img.width || cellSize;
+        const naturalH = img.naturalHeight || img.height || cellSize;
+        const imgAspect = naturalW / naturalH;
+        let sWidth = naturalW;
+        let sHeight = naturalH;
+        let sx = 0;
+        let sy = 0;
+
+        if (imgAspect > 1) {
+          sWidth = naturalH;
+          sx = (naturalW - sWidth) / 2;
+        } else if (imgAspect < 1) {
+          sHeight = naturalW;
+          sy = (naturalH - sHeight) * 0.22; // Bias slightly upward for face centering
+        }
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x, y, cellSize, cellSize);
+        ctx.clip();
+
         if (zoom === 1.0) {
-          ctx.drawImage(img, x, y, cellSize, cellSize);
+          ctx.drawImage(img, sx, sy, sWidth, sHeight, x, y, cellSize, cellSize);
         } else {
-          ctx.save();
-          ctx.beginPath();
-          ctx.rect(x, y, cellSize, cellSize);
-          ctx.clip();
           const drawW = cellSize * zoom;
           const drawH = cellSize * zoom;
           const drawX = x + (cellSize - drawW) / 2;
           const drawY = y + (cellSize - drawH) / 2;
-          ctx.drawImage(img, drawX, drawY, drawW, drawH);
-          ctx.restore();
+          ctx.drawImage(img, sx, sy, sWidth, sHeight, drawX, drawY, drawW, drawH);
         }
+        ctx.restore();
       });
 
       gl.bindTexture(gl.TEXTURE_2D, this.tex);
