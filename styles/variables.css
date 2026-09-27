@@ -9,6 +9,11 @@
     --color-grid-line: #E5E5E5;
     --color-text-muted: rgba(27, 32, 40, 0.5);
     --color-text-muted-strong: rgba(27, 32, 40, 0.8);
+    --color-footer-block: #000000;
+    --color-footer-block-text: rgba(255, 255, 255, 0.75);
+    --color-footer-block-title: #ffffff;
+    --color-footer-block-shadow: 0 4px 24px rgba(0, 0, 0, 0.9);
+    --color-footer-block-border: rgba(255, 255, 255, 0.08);
 
     --wf-teal: var(--color-accent-teal);
     --wf-red: #da3036;
@@ -74,4 +79,9 @@
     --paper: #1F1C17;
     --color-screen-bezel: #08090c;
     --color-screen-border: transparent;
+    --color-footer-block: #ffffff;
+    --color-footer-block-text: rgba(27, 32, 40, 0.82);
+    --color-footer-block-title: #1b2028;
+    --color-footer-block-shadow: none;
+    --color-footer-block-border: rgba(0, 0, 0, 0.08);
 }

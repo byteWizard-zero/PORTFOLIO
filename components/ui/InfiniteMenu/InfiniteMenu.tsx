@@ -1153,7 +1153,7 @@ export interface InfiniteMenuProps {
 export const InfiniteMenu: FC<InfiniteMenuProps> = ({
   items = [],
   scale = 1.0,
-  backgroundColor = '#000000',
+  backgroundColor,
   showTitle = false
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -1232,7 +1232,7 @@ export const InfiniteMenu: FC<InfiniteMenuProps> = ({
       ref={containerRef}
       className={styles.container}
       style={{
-        '--infinite-menu-background': backgroundColor
+        ...(backgroundColor ? { '--infinite-menu-background': backgroundColor } : {})
       } as CSSProperties}
     >
       <canvas className={styles.canvas} ref={canvasRef} />

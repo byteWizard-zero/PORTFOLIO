@@ -25,8 +25,19 @@
   margin-right: -1cm;
   height: clamp(540px, 70vh, 840px);
   border-radius: clamp(24px, 3.5vw, 44px);
-  background: #000000;
+  background: var(--color-footer-block, #000000);
+  border: 1px solid var(--color-footer-block-border, rgba(255, 255, 255, 0.08));
   overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+  transition: background-color var(--duration-slow) var(--ease-out-quart),
+              border-color var(--duration-slow) var(--ease-out-quart),
+              box-shadow var(--duration-slow) var(--ease-out-quart);
+}
+
+:global([data-theme="dark"]) .blackBlock {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
 }
 
 @media (max-width: 640px) {

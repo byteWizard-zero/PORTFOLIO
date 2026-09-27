@@ -53,7 +53,7 @@ export function Footer() {
     <footer className={styles.footer} role="contentinfo" id="footer" aria-label="Footer">
       <div className={styles.container}>
         <div className={styles.blackBlock}>
-          <InfiniteMenu items={HANDLE_ITEMS} scale={1} backgroundColor="#000000" />
+          <InfiniteMenu items={HANDLE_ITEMS} scale={1} />
         </div>
       </div>
     </footer>
