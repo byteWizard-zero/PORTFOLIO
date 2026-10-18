@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useSyncExternalStore } from 'react';
 import { content } from '@/data';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 import { MetaLabel } from '@/components/ui/MetaLabel';
@@ -9,15 +9,13 @@ import { useEclipseDriver } from './useEclipseDriver';
 import { renderCopy } from './renderCopy';
 import styles from './Eclipse.module.css';
 
+const emptySubscribe = () => () => {};
+
 export function EclipseWorkflow() {
   const { label, stops } = content.workflow;
   const reducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   const accents = stops.map((s, i) => workflowAccent(s.accent, i, stops.length));
 
