@@ -1,31 +1,10 @@
 .overlay {
-  display: none;
+  display: none !important;
 }
 
 @media (max-width: 1024px), (max-height: 500px) and (max-width: 1180px) {
-  :global(html),
-  :global(body) {
-    overflow: hidden !important;
-    height: 100vh !important;
-    width: 100vw !important;
-    position: fixed !important;
-  }
-
   .overlay {
-    display: flex !important;
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: var(--color-background, #0b0d0e);
-    color: var(--color-primary-text, #f4f0e8);
-    z-index: 999999999;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 32px 28px;
-    box-sizing: border-box;
-    font-family: var(--font-sans, "PP Neue Montreal", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
-    overflow: hidden;
+    display: none !important;
   }
 
   /* Header */
