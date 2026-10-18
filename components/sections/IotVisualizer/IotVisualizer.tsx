@@ -166,7 +166,9 @@ export function IotVisualizer() {
   };
 
   const stateRef = useRef({ temperature, voltage, resetting });
-  stateRef.current = { temperature, voltage, resetting };
+  useEffect(() => {
+    stateRef.current = { temperature, voltage, resetting };
+  }, [temperature, voltage, resetting]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
