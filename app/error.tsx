@@ -38,7 +38,7 @@ export default function ErrorBoundary({
           marginBottom: '1rem',
         }}
       >
-        // SYSTEM RUNTIME EXCEPTION
+        {'// SYSTEM RUNTIME EXCEPTION'}
       </span>
       <h1
         style={{
