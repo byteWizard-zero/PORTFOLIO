@@ -24,6 +24,8 @@
     align-items: center;
     gap: 6px;
     height: 25px;
+    min-height: 44px;
+    min-width: 44px;
     cursor: pointer;
     background: none;
     border: none;

@@ -405,6 +405,17 @@
 
     .link {
         gap: 0;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        padding: 4px 0;
+    }
+
+    .linkText,
+    .linkFill {
+        font-size: clamp(30px, 9vw, 44px);
+        letter-spacing: -0.02em;
+        line-height: 1.05;
     }
 
     .socialSection {
