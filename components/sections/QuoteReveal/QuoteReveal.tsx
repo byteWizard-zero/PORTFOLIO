@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef, useSyncExternalStore } from 'react';
 import ScrollReveal from '@/components/ui/ScrollReveal/ScrollReveal';
 import styles from './QuoteReveal.module.css';
 
@@ -14,19 +14,25 @@ const QUOTE_LINES = [
   "//NO ERRORS LOGGED. ▒▒░░█[0x44]DΔMAGE DETECTED..."
 ];
 
+const MOBILE_QUERY = '(max-width: 1024px)';
+
+function subscribe(onChange: () => void) {
+  if (typeof window === 'undefined' || !window.matchMedia) return () => {};
+  const mql = window.matchMedia(MOBILE_QUERY);
+  mql.addEventListener('change', onChange);
+  return () => mql.removeEventListener('change', onChange);
+}
+
+const getSnapshot = () =>
+  typeof window !== 'undefined' && !!window.matchMedia &&
+  window.matchMedia(MOBILE_QUERY).matches;
+
+const getServerSnapshot = () => false;
+
 export function QuoteReveal() {
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   return (
     <div ref={wrapperRef} className={styles.quoteWrapper}>
@@ -37,7 +43,7 @@ export function QuoteReveal() {
             triggerRef={sectionRef}
             wrapperRef={wrapperRef}
             scrollMultiplier={0.45}
-            enableBlur={true}
+            enableBlur={!isMobile}
             blurStrength={10}
             baseRotation={isMobile ? 3 : 8}
             baseOpacity={0.25}

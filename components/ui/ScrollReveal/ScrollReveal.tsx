@@ -217,35 +217,39 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
         const wordsInLine = lineEl.querySelectorAll<HTMLElement>('.word');
         if (wordsInLine.length === 0) return;
 
-        gsap.fromTo(
-          wordsInLine,
-          {
-            opacity: baseOpacity,
-            filter: enableBlur ? `blur(${blurStrength}px)` : 'none',
-            willChange: 'opacity, filter'
-          },
-          {
-            ease: 'none',
-            opacity: 1,
-            filter: 'blur(0px)',
-            stagger: 0.02,
-            scrollTrigger: {
-              trigger: lineEl,
-              scroller,
-              start: lineAnimationStart,
-              end: lineAnimationEnd,
-              scrub: true,
-              onLeave: () => {
-                gsap.set(wordsInLine, { filter: 'none', willChange: 'auto' });
-              },
-              onLeaveBack: () => {
-                if (enableBlur) {
-                  gsap.set(wordsInLine, { filter: `blur(${blurStrength}px)` });
-                }
+        const fromVars: gsap.TweenVars = {
+          opacity: baseOpacity,
+          willChange: enableBlur ? 'opacity, filter' : 'opacity',
+        };
+        if (enableBlur) {
+          fromVars.filter = `blur(${blurStrength}px)`;
+        }
+
+        const toVars: gsap.TweenVars = {
+          ease: 'none',
+          opacity: 1,
+          stagger: 0.02,
+          scrollTrigger: {
+            trigger: lineEl,
+            scroller,
+            start: lineAnimationStart,
+            end: lineAnimationEnd,
+            scrub: true,
+            onLeave: () => {
+              gsap.set(wordsInLine, { filter: 'none', willChange: 'auto' });
+            },
+            onLeaveBack: () => {
+              if (enableBlur) {
+                gsap.set(wordsInLine, { filter: `blur(${blurStrength}px)` });
               }
-            }
-          }
-        );
+            },
+          },
+        };
+        if (enableBlur) {
+          toVars.filter = 'blur(0px)';
+        }
+
+        gsap.fromTo(wordsInLine, fromVars, toVars);
       });
 
       // 3. Glitch terminal line: typewrites character-by-character as it scrolls into view
