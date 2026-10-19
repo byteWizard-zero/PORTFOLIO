@@ -20,7 +20,7 @@
     will-change: opacity, transform;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .frameContainer {
         display: none;
         --frame-margin: 0px;

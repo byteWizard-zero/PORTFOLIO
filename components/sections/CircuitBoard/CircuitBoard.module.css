@@ -13,6 +13,12 @@
   min-height: 100vh;
 }
 
+@media (max-width: 1024px) {
+  .boardContainer {
+    background-attachment: scroll;
+  }
+}
+
 .header {
   margin-bottom: 40px;
 }

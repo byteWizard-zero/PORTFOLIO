@@ -755,3 +755,22 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .pulsePro,
+  .pulseGroq,
+  .pulseFlash {
+    animation: none;
+    filter: none;
+  }
+
+  .nodeLocked rect {
+    filter: none;
+  }
+
+  .packetFlow,
+  .packetFlowCode,
+  .packetFlowCreative,
+  .packetFlowDebug {
+    filter: none;
+  }
+}

@@ -71,6 +71,10 @@
 }
 
 @media (max-width: 1024px) {
+  .main {
+    background-attachment: scroll;
+  }
+
   .heroSection {
     padding: 80px 6% 40px 6%;
   }
@@ -85,10 +89,6 @@
 }
 
 @media (max-width: 768px) {
-  .main {
-    background-attachment: scroll;
-  }
-
   .heroSection {
     padding: 60px 5% 30px 5%;
   }
