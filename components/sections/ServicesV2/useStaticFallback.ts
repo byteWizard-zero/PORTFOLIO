@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from 'react';
 
-const STATIC_QUERY = '(pointer: coarse), (max-width: 767px)';
+const STATIC_QUERY = '(pointer: coarse), (max-width: 1024px)';
 
 function subscribe(onChange: () => void) {
   if (typeof window === 'undefined' || !window.matchMedia) return () => {};

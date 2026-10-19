@@ -24,7 +24,7 @@ const MOVE_DECAY = 0.85;
 const IDLE_TIMEOUT_MS = 150;
 const DPR_CAP_DESKTOP = 2;
 const DPR_CAP_MOBILE = 1.5;
-const MOBILE_BREAKPOINT = 768;
+const MOBILE_BREAKPOINT = 1024;
 const FAR = -100000;
 
 const OFFSCREEN = FAR / 2;
@@ -341,7 +341,10 @@ export function InteractiveBackground() {
     const onMouseOut = (ev: MouseEvent) => {
       if (!ev.relatedTarget) onLeave();
     };
+    let lastWidth = window.innerWidth;
     const onResize = () => {
+      if (window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
       resize();
       startTicker();
     };

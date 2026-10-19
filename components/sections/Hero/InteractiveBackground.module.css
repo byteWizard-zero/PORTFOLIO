@@ -23,6 +23,9 @@
 .staticGrid {
     position: absolute;
     inset: 0;
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
     background-color: var(--color-accent-purple);
     opacity: 0.22;
     transition: background-color 0.4s var(--ease-out-quart, ease-out);
