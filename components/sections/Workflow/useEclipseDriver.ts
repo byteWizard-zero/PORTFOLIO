@@ -224,14 +224,14 @@ export function useEclipseDriver(
         };
       }
 
-      const pinVh = typeof window !== 'undefined' && window.innerWidth <= 768 ? 1.5 : 7.5;
+      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 1024;
       const trigger = ScrollTrigger.create({
         trigger: section,
         start: 'top top',
-        end: () => '+=' + window.innerHeight * pinVh,
+        end: () => '+=' + window.innerHeight * (typeof window !== 'undefined' && window.innerWidth <= 1024 ? 1.5 : 7.5),
         pin: viewport,
         pinType: 'fixed',
-        scrub: 1,
+        scrub: isMobile ? true : 1,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => render(self.progress),

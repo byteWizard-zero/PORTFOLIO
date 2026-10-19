@@ -171,11 +171,14 @@ export function RevealText({ text, highlights }: RevealTextProps) {
       ? Math.min(ANIMATION_CONFIG.stagger.words, MAX_STAGGER_OFFSET / (normalCount - 1))
       : 0;
 
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 1024;
+    const scrubVal = isMobile ? true : 2.5;
+
     ScrollTrigger.create({
       trigger: containerRef.current,
       start: 'top 95%',
       end: 'top 35%',
-      scrub: 2.5,
+      scrub: scrubVal,
       onUpdate: (self) => {
         
         const progress = self.progress;
@@ -209,7 +212,7 @@ export function RevealText({ text, highlights }: RevealTextProps) {
       trigger: containerRef.current,
       start: 'top 50%',
       end: 'top 20%',
-      scrub: 2.5,
+      scrub: scrubVal,
       onUpdate: (self) => {
         const progress = self.progress;
         const totalHighlights = highlightWords.length;

@@ -175,6 +175,9 @@
 }
 
 @media (max-width: 1024px) {
+  .corona {
+    filter: none;
+  }
   .detailWrap {
     width: min(52ch, 60vw);
   }
