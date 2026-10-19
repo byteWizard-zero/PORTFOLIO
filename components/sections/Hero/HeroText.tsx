@@ -53,13 +53,20 @@ export function HeroText() {
     const container = taglineContainerRef.current;
     if (!container) return;
 
+    let lastWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
     const updateRect = () => {
       cachedRect.current = container.getBoundingClientRect();
     };
     updateRect();
     updateRectRef.current = updateRect;
 
-    window.addEventListener('resize', updateRect);
+    const onResize = () => {
+      if (typeof window !== 'undefined' && window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+      updateRect();
+    };
+
+    window.addEventListener('resize', onResize);
 
     const updateSpotlight = () => {
       if (!cachedRect.current) return;
@@ -83,7 +90,7 @@ export function HeroText() {
       if (taglineContainerRef.current) {
         taglineContainerRef.current.classList.remove(styles.spotlightActive);
       }
-      window.removeEventListener('resize', updateRect);
+      window.removeEventListener('resize', onResize);
 
       window.removeEventListener('scroll', updateRect);
       updateRectRef.current = null;
@@ -91,6 +98,9 @@ export function HeroText() {
   }, []); 
 
   const handleTaglineMouseEnter = useCallback(() => {
+    if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse), (max-width: 1024px)').matches) {
+      return;
+    }
     const container = taglineContainerRef.current;
     if (!container) return;
 

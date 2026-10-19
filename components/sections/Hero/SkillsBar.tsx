@@ -12,6 +12,7 @@ export function SkillsBar() {
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let lastWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
     const measureWidth = () => {
       const node = contentRef.current;
       if (!node) return;
@@ -25,8 +26,13 @@ export function SkillsBar() {
     };
 
     measureWidth();
-    window.addEventListener('resize', measureWidth);
-    return () => window.removeEventListener('resize', measureWidth);
+    const onResize = () => {
+      if (typeof window !== 'undefined' && window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+      measureWidth();
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   const renderSkillItem = (skill: string, index: number, keyPrefix: string = '') => (

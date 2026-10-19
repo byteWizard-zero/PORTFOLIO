@@ -170,11 +170,13 @@ export function Hero() {
     tl.to(navBrand, { opacity: 1, duration: 0.1, ease: 'power1.inOut' }, 0.71)
       .to([flyingM, flyingA], { opacity: 0, duration: 0.1, ease: 'power1.in' }, 0.71);
 
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 1024;
+
     ScrollTrigger.create({
       trigger: spacer,
       start: 'top top',
       end: () => `+=${window.innerHeight * SCROLL_RANGE_VH}`,
-      scrub: SCRUB_SMOOTHING,
+      scrub: isMobile ? true : SCRUB_SMOOTHING,
       animation: tl,
       invalidateOnRefresh: true,
       onLeave: () => {
