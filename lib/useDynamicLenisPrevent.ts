@@ -21,11 +21,18 @@ export function useDynamicLenisPrevent(ref: RefObject<HTMLElement | null>) {
     const observer = new MutationObserver(checkScroll);
     observer.observe(el, { childList: true, subtree: true, characterData: true });
 
-    window.addEventListener('resize', checkScroll);
+    let lastWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
+    const onResize = () => {
+      if (typeof window !== 'undefined' && window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+      checkScroll();
+    };
+
+    window.addEventListener('resize', onResize);
 
     return () => {
       observer.disconnect();
-      window.removeEventListener('resize', checkScroll);
+      window.removeEventListener('resize', onResize);
     };
   }, [ref]);
 }

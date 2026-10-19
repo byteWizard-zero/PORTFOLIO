@@ -220,6 +220,7 @@ export function Contact() {
   const MAILTO_MAX_LENGTH = 1800;
 
   useEffect(() => {
+    let lastWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
     const syncCanvasSize = () => {
       if (!canvasRef.current || !panelRef.current) return;
       const panel = panelRef.current;
@@ -240,8 +241,15 @@ export function Contact() {
     };
 
     syncCanvasSize();
-    window.addEventListener('resize', syncCanvasSize);
-    return () => window.removeEventListener('resize', syncCanvasSize);
+
+    const onResize = () => {
+      if (typeof window !== 'undefined' && window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+      syncCanvasSize();
+    };
+
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   const startAnimationLoop = () => {
@@ -404,7 +412,7 @@ export function Contact() {
     gsap.set(inputBorders, { scaleX: 0, transformOrigin: 'left center' });
     if (submit) gsap.set(submit, { opacity: 0, y: 20 });
 
-    if (reducedMotion || (typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches)) {
+    if (reducedMotion || (typeof window !== 'undefined' && window.matchMedia('(max-width: 1024px)').matches)) {
       gsap.set(chars, { opacity: 1 });
       gsap.set(revealItems, { opacity: 1, y: 0 });
       gsap.set(inputBorders, { scaleX: 1 });

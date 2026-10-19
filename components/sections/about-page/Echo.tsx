@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
-import { gsap } from "@/lib/gsap";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { TransitionLink, useTransition } from "@/components/transitions";
 import { useAccentColor } from "@/lib/AccentColorContext";
 import styles from "./Echo.module.css";
@@ -25,7 +25,6 @@ export function AboutPageHeroEcho() {
 
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const echoes = gsap.utils.toArray<HTMLElement>("[data-echo]", section);
         const cells = gsap.utils.toArray<HTMLElement>("[data-echo-cell]", section);
         const solidRow = section.querySelector<HTMLElement>(
           '[data-band="solid"]',
@@ -64,7 +63,7 @@ export function AboutPageHeroEcho() {
 
               onComplete: () => {
                 gsap.set(cells, { clearProps: "clipPath,transform" });
-                merge.scrollTrigger?.refresh();
+                ScrollTrigger.refresh();
               },
             },
             "-=0.65",
@@ -80,6 +79,20 @@ export function AboutPageHeroEcho() {
             },
             "-=0.8",
           );
+
+        return () => {
+          intro.kill();
+          gsap.set("[data-reveal]", { clearProps: "all" });
+          gsap.set("[data-solid]", { clearProps: "all" });
+          gsap.set(cells, { clearProps: "all" });
+        };
+      });
+
+      mm.add("(prefers-reduced-motion: no-preference) and (min-width: 1025px)", () => {
+        const echoes = gsap.utils.toArray<HTMLElement>("[data-echo]", section);
+        const solidRow = section.querySelector<HTMLElement>(
+          '[data-band="solid"]',
+        );
 
         const merge = gsap.timeline({
           scrollTrigger: {
@@ -116,12 +129,9 @@ export function AboutPageHeroEcho() {
         );
 
         return () => {
-          intro.kill();
           merge.scrollTrigger?.kill();
           merge.kill();
-          gsap.set("[data-reveal]", { clearProps: "all" });
-          gsap.set("[data-solid]", { clearProps: "all" });
-          gsap.set(cells, { clearProps: "all" });
+          gsap.set(echoes, { clearProps: "all" });
         };
       });
     },

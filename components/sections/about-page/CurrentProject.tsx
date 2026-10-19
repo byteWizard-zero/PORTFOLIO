@@ -54,7 +54,7 @@ export function AboutPageCurrentProject() {
             trigger: section,
             start: 'top top',
             end: 'bottom bottom',
-            scrub: 2.5,
+            scrub: typeof window !== 'undefined' && window.innerWidth <= 1024 ? true : 2.5,
             pin: stickyContainer,
             onUpdate: openFromTimeline,
           },

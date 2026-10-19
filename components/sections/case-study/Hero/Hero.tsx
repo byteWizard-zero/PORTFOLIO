@@ -224,7 +224,7 @@ export function Hero({
 
       const mm = gsap.matchMedia();
 
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
+      mm.add("(prefers-reduced-motion: no-preference) and (min-width: 1025px)", () => {
 
         const originalParent = card.parentElement;
 

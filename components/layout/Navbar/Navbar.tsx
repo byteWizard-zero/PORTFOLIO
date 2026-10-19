@@ -71,7 +71,10 @@ export function Navbar() {
     buildObserver();
 
     let resizeRaf = 0;
+    let lastWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
     const onResize = () => {
+      if (typeof window !== 'undefined' && window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
       if (resizeRaf) cancelAnimationFrame(resizeRaf);
       resizeRaf = requestAnimationFrame(buildObserver);
     };

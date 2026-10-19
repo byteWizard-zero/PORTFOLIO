@@ -27,7 +27,7 @@ export const Dashboard = ({ badge, figcaption, image, alt }: DashboardContent) =
 
       const mm = gsap.matchMedia();
 
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
+      mm.add("(prefers-reduced-motion: no-preference) and (min-width: 1025px)", () => {
 
         const computeTarget = () => {
           const t = slot.getBoundingClientRect();
