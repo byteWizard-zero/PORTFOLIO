@@ -54,8 +54,8 @@ export function LenisProvider({ children }: LenisProviderProps) {
     };
 
     gsap.ticker.add(tick);
-    // Keep standard lag smoothing to avoid abrupt skips/teleporting on GC or frame hiccups
-    gsap.ticker.lagSmoothing(500, 33);
+    // Turn off GSAP's lag smoothing per Lenis best practice to ensure 1:1 clock sync
+    gsap.ticker.lagSmoothing(0);
 
     const handleVisibilityChange = () => {
       if (!document.hidden) ScrollTrigger.update();
