@@ -177,7 +177,7 @@
     font-size: 14px;
     z-index: 20;
     transform: scale(0);
-    box-shadow: 5px 5px 0px var(--color-primary-text);
+    box-shadow: 5px 5px 0px var(--badge-shadow, var(--color-primary-text));
     color: var(--color-primary-text);
     text-align: center;
     line-height: 1.2;
@@ -205,29 +205,60 @@
 
 @media (max-width: 768px) {
     .textContent {
-        white-space: normal;
-        font-size: clamp(28px, 10vw, 70px);
+        white-space: nowrap;
+        font-size: clamp(20px, 6.5vw, 32px);
+        letter-spacing: -0.02em;
         text-align: center;
+        max-width: 82vw;
+    }
+
+    .cardFrame {
+        width: min(85vw, 340px);
     }
 
     .projectMeta {
-        font-size: 13px;
-        gap: 10px;
+        bottom: clamp(60px, 9vh, 80px);
+        font-size: 11px;
+        gap: 8px;
+        max-width: 85vw;
+        justify-content: center;
     }
 
     .pill {
-        padding: 7px 14px;
-        border-width: 1.5px;
+        padding: 5px 12px;
+        border-width: 1px;
+        border-radius: 20px;
+        font-size: 11px;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+        line-height: 1.2;
+    }
+
+    .desktopOnly {
+        display: none !important;
+    }
+
+    .mobileOnly {
+        display: inline !important;
     }
 
     .funkyBadge {
-        right: 0;
-        top: 0;
-        transform: scale(0.85);
-        width: 76px;
-        height: 76px;
-        font-size: 11px;
+        right: -8px;
+        top: -8px;
+        width: clamp(48px, 13vw, 56px);
+        height: clamp(48px, 13vw, 56px);
+        font-size: 8.5px;
+        line-height: 1.15;
+        box-shadow: 3px 3px 0px var(--badge-shadow, var(--color-primary-text));
     }
+}
+
+.desktopOnly {
+    display: inline;
+}
+
+.mobileOnly {
+    display: none;
 }
 
 .projectSection[data-last='true'] .projectSticky {

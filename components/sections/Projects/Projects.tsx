@@ -113,15 +113,19 @@ export const Projects = () => {
                 }, "start");
             }
 
+            const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 1024px)').matches;
+
             tl.to(topPart, {
-                yPercent: -45,
-                rotation: -5, // Rotate Left
+                yPercent: isMobile ? -20 : -45,
+                rotation: isMobile ? -3 : -5,
+                opacity: isMobile ? 0.35 : 1,
                 force3D: true,
                 ease: "power2.inOut",
             }, "start")
             .to(botPart, {
-                yPercent: 45,
-                rotation: 5, // Rotate Right
+                yPercent: isMobile ? 20 : 45,
+                rotation: isMobile ? 3 : 5,
+                opacity: isMobile ? 0.35 : 1,
                 force3D: true,
                 ease: "power2.inOut",
             }, "start");
@@ -218,9 +222,9 @@ export const Projects = () => {
                     style={{
                         backgroundColor: project.badgeColor,
                         color: project.badgeTextColor,
-                        boxShadow: `5px 5px 0px ${project.badgeShadowColor || 'black'}`,
+                        ['--badge-shadow' as string]: project.badgeShadowColor || 'black',
                         transform: 'scale(0)'
-                    }}
+                    } as React.CSSProperties}
                    >
                        <span>
                            {project.badge.split(/<br\s*\/?>/i).map((line, i, arr) => (
@@ -279,8 +283,14 @@ export const Projects = () => {
                        </div>
 
                        <div className={styles.projectMeta}>
-                           <div className={styles.pill}>{caseStudies[project.id]?.hero?.pills?.[1] ?? project.year}</div>
-                           <div className={styles.pill}>{project.category}</div>
+                           <div className={styles.pill}>
+                               <span className={styles.desktopOnly}>{caseStudies[project.id]?.hero?.pills?.[1] ?? project.year}</span>
+                               <span className={styles.mobileOnly}>{project.year}</span>
+                           </div>
+                           <div className={styles.pill}>
+                               <span className={styles.desktopOnly}>{project.category}</span>
+                               <span className={styles.mobileOnly}>{project.category.replace('FEATURED · ', '').replace('APPLICATION', 'APP')}</span>
+                           </div>
                        </div>
                    </div>
                </div>
