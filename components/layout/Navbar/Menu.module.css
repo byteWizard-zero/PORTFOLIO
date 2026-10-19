@@ -18,8 +18,7 @@
     inset: 0;
     background-color: var(--color-accent-purple);
     clip-path: inset(0% 0% 100% 0%);
-    
-    contain: strict;
+    contain: paint;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
 }
@@ -640,8 +639,8 @@
     }
 }
 
-.menu.isOpen .overlay,
-.menu.isOpen .linkInner { will-change: clip-path; }
+.menu.isOpen .overlay { will-change: clip-path; }
+.menu.isOpen .linkInner { will-change: transform; }
 .menu.isOpen .linkNumber,
 .menu.isOpen .socialSection,
 .menu.isOpen .socialLabel,

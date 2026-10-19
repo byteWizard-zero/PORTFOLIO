@@ -200,7 +200,7 @@ export function Navbar() {
     } else {
 
       if (brandWrapper) {
-        gsap.to(brandWrapper, { opacity: 1, duration: 0.3, ease: 'power2.out', delay: 0.5 });
+        gsap.to(brandWrapper, { opacity: 1, duration: 0.3, ease: 'power2.out', delay: 0.35 });
       }
 
       gsap.to(line1, {

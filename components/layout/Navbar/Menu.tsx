@@ -30,7 +30,7 @@ const socialLinks = navigation.socialLinks.map(link => ({
   href: link.href,
 }));
 
-const MENU_EASE = 'power4.inOut';
+
 
 export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
@@ -192,48 +192,49 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
         }
       });
 
+      // 1. Curtain rolls down immediately with crisp deceleration
       tl.to(overlayRef.current, {
         clipPath: 'inset(0% 0% 0% 0%)',
-        duration: 0.7,
-        ease: MENU_EASE,
+        duration: 0.65,
+        ease: 'power3.out',
       })
-      // 2. Links stagger up (starts 0.3s after overlay begins)
+      // 2. Links stagger up gracefully from down to up (starts immediately at 0.08s, no dead pause)
       .to(links, {
         y: '0%',
-        duration: 0.8,
-        stagger: 0.1,
-        ease: MENU_EASE,
-      }, 0.3)
+        duration: 0.65,
+        stagger: 0.07,
+        ease: 'power3.out',
+      }, 0.08)
       // 3. Numbers fade in
       .to(linkNumbers, {
         opacity: 1,
         x: 0,
-        duration: 0.5,
-        stagger: 0.1,
+        duration: 0.45,
+        stagger: 0.07,
         ease: 'power2.out',
-      }, 0.5)
+      }, 0.18)
       // 4. Social labels slide in from right
       .to(socialLabels, {
         opacity: 1,
         x: 0,
-        duration: 0.5,
-        stagger: 0.15,
+        duration: 0.45,
+        stagger: 0.1,
         ease: 'power2.out',
-      }, 0.4)
+      }, 0.2)
       // 5. Social links stagger up
       .to(socialLinks, {
         opacity: 1,
         y: 0,
-        duration: 0.5,
-        stagger: 0.08,
-        ease: MENU_EASE,
-      }, 0.5)
+        duration: 0.45,
+        stagger: 0.05,
+        ease: 'power3.out',
+      }, 0.25)
       // 6. Location text fades in
       .to(locationText, {
         opacity: 1,
-        duration: 0.4,
+        duration: 0.35,
         ease: 'power2.out',
-      }, 0.7);
+      }, 0.35);
 
     } else {
 
@@ -264,48 +265,49 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
         }
       });
 
+      // 1. Content exits promptly without dead pauses
       tl.to(locationText, {
         opacity: 0,
-        duration: 0.2,
+        duration: 0.18,
         ease: 'power2.in',
-      }, 0.05)
-      // 3. Social links stagger out
+      }, 0)
+      // 2. Social links stagger out
       .to(socialLinks, {
         opacity: 0,
-        y: 30,
-        duration: 0.3,
-        stagger: { each: 0.04, from: 'end' },
-        ease: 'power2.in',
-      }, 0.1)
-      // 4. Social labels slide out
-      .to(socialLabels, {
-        opacity: 0,
-        x: 20,
-        duration: 0.3,
-        stagger: { each: 0.05, from: 'end' },
-        ease: 'power2.in',
-      }, 0.15)
-      // 5. Numbers fade out
-      .to(linkNumbers, {
-        opacity: 0,
-        x: -20,
-        duration: 0.3,
+        y: 20,
+        duration: 0.22,
         stagger: { each: 0.03, from: 'end' },
         ease: 'power2.in',
-      }, 0.1)
-      // 6. Links stagger down (reverse order)
+      }, 0.02)
+      // 3. Social labels slide out
+      .to(socialLabels, {
+        opacity: 0,
+        x: 15,
+        duration: 0.22,
+        stagger: { each: 0.03, from: 'end' },
+        ease: 'power2.in',
+      }, 0.04)
+      // 4. Numbers fade out
+      .to(linkNumbers, {
+        opacity: 0,
+        x: -15,
+        duration: 0.2,
+        stagger: { each: 0.02, from: 'end' },
+        ease: 'power2.in',
+      }, 0.02)
+      // 5. Links stagger down gracefully in reverse order (starts immediately at 0.02s)
       .to(links, {
         y: '110%',
-        duration: 0.5,
-        stagger: { each: 0.05, from: 'end' },
-        ease: MENU_EASE,
-      }, 0.2)
-      // 7. Overlay clips out (delayed until content exits)
+        duration: 0.38,
+        stagger: { each: 0.035, from: 'end' },
+        ease: 'power3.in',
+      }, 0.02)
+      // 6. Curtain rolls up cleanly in lockstep (starts promptly at 0.14s)
       .to(overlayRef.current, {
         clipPath: 'inset(0% 0% 100% 0%)',
-        duration: 0.7,
-        ease: MENU_EASE,
-      }, 0.5);
+        duration: 0.45,
+        ease: 'power3.inOut',
+      }, 0.14);
     }
   }, [isOpen, onClose, onCloseComplete, onRevealStart, triggerTransition]);
 
@@ -355,14 +357,13 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
       } else {
         scrollTo(href, { duration: 1.8 }); 
       }
-    }, 800);
+    }, 500);
   }, [onClose, scrollTo, pathname, triggerTransition, currentAccent]);
 
   return (
     <div ref={menuRef} id="main-menu" className={`${styles.menu} ${isOpen ? styles.isOpen : ''}`}>
-      <div ref={overlayRef} className={styles.overlay} />
-
-      <div className={styles.menuContent} data-lenis-prevent="">
+      <div ref={overlayRef} className={styles.overlay}>
+        <div className={styles.menuContent} data-lenis-prevent="">
         <nav className={styles.nav} role="navigation" aria-label="Main menu">
           <ul ref={linksContainerRef} className={styles.linkList}>
             {menuLinks.map((link, index) => (
@@ -459,6 +460,7 @@ export function Menu({ isOpen, onClose, onCloseComplete, onRevealStart }: MenuPr
           </div>
 
         </aside>
+      </div>
       </div>
     </div>
   );
